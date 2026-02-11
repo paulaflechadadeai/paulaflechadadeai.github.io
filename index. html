@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>paulaandreaadasmecastillo · Sin Sponsors</title>
+    <style>
+        /* Estilo terminal glitch */
+        :root {
+            --neon-green: #00ff00;
+            --neon-pink: #ff00ff;
+            --neon-blue: #00aaff;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-dark);
+            color: var(--neon-green);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 20%);
+        }
+        
+        .header {
+            border-bottom: 2px dashed var(--neon-green);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .glitch-title {
+            font-size: 2.5em;
+            color: var(--neon-pink);
+            text-shadow: 
+                2px 0 var(--neon-blue),
+                -1px 0 var(--neon-green);
+            animation: glitch 3s infinite;
+        }
+        
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-2px, 1px); }
+            20% { transform: translate(1px, -1px); }
+            30% { transform: translate(-1px, 2px); }
+        }
+        
+        .terminal {
+            background: var(--bg-darker);
+            border: 1px solid var(--neon-green);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+        
+        .terminal-line {
+            margin: 8px 0;
+        }
+        
+        .prompt { color: var(--neon-pink); }
+        .cmd { color: var(--neon-blue); }
+        .output { color: var(--neon-green); }
+        
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 40px 0;
+        }
+        
+        .menu-item {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255, 0, 255, 0.1);
+            border-color: var(--neon-pink);
+            transform: translateY(-3px);
+        }
+        
+        .menu-item a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .menu-item .desc {
+            font-size: 0.9em;
+            color: #88ff88;
+            margin-top: 8px;
+        }
+        
+        .manifesto {
+            background: rgba(0, 170, 255, 0.05);
+            border-left: 4px solid var(--neon-blue);
+            padding: 20px;
+            margin: 40px 0;
+        }
+        
+        .footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #444;
+            color: #888;
+            font-size: 0.9em;
+            text-align: center;
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            body { padding: 15px; }
+            .glitch-title { font-size: 1.8em; }
+            .menu { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="glitch-title">~/paulaandreaadasmecastillo $</h1>
+        <p>> Reconstruyendo internet como en el 93, pero con rabia del 2026</p>
+    </div>
+    
+    <div class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">whoami</span>
+            <div class="output">> Usuario: paulaandreaadasmecastillo</div>
+        </div>
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">check_status</span>
+            <div class="output">> Estado: Famosa sin sponsors ✓</div>
+        </div>
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">scan_ias</span>
+            <div class="output">> IAs derrotadas: [Meta ✓] [ChatGPT ✓] [Claude ✓]</div>
+        </div>
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">locate_hadas</span>
+            <div class="output">> Hadas malvadas: [███████] (recuperando de IG...)</div>
+        </div>
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">philosophy</span>
+            <div class="output">> Soñar no tiene affiliate links</div>
+        </div>
+    </div>
+    
+    <div class="menu">
+        <div class="menu-item">
+            <a href="/hadas">/hadas-malvadas</a>
+            <div class="desc">Contenido baneado en IG, liberado aquí</div>
+        </div>
+        <div class="menu-item">
+            <a href="/observatorio">/observatorio</a>
+            <div class="desc">Visor de APIs sociales sin middlemen</div>
+        </div>
+        <div class="menu-item">
+            <a href="/bitacora">/bitacora</a>
+            <div class="desc">Pensamientos sin censura ni algoritmos</div>
+        </div>
+        <div class="menu-item">
+            <a href="/ia-fallos">/ia-fallos</a>
+            <div class="desc">Crónica del triple fail: Meta+ChatGPT+Claude</div>
+        </div>
+    </div>
+    
+    <div class="manifesto">
+        <h2>📜 Manifiesto del espacio sin sponsors:</h2>
+        <p>1. Este sitio no tiene affiliate links, ads encubiertos ni patrocinios.</p>
+        <p>2. El código es abierto como el FTP del 93.</p>
+        <p>3. Las palabras peligrosas tienen casa aquí.</p>
+        <p>4. Soñar no necesita patrocinadores.</p>
+        <p>5. La fama se construye con autenticidad, no con engagement.</p>
+    </div>
+    
+    <div class="footer">
+        <p>📍 En vivo desde Chile · <span id="fecha-chile"></span></p>
+        <p>Hosteado en GitHub Pages · Código 100% propio</p>
+        <p>GitHub: @paulaandreaadasmecastillo · Sin trackers, sin cookies</p>
+        <p><em>"Internet era gratis en el 93. Soñar no tiene sponsor."</em></p>
+    </div>
+
+    <script>
+        // Fecha en formato Chile
+        const ahora = new Date();
+        const opciones = { 
+            timeZone: 'America/Santiago',
+            weekday: 'long',
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        document.getElementById('fecha-chile').textContent = 
+            ahora.toLocaleDateString('es-CL', opciones);
+        
+        // Efecto de escritura en consola
+        console.log('%c 🔮 Bienvenid@ al espacio sin sponsors', 
+                   'color: #00ff00; font-size: 16px; font-weight: bold;');
+        console.log('%c > Usuario:', 'color: #ff00ff;', 
+                   window.location.hostname.split('.')[0]);
+        console.log('%c > Fecha:', 'color: #00aaff;', 
+                   new Date().toLocaleString('es-CL'));
+        
+        // Glitch aleatorio en título
+        setInterval(() => {
+            const title = document.querySelector('.glitch-title');
+            if (Math.random() > 0.7) {
+                title.style.textShadow = `
+                    ${Math.random() * 4}px 0 var(--neon-blue),
+                    0 ${Math.random() * 4}px var(--neon-green)
+                `;
+                setTimeout(() => {
+                    title.style.textShadow = 
+                        '2px 0 var(--neon-blue), -1px 0 var(--neon-green)';
+                }, 100);
+            }
+        }, 500);
+    </script>
+</body>
+</html>
