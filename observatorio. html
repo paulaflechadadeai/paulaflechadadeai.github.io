@@ -298,7 +298,7 @@
             border: 2px solid var(--neon-pink);
         }
 
-        /* ===== CONTADOR ===== */
+        /* ===== CONTADOR ===== */ 
         .contador-mes {
             background: rgba(255, 0, 255, 0.1);
             border: 1px solid var(--neon-pink);
