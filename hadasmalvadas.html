@@ -352,7 +352,9 @@
         // ============================================
         // ===== CONFIGURACIÓN =====
         // ============================================
-        const CLAVE_EDITOR = "yate-1975"; // Cambia por tu clave
+        // ⚠️ IMPORTANTE: Este archivo será procesado por GitHub Actions
+        // La línea de abajo será REEMPLAZADA automáticamente durante el despliegue
+        const CLAVE_EDITOR = "___CLAVE_SECRETA_EDITOR___";
         const MAX_ENTRADAS_POR_MES = 10;
         
         let todosLosVideos = [];
@@ -445,6 +447,8 @@
         // ============================================
         function mostrarEditor() {
             const clave = prompt("🔑 Clave de cazadora:");
+            
+            // La constante CLAVE_EDITOR ya tiene el valor inyectado por GitHub Actions
             if (clave === CLAVE_EDITOR) {
                 editorActivo = true;
                 document.getElementById('panelEditor').style.display = 'block';
@@ -717,4 +721,4 @@
         console.log('%c🧚 Sistema de Caza de Hadas iniciado', 'color: #ff88ff; font-size: 16px;');
     </script>
 </body>
-  </html>
+</html>
