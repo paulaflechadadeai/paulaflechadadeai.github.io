@@ -249,24 +249,25 @@
         }
         
         // ===== EDITOR (protegido con "contraseña" simple) =====
-        function mostrarEditor() {
-            // Preguntar contraseña (solo tú la sabes)
-            const clave = prompt("🔑 Clave de editor:");
-            
-            if (clave === "yate-1975") { // Cambia esto por tu contraseña
-                document.getElementById('panelEditor').style.display = 'block';
-                document.getElementById('btnMostrarEditor').style.display = 'none';
-            } else if (clave !== null) {
-                alert("❌ Clave incorrecta");
-            }
-        }
-        
-        function ocultarEditor() {
-            document.getElementById('panelEditor').style.display = 'none';
-            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
-        }
-        
-        // ===== CARGAR DATOS GUARDADOS =====
+    function mostrarEditor() {
+    const clave = prompt("🔑 Clave de editor:");
+    
+    // Esta variable será inyectada por GitHub Actions
+    const CLAVE_REAL = "___CLAVE_SECRETA_EDITOR___";
+    
+    if (clave === CLAVE_REAL) {
+        document.getElementById('panelEditor').style.display = 'block';
+        document.getElementById('btnMostrarEditor').style.display = 'none';
+    } else if (clave !== null) {
+        alert("❌ Clave incorrecta");
+    }
+}
+
+function ocultarEditor() {
+    document.getElementById('panelEditor').style.display = 'none';
+    document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+}
+       // ===== CARGAR DATOS GUARDADOS =====
         function cargarBitacora() {
             const guardadas = localStorage.getItem('bitacoraPublica');
             if (guardadas) {
