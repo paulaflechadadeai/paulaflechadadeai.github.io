@@ -15,13 +15,32 @@ jobs:
       - name: Descargar código
         uses: actions/checkout@v4
 
-      - name: 🔑 INYECTAR CLAVE SECRETA EN LOS HTML
+      - name: 🔍 PASO 1 - Listar archivos HTML
         run: |
-          echo "🔍 Buscando archivos HTML..."
-          find . -name "*.html" -type f
-          echo "⚡ Reemplazando marcador por la clave secreta..."
+          echo "📂 ARCHIVOS HTML ENCONTRADOS:"
+          find . -name "*.html" -type f | sort
+          echo ""
+          echo "📂 TOTAL:" $(find . -name "*.html" -type f | wc -l) "archivos"
+
+      - name: 🔎 PASO 2 - Buscar el marcador
+        run: |
+          echo "🔎 BUSCANDO '___CLAVE_SECRETA_EDITOR___' EN LOS ARCHIVOS:"
+          grep -r "___CLAVE_SECRETA_EDITOR___" --include="*.html" . || echo "❌ NO SE ENCONTRÓ EL MARCADOR EN NINGÚN ARCHIVO"
+
+      - name: 🔑 PASO 3 - REEMPLAZAR con la clave secreta
+        run: |
+          echo "⚡ REEMPLAZANDO MARCADOR POR LA CLAVE SECRETA..."
           find . -name "*.html" -type f -exec sed -i 's/___CLAVE_SECRETA_EDITOR___/${{ secrets.CLAVE_EDITOR }}/g' {} \;
-          echo "✅ Clave inyectada correctamente en todos los HTML"
+          echo "✅ REEMPLAZO COMPLETADO"
+
+      - name: ✅ PASO 4 - Verificar que se reemplazó
+        run: |
+          echo "🔎 VERIFICANDO QUE EL MARCADOR YA NO EXISTE:"
+          grep -r "___CLAVE_SECRETA_EDITOR___" --include="*.html" . && echo "❌ EL MARCADOR TODAVÍA EXISTE" || echo "✅ MARCADOR ELIMINADO CORRECTAMENTE"
+          
+          echo ""
+          echo "🔎 BUSCANDO LA NUEVA CLAVE (primeros 4 caracteres):"
+          grep -r "${{ secrets.CLAVE_EDITOR }}" --include="*.html" . | head -5 || echo "❌ NO SE ENCONTRÓ LA CLAVE INYECTADA"
 
       - name: 🚀 Desplegar a GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
