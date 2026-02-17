@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>paulaflechadadeai · Sin Sponsors</title>
+    <style>
+        /* Estilo terminal glitch */
+        :root {
+            --neon-green: #00ff00;
+            --neon-pink: #ff00ff;
+            --neon-blue: #00aaff;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-dark);
+            color: var(--neon-green);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 20%);
+        }
+
+        .header {
+            border-bottom: 2px dashed var(--neon-green);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .glitch-title {
+            font-size: 2.5em;
+            color: var(--neon-pink);
+            text-shadow: 
+                2px 0 var(--neon-blue),
+                -1px 0 var(--neon-green);
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-2px, 1px); }
+            20% { transform: translate(1px, -1px); }
+            30% { transform: translate(-1px, 2px); }
+        }
+
+        .terminal {
+            background: var(--bg-darker);
+            border: 1px solid var(--neon-green);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+
+        .terminal-line {
+            margin: 8px 0;
+        }
+
+        .prompt { color: var(--neon-pink); }
+        .cmd { color: var(--neon-blue); }
+        .output { color: var(--neon-green); }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 40px 0;
+        }
+
+        .menu-item {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 0, 255, 0.1);
+            border-color: var(--neon-pink);
+            transform: translateY(-3px);
+        }
+
+        .menu-item a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+        }
+
+        .menu-item .desc {
+            font-size: 0.9em;
+            color: #88ff88;
+            margin-top: 8px;
+        }
+
+        .manifesto {
+            background: rgba(0, 170, 255, 0.05);
+            border-left: 4px solid var(--neon-blue);
+            padding: 20px;
+            margin: 40px 0;
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #444;
+            color: #888;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        /* ===== REPRODUCTOR DE MÚSICA ===== */
+        .music-player {
+            background: var(--bg-darker);
+            border: 1px solid var(--neon-pink);
+            padding: 15px;
+            margin: 30px 0;
+            border-radius: 5px;
+        }
+
+        .music-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .music-btn {
+            background: black;
+            border: 2px solid;
+            padding: 8px 15px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .music-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .btn-play {
+            color: var(--neon-green);
+            border-color: var(--neon-green);
+        }
+
+        .btn-pause {
+            color: var(--neon-pink);
+            border-color: var(--neon-pink);
+        }
+
+        .btn-replay {
+            color: var(--neon-blue);
+            border-color: var(--neon-blue);
+        }
+
+        .volume-slider {
+            width: 100px;
+            background: black;
+            accent-color: var(--neon-pink);
+            cursor: pointer;
+        }
+
+        /* ===== CONTADOR ===== */
+        .counter-box {
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid var(--neon-pink);
+            padding: 20px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .counter-number {
+            font-size: 3em;
+            color: var(--neon-pink);
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body { padding: 15px; }
+            .glitch-title { font-size: 1.8em; }
+            .menu { grid-template-columns: 1fr; }
+            .music-controls { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="glitch-title">~/paulaflechadadeai $</h1>
+        <p>> Reconstruyendo internet como en el 93, pero con rabia del 2026</p>
+    </div>
+
+    <div class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">whoami</span>
+            <div class="output">> Usuario: paulaflechadadeai</div>
+        </div>
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">check_status</span>
+            <div class="output">> Estado: Famosa sin sponsors ✓</div>
+        </div>
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">scan_ias</span>
+            <div class="output">> IAs derrotadas: [Meta ✓] [ChatGPT ✓] [Claude ✓]</div>
+        </div>
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">locate_hadas</span>
+            <div class="output">> Hadas malvadas: [███████] (recuperando de IG...)</div>
+        </div>
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">philosophy</span>
+            <div class="output">> Soñar no tiene affiliate links</div>
+        </div>
+    </div>
+
+    <div class="menu">
+        <div class="menu-item">
+    <a href="/hadasmalvadas.html">🧚 /hadasmalvadas</a>
+    <div class="desc">Cazando hadas en TikTok · 10 por mes</div>
+        </div>
+    <div class="menu-item">
+            <a href="/observatorio">/observatorio</a>
+            <div class="desc">Visor de APIs sociales sin middlemen</div>
+        </div>
+        <div class="menu-item">
+            <a href="/bitacora.html">📖 /bitacora-v2</a>
+            <div class="desc">Bitácora completa con todo: filtros, stats, exportar</div>
+        </div>
+<div class="menu-item">
+    <a href="/ia-fallos.html">🤖 /ia-fallos</a>
+    <div class="desc">Gráficos y registro de fails de IAs</div>
+</div>
+   <div class="menu-item">
+            <a href="/posteos.html">📝 /posteos</a>
+            <div class="desc">Manifiestos, crónicas, ideas bomba</div>
+        </div>
+    </div>
+
+    <!-- ======================================== -->
+    <!-- ===== REPRODUCTOR DE MÚSICA ===== -->
+    <!-- ======================================== -->
+    <div class="music-player">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">sistema_audio --play</span>
+        </div>
+
+        <!-- ✅ NOMBRE CORREGIDO: himno-sin-sponsors.mp3 -->
+        <audio id="musicaFondo" loop preload="auto">
+            <source src="/musica/himno-sin-sponsors.mp3" type="audio/mpeg">
+            Tu navegador no soporta audio HTML5.
+        </audio>
+
+        <div class="music-controls">
+            <button onclick="document.getElementById('musicaFondo').play()" class="music-btn btn-play">
+                ▶ PLAY
+            </button>
+            
+            <button onclick="document.getElementById('musicaFondo').pause()" class="music-btn btn-pause">
+                ⏸ PAUSE
+            </button>
+            
+            <button onclick="document.getElementById('musicaFondo').currentTime = 0; document.getElementById('musicaFondo').play()" class="music-btn btn-replay">
+                ↺ REPLAY
+            </button>
+            
+            <span style="color: var(--neon-green);">🔊</span>
+            <input type="range" id="controlVolumen" class="volume-slider" min="0" max="1" step="0.1" value="0.3">
+            <span id="volumenDisplay" style="color: var(--neon-blue);">30%</span>
+        </div>
+
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">track_info</span>
+            <div class="output" id="infoCancion">> Reproduciendo: himno sin sponsors · Loop infinito</div>
+        </div>
+    </div>
+
+    <!-- ======================================== -->
+    <!-- ===== CONTADOR DE VISITAS ===== -->
+    <!-- ======================================== -->
+    <div class="counter-box">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">visitas_contador</span>
+        </div>
+        
+        <div class="counter-number" id="contadorVisitas">[--]</div>
+        
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">visitante_status</span>
+            <div class="output" id="mensajeVisitas"></div>
+        </div>
+    </div>
+
+    <div class="manifesto">
+        <h2>📜 Manifiesto del espacio sin sponsors:</h2>
+        <p>1. Este sitio no tiene affiliate links, ads encubiertos ni patrocinios.</p>
+        <p>2. El código es abierto como el FTP del 93.</p>
+        <p>3. Las palabras peligrosas tienen casa aquí.</p>
+        <p>4. Soñar no necesita patrocinadores.</p>
+        <p>5. La fama se construye con autenticidad, no con engagement.</p>
+    </div>
+
+    <div class="footer">
+        <p>📍 En vivo desde Chile · <span id="fecha-chile"></span></p>
+        <p>Hosteado en GitHub Pages · Código 100% propio</p>
+        <p>GitHub: @paulaflechadadeai · Sin trackers, sin cookies</p>
+        <p><em>"Internet era gratis en el 93. Soñar no tiene sponsor."</em></p>
+    </div>
+
+    <script>
+        // ========================================
+        // ===== 1. FECHA EN FORMATO CHILE =====
+        // ========================================
+        const ahora = new Date();
+        const opciones = { 
+            timeZone: 'America/Santiago',
+            weekday: 'long',
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        document.getElementById('fecha-chile').textContent = 
+            ahora.toLocaleDateString('es-CL', opciones);
+
+        // ========================================
+        // ===== 2. CONTROL DE VOLUMEN =====
+        // ========================================
+        const controlVolumen = document.getElementById('controlVolumen');
+        const musica = document.getElementById('musicaFondo');
+        const volumenDisplay = document.getElementById('volumenDisplay');
+
+        controlVolumen.addEventListener('input', function() {
+            musica.volume = this.value;
+            volumenDisplay.textContent = Math.round(this.value * 100) + '%';
+        });
+
+        // ========================================
+        // ===== 3. CONTADOR DE VISITAS =====
+        // ========================================
+        const NOMBRE_CONTADOR = 'visitas_paulaflechadadeai';
+        let visitasGuardadas = localStorage.getItem(NOMBRE_CONTADOR);
+        let contadorNumero = document.getElementById('contadorVisitas');
+        let mensajeVisitas = document.getElementById('mensajeVisitas');
+
+        if (visitasGuardadas === null) {
+            // Primera visita
+            localStorage.setItem(NOMBRE_CONTADOR, '1');
+            contadorNumero.innerHTML = '[001]';
+            mensajeVisitas.innerHTML = '> Primera visita · Bienvenida al espacio sin sponsors';
+        } else {
+            // Ya ha visitado antes
+            let visitas = parseInt(visitasGuardadas) + 1;
+            localStorage.setItem(NOMBRE_CONTADOR, visitas);
+            
+            // Formato de 3 dígitos
+            if (visitas < 10) {
+                contadorNumero.innerHTML = '[00' + visitas + ']';
+            } else if (visitas < 100) {
+                contadorNumero.innerHTML = '[0' + visitas + ']';
+            } else {
+                contadorNumero.innerHTML = '[' + visitas + ']';
+            }
+            
+            // Mensajes personalizados
+            if (visitas === 2) {
+                mensajeVisitas.innerHTML = '> Segunda visita · Ya somos casi amigas';
+            } else if (visitas === 5) {
+                mensajeVisitas.innerHTML = '> 5 visitas · Eres de la familia';
+            } else if (visitas === 10) {
+                mensajeVisitas.innerHTML = '> 10 visitas · ¡Fan número 1! 🏆';
+            } else if (visitas === 20) {
+                mensajeVisitas.innerHTML = '> 20 visitas · Ya eres parte del mobiliario';
+            } else {
+                mensajeVisitas.innerHTML = '> Nos has visitado ' + visitas + ' veces';
+            }
+        }
+
+        // ========================================
+        // ===== 4. EFECTOS VISUALES =====
+        // ========================================
+        
+        // Efecto de escritura en consola
+        console.log('%c 🔮 Bienvenid@ al espacio sin sponsors', 
+                   'color: #00ff00; font-size: 16px; font-weight: bold;');
+        console.log('%c > Usuario:', 'color: #ff00ff;', 
+                   window.location.hostname.split('.')[0]);
+        console.log('%c > Fecha:', 'color: #00aaff;', 
+                   new Date().toLocaleString('es-CL'));
+
+        // Glitch aleatorio en título
+        setInterval(() => {
+            const title = document.querySelector('.glitch-title');
+            if (Math.random() > 0.7) {
+                title.style.textShadow = `
+                    ${Math.random() * 4}px 0 var(--neon-blue),
+                    0 ${Math.random() * 4}px var(--neon-green)
+                `;
+                setTimeout(() => {
+                    title.style.textShadow = 
+                        '2px 0 var(--neon-blue), -1px 0 var(--neon-green)';
+                }, 100);
+            }
+        }, 500);
+
+        // Intento de reproducción automática (silenciosa)
+        window.addEventListener('load', function() {
+            // Intentar reproducir (puede que el navegador lo bloquee)
+            let playPromise = musica.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    console.log("Autoplay bloqueado. Usa los botones para reproducir.");
+                });
+            }
+        });
+    </script>
+</body>
+</html>

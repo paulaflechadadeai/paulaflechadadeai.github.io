@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitácora · paulaflechadadeai</title>
+    <style>
+        /* COPIA AQUÍ TODO TU CSS EXISTENTE */
+        :root {
+            --neon-green: #00ff00;
+            --neon-pink: #ff00ff;
+            --neon-blue: #00aaff;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000;
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-dark);
+            color: var(--neon-green);
+            line-height: 1.7;
+        }
+        .header { border-bottom: 2px dashed var(--neon-green); padding-bottom: 20px; margin-bottom: 40px; }
+        .glitch-title { font-size: 2.5em; color: var(--neon-pink); text-shadow: 2px 0 var(--neon-blue), -1px 0 var(--neon-green); animation: glitch 3s infinite; }
+        @keyframes glitch { 0%,100%{transform:translate(0)} 10%{transform:translate(-2px,1px)} 20%{transform:translate(1px,-1px)} 30%{transform:translate(-1px,2px)} }
+        .terminal { background: var(--bg-darker); border: 1px solid var(--neon-green); padding: 20px; margin: 30px 0; border-radius: 5px; }
+        .terminal-line { margin: 8px 0; }
+        .prompt { color: var(--neon-pink); }
+        .cmd { color: var(--neon-blue); }
+        .output { color: var(--neon-green); }
+        .footer { margin-top: 60px; padding-top: 20px; border-top: 1px dashed #444; color: #888; text-align: center; }
+        .volver { margin: 20px 0; }
+        .volver a { color: var(--neon-blue); text-decoration: none; }
+        .volver a:hover { color: var(--neon-pink); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="glitch-title">~/bitacora-publica $</h1>
+        <p>> Registro de hadas, IAs y pensamientos · 2026</p>
+    </div>
+    
+    <div class="volver">
+        <a href="/">← Inicio</a> · <a href="/posteos.html">← Posteos</a>
+    </div>
+    
+    <!-- ======================================== -->
+    <!-- BITÁCORA PÚBLICA - MODO MEMO VB -->
+    <!-- ======================================== -->
+    
+    <!-- PANEL DE EDITOR (OCULTO POR DEFECTO) -->
+    <div id="panelEditor" style="display: none;" class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+        </div>
+        
+        <div style="margin: 20px 0;">
+            <input type="text" id="nuevaEntradaTitulo" placeholder="Título de la entrada" 
+                   style="width: 100%; background: black; color: var(--neon-green); border: 1px solid var(--neon-green); padding: 8px; margin-bottom: 10px;">
+            
+            <select id="nuevaEntradaTag" style="width: 100%; background: black; color: var(--neon-green); border: 1px solid var(--neon-green); padding: 8px; margin-bottom: 10px;">
+                <option value="hadas">🐉 Hadas Malvadas</option>
+                <option value="ias">🤖 IAs</option>
+                <option value="pensamientos">💭 Pensamientos</option>
+                <option value="eventos">📅 Eventos</option>
+            </select>
+            
+            <textarea id="nuevaEntradaContenido" rows="4" placeholder="Escribe tu entrada..." 
+                      style="width: 100%; background: black; color: var(--neon-green); border: 1px solid var(--neon-green); padding: 8px; margin-bottom: 10px;"></textarea>
+            
+            <button onclick="guardarEntradaBitacora()" 
+                    style="background: black; color: var(--neon-pink); border: 2px solid var(--neon-pink); padding: 10px 20px; cursor: pointer;">
+                💾 PUBLICAR EN BITÁCORA
+            </button>
+            
+            <button onclick="ocultarEditor()" 
+                    style="background: black; color: var(--neon-blue); border: 1px solid var(--neon-blue); padding: 10px 20px; cursor: pointer; margin-left: 10px;">
+                ✖ Cerrar editor
+            </button>
+        </div>
+    </div>
+    
+    <!-- BOTÓN PARA ACTIVAR MODO EDITOR -->
+    <div style="text-align: right; margin: 20px 0;">
+        <button onclick="mostrarEditor()" id="btnMostrarEditor"
+                style="background: black; color: var(--neon-blue); border: 1px dashed var(--neon-blue); padding: 5px 10px; cursor: pointer;">
+            🔧 Modo editor
+        </button>
+    </div>
+    
+    <!-- FILTROS -->
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0;">
+        <button onclick="filtrarBitacora('hadas')" style="background: black; color: #ff88ff; border: 1px solid #ff88ff; padding: 5px 10px;">🐉 Hadas</button>
+        <button onclick="filtrarBitacora('ias')" style="background: black; color: #88ff88; border: 1px solid #88ff88; padding: 5px 10px;">🤖 IAs</button>
+        <button onclick="filtrarBitacora('pensamientos')" style="background: black; color: #ffaa00; border: 1px solid #ffaa00; padding: 5px 10px;">💭 Pensamientos</button>
+        <button onclick="filtrarBitacora('eventos')" style="background: black; color: #00aaff; border: 1px solid #00aaff; padding: 5px 10px;">📅 Eventos</button>
+        <button onclick="mostrarTodasBitacora()" style="background: black; color: var(--neon-green); border: 1px solid var(--neon-green); padding: 5px 10px;">📋 Todas</button>
+    </div>
+    
+    <!-- CONTENEDOR DE ENTRADAS -->
+    <div class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">bitacora --mostrar</span>
+        </div>
+        
+        <div id="contenedorBitacora" style="margin: 20px 0;">
+            <!-- Las entradas se cargarán aquí -->
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>📍 Bitácora pública · Sin sponsors · Sin censura</p>
+    </div>
+    
+    <script>
+        // ========================================
+        // BITÁCORA PÚBLICA - CON DATOS INICIALES
+        // ========================================
+        
+        // Datos iniciales de la bitácora (esto es lo que VE TODO EL MUNDO)
+        let entradasBitacora = [
+            {
+                id: 1,
+                titulo: "Primera entrada",
+                tag: "pensamientos",
+                contenido: "Hoy decidí crear esta bitácora para registrar todo lo que pasa con las hadas malvadas y las IAs.",
+                fecha: "16/02/2026 10:30",
+                timestamp: Date.now() - 86400000
+            },
+            {
+                id: 2,
+                titulo: "Meta falló otra vez",
+                tag: "ias",
+                contenido: "Intenté subir contenido y su IA lo bloqueó sin razón. Ya tenemos 3 casos documentados.",
+                fecha: "16/02/2026 15:45",
+                timestamp: Date.now() - 43200000
+            },
+            {
+                id: 3,
+                titulo: "Hada detectada en TikTok",
+                tag: "hadas",
+                contenido: "Una cuenta con 50k seguidores desapareció de la noche a la mañana. Coincidencias?",
+                fecha: "15/02/2026 09:20",
+                timestamp: Date.now() - 172800000
+            }
+        ];
+        
+        // Variable para controlar el filtro actual
+        let filtroActual = "todas";
+        
+        // ===== MOSTRAR ENTRADAS =====
+        function mostrarEntradas(lista) {
+            const contenedor = document.getElementById('contenedorBitacora');
+            
+            if (lista.length === 0) {
+                contenedor.innerHTML = '<p style="color: var(--neon-blue);">📭 No hay entradas que coincidan</p>';
+                return;
+            }
+            
+            let html = '';
+            
+            for (let i = 0; i < lista.length; i++) {
+                const e = lista[i];
+                
+                // Color según tag
+                let colorTag = 'var(--neon-green)';
+                if (e.tag === 'hadas') colorTag = '#ff88ff';
+                if (e.tag === 'ias') colorTag = '#88ff88';
+                if (e.tag === 'pensamientos') colorTag = '#ffaa00';
+                if (e.tag === 'eventos') colorTag = '#00aaff';
+                
+                html += `
+                    <div style="border-left: 4px solid ${colorTag}; margin-bottom: 20px; padding: 12px; background: rgba(0,0,0,0.5);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="color: ${colorTag}; font-weight: bold;">📌 ${e.titulo}</span>
+                            <span style="color: var(--neon-blue); font-size: 0.8em;">${e.fecha}</span>
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            <span style="background: ${colorTag}; color: black; padding: 2px 8px; font-size: 0.7em;">#${e.tag}</span>
+                        </div>
+                        <div style="color: var(--neon-green); white-space: pre-wrap; border-top: 1px dashed #333; padding-top: 10px;">
+                            ${e.contenido.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            contenedor.innerHTML = html;
+        }
+        
+        // ===== GUARDAR NUEVA ENTRADA =====
+        function guardarEntradaBitacora() {
+            const titulo = document.getElementById('nuevaEntradaTitulo').value.trim();
+            const tag = document.getElementById('nuevaEntradaTag').value;
+            const contenido = document.getElementById('nuevaEntradaContenido').value.trim();
+            
+            if (!titulo || !contenido) {
+                alert("⚠️ El título y el contenido son obligatorios");
+                return;
+            }
+            
+            // Crear nueva entrada
+            const ahora = new Date();
+            const nueva = {
+                id: Date.now(),
+                titulo: titulo,
+                tag: tag,
+                contenido: contenido,
+                fecha: `${ahora.getDate().toString().padStart(2,'0')}/${(ahora.getMonth()+1).toString().padStart(2,'0')}/${ahora.getFullYear()} ${ahora.getHours().toString().padStart(2,'0')}:${ahora.getMinutes().toString().padStart(2,'0')}`,
+                timestamp: ahora.getTime()
+            };
+            
+            // Agregar al principio
+            entradasBitacora.unshift(nueva);
+            
+            // Guardar en localStorage (para que persista entre recargas)
+            localStorage.setItem('bitacoraPublica', JSON.stringify(entradasBitacora));
+            
+            // Mostrar según filtro actual
+            if (filtroActual === "todas") {
+                mostrarEntradas(entradasBitacora);
+            } else {
+                const filtradas = entradasBitacora.filter(e => e.tag === filtroActual);
+                mostrarEntradas(filtradas);
+            }
+            
+            // Limpiar formulario
+            document.getElementById('nuevaEntradaTitulo').value = "";
+            document.getElementById('nuevaEntradaContenido').value = "";
+            
+            // Ocultar editor automáticamente
+            ocultarEditor();
+            
+            alert("✅ Entrada publicada en la bitácora");
+        }
+        
+        // ===== FILTRAR =====
+        function filtrarBitacora(tag) {
+            filtroActual = tag;
+            const filtradas = entradasBitacora.filter(e => e.tag === tag);
+            mostrarEntradas(filtradas);
+        }
+        
+        function mostrarTodasBitacora() {
+            filtroActual = "todas";
+            mostrarEntradas(entradasBitacora);
+        }
+        
+        // ===== EDITOR (protegido con "contraseña" simple) =====
+    function mostrarEditor() {
+    const clave = prompt("🔑 Clave de editor:");
+    
+    // Esta variable será inyectada por GitHub Actions
+    const CLAVE_REAL = "___CLAVE_SECRETA_EDITOR___";
+    
+    if (clave === CLAVE_REAL) {
+        document.getElementById('panelEditor').style.display = 'block';
+        document.getElementById('btnMostrarEditor').style.display = 'none';
+    } else if (clave !== null) {
+        alert("❌ Clave incorrecta");
+    }
+}
+
+function ocultarEditor() {
+    document.getElementById('panelEditor').style.display = 'none';
+    document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+}
+       // ===== CARGAR DATOS GUARDADOS =====
+        function cargarBitacora() {
+            const guardadas = localStorage.getItem('bitacoraPublica');
+            if (guardadas) {
+                entradasBitacora = JSON.parse(guardadas);
+            } else {
+                // Si no hay guardadas, usar las de ejemplo Y guardarlas
+                localStorage.setItem('bitacoraPublica', JSON.stringify(entradasBitacora));
+            }
+            mostrarEntradas(entradasBitacora);
+        }
+        
+        // ===== INICIAR =====
+        cargarBitacora();
+        
+        console.log('%c📖 Bitácora pública iniciada', 'color: #00ff00');
+    </script>
+</body>
+</html>

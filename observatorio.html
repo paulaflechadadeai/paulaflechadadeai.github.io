@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Observatorio · paulaflechadadeai</title>
+    <style>
+        /* ===== ESTILOS BASE (los mismos de tu sitio) ===== */
+        :root {
+            --neon-green: #00ff00;
+            --neon-pink: #ff00ff;
+            --neon-blue: #00aaff;
+            --neon-yellow: #ffff00;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-dark);
+            color: var(--neon-green);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 20%);
+        }
+
+        /* ===== HEADER CON GLITCH ===== */
+        .header {
+            border-bottom: 2px dashed var(--neon-green);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .glitch-title {
+            font-size: clamp(1.8em, 5vw, 2.8em);
+            color: var(--neon-pink);
+            text-shadow: 3px 0 var(--neon-blue), -2px 0 var(--neon-green);
+            animation: glitch 3s infinite;
+            margin: 0;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-3px, 1px); }
+            20% { transform: translate(2px, -2px); }
+            30% { transform: translate(-2px, 3px); }
+            40% { transform: translate(1px, -1px); }
+        }
+
+        .subheader {
+            color: var(--neon-blue);
+            margin: 10px 0 0 0;
+            font-size: 1em;
+        }
+
+        /* ===== TERMINAL BOX ===== */
+        .terminal {
+            background: var(--bg-darker);
+            border: 2px solid var(--neon-green);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .terminal-line {
+            margin: 12px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .prompt {
+            color: var(--neon-pink);
+            font-weight: bold;
+        }
+
+        .cmd {
+            color: var(--neon-blue);
+        }
+
+        .output {
+            color: var(--neon-green);
+            margin-left: 15px;
+        }
+
+        /* ===== BOTONES ===== */
+        button {
+            background: black;
+            border: 2px solid;
+            padding: 8px 16px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .btn-primary {
+            color: var(--neon-pink);
+            border-color: var(--neon-pink);
+        }
+
+        .btn-primary:hover {
+            background: rgba(255, 0, 255, 0.1);
+        }
+
+        .btn-secondary {
+            color: var(--neon-blue);
+            border-color: var(--neon-blue);
+        }
+
+        .btn-danger {
+            color: #ff5555;
+            border-color: #ff5555;
+        }
+
+        .btn-success {
+            color: var(--neon-green);
+            border-color: var(--neon-green);
+        }
+
+        .btn-warning {
+            color: #ffaa00;
+            border-color: #ffaa00;
+        }
+
+        /* ===== FORMULARIOS ===== */
+        input, select, textarea {
+            background: black;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            width: 100%;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        label {
+            color: var(--neon-blue);
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* ===== TAGS ===== */
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            color: black;
+        }
+
+        .tag-hadas { background: #ff88ff; }
+        .tag-ias { background: #88ff88; }
+        .tag-pensamientos { background: #ffaa00; }
+        .tag-eventos { background: #00aaff; }
+        .tag-observatorio { background: #ff66aa; }
+
+        /* ===== ENTRADAS ===== */
+        .entrada {
+            border-left: 6px solid;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s;
+        }
+
+        .entrada:hover {
+            transform: translateX(5px);
+            box-shadow: -5px 5px 15px rgba(0, 255, 0, 0.1);
+        }
+
+        .entrada-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .entrada-titulo {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--neon-pink);
+        }
+
+        .entrada-fecha {
+            color: var(--neon-blue);
+            font-size: 0.85em;
+            font-family: monospace;
+        }
+
+        .entrada-tags {
+            margin: 10px 0;
+        }
+
+        .entrada-contenido {
+            color: var(--neon-green);
+            white-space: pre-wrap;
+            border-top: 1px dashed #333;
+            border-bottom: 1px dashed #333;
+            padding: 15px 0;
+            margin: 15px 0;
+            line-height: 1.8;
+        }
+
+        .entrada-imagen {
+            margin: 20px 0;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .entrada-imagen img {
+            max-width: 100%;
+            max-height: 300px;
+            border: 3px solid var(--neon-pink);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .entrada-imagen img:hover {
+            transform: scale(1.02);
+            border-color: var(--neon-blue);
+        }
+
+        .entrada-acciones {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+
+        /* ===== FILTROS ===== */
+        .filtros {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .filtro-btn {
+            background: black;
+            border: 2px solid;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            border-radius: 20px;
+        }
+
+        .filtro-btn.activo {
+            background: var(--neon-green);
+            color: black;
+        }
+
+        /* ===== PREVIEW DE IMAGEN ===== */
+        .preview-container {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px dashed var(--neon-blue);
+            text-align: center;
+        }
+
+        .preview-container img {
+            max-width: 200px;
+            max-height: 200px;
+            border: 2px solid var(--neon-pink);
+        }
+
+        /* ===== CONTADOR ===== */
+        .contador-mes {
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid var(--neon-pink);
+            padding: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        /* ===== VOLVER ===== */
+        .volver {
+            margin: 20px 0;
+            padding: 10px 0;
+        }
+
+        .volver a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .volver a:hover {
+            color: var(--neon-pink);
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border: 3px solid var(--neon-pink);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .entrada-header { flex-direction: column; align-items: flex-start; }
+            .entrada-fecha { margin-top: 5px; }
+            .filtros { justify-content: flex-start; }
+            button { width: 100%; margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== HEADER ===== -->
+    <div class="header">
+        <h1 class="glitch-title">~/observatorio $</h1>
+        <p class="subheader">> Vigilando hadas, IAs y el universo digital · 2026</p>
+    </div>
+
+    <!-- ===== NAVEGACIÓN ===== -->
+    <div class="volver">
+        <a href="/">← INICIO</a> · 
+        <a href="/posteos.html">← POSTEOS</a>
+    </div>
+
+    <!-- ======================================== -->
+    <!-- ===== 1. PANEL DE EDITOR (OCULTO) ===== -->
+    <!-- ======================================== -->
+    <div id="panelEditor" style="display: none;" class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+        </div>
+        
+        <form id="formEditor" onsubmit="event.preventDefault(); guardarEntrada();">
+            <div>
+                <label>📌 TÍTULO:</label>
+                <input type="text" id="editTitulo" placeholder="Ej: Avistamiento en el norte" required>
+            </div>
+            
+            <div>
+                <label>🏷️ TAG:</label>
+                <select id="editTag" required>
+                    <option value="hadas">🐉 HADAS MALVADAS</option>
+                    <option value="ias">🤖 IAs</option>
+                    <option value="pensamientos">💭 PENSAMIENTOS</option>
+                    <option value="eventos">📅 EVENTOS</option>
+                    <option value="observatorio">🔭 OBSERVATORIO</option>
+                </select>
+            </div>
+            
+            <div>
+                <label>📝 CONTENIDO:</label>
+                <textarea id="editContenido" rows="4" placeholder="Describe el avistamiento..." required></textarea>
+            </div>
+            
+            <div>
+                <label>🖼️ IMAGEN (opcional, 1 por entrada):</label>
+                <input type="file" id="imagenEntrada" accept="image/*" onchange="previsualizarImagen(this)">
+                <small style="color: var(--neon-blue);">Máximo 500KB · Se comprimirá automáticamente</small>
+            </div>
+            
+            <!-- Vista previa de la imagen -->
+            <div id="vistaPrevia" class="preview-container" style="display: none;">
+                <img id="imgPreview" src="">
+                <p style="margin: 10px 0;">
+                    <button type="button" onclick="quitarImagen()" class="btn-danger" style="padding: 5px 10px;">✖ QUITAR IMAGEN</button>
+                </p>
+            </div>
+            
+            <input type="hidden" id="editId" value="">
+            
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+                <button type="submit" class="btn-primary">💾 GUARDAR ENTRADA</button>
+                <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ===== BOTONES DE CONTROL ===== -->
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; margin: 20px 0;">
+        <button onclick="mostrarEditor()" id="btnMostrarEditor" class="btn-secondary">
+            🔧 MODO EDITOR
+        </button>
+        
+        <button onclick="nuevoMes()" id="btnNuevoMes" class="btn-warning">
+            📅 NUEVO MES (borrar todo)
+        </button>
+    </div>
+
+    <!-- ===== CONTADOR DEL MES ===== -->
+    <div class="contador-mes" id="contadorMes">
+        Cargando...
+    </div>
+
+    <!-- ===== FILTROS ===== -->
+    <div class="filtros">
+        <button onclick="filtrarPorTag('todas')" id="filtro-todas" class="filtro-btn" style="border-color: var(--neon-green); color: var(--neon-green);">📋 TODAS</button>
+        <button onclick="filtrarPorTag('hadas')" id="filtro-hadas" class="filtro-btn" style="border-color: #ff88ff; color: #ff88ff;">🐉 HADAS</button>
+        <button onclick="filtrarPorTag('ias')" id="filtro-ias" class="filtro-btn" style="border-color: #88ff88; color: #88ff88;">🤖 IAs</button>
+        <button onclick="filtrarPorTag('pensamientos')" id="filtro-pensamientos" class="filtro-btn" style="border-color: #ffaa00; color: #ffaa00;">💭 PENSAMIENTOS</button>
+        <button onclick="filtrarPorTag('eventos')" id="filtro-eventos" class="filtro-btn" style="border-color: #00aaff; color: #00aaff;">📅 EVENTOS</button>
+        <button onclick="filtrarPorTag('observatorio')" id="filtro-observatorio" class="filtro-btn" style="border-color: #ff66aa; color: #ff66aa;">🔭 OBSERVATORIO</button>
+    </div>
+
+    <!-- ===== CONTENEDOR DE ENTRADAS ===== -->
+    <div class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">observatorio --registros</span>
+            <span id="contadorEntradas" style="color: var(--neon-pink); margin-left: 15px;">(0/10)</span>
+        </div>
+        
+        <div id="contenedorEntradas" style="margin: 20px 0; min-height: 200px;">
+            <!-- Las entradas se cargarán aquí -->
+            <p style="color: var(--neon-blue); text-align: center;">Cargando observatorio...</p>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="footer">
+        <p>📍 Observatorio personal · Máximo 10 entradas por mes · Sin sponsors</p>
+        <p>📸 1 imagen por entrada · Ciclo mensual · Todo se borra cada mes</p>
+    </div>
+
+    <script>
+        // ============================================
+        // ===== 1. CONFIGURACIÓN Y VARIABLES =====
+        // ============================================
+        
+        // 🔑 CLAVE DE EDITOR (CÁMBIALA)
+        const CLAVE_EDITOR = "___CLAVE_SECRETA_EDITOR___";
+        // Límite mensual
+        const MAX_ENTRADAS_POR_MES = 10;
+        
+        // Variable global con todas las entradas
+        let todasLasEntradas = [];
+        
+        // Variables de estado
+        let editorActivo = false;
+        let filtroActivo = "todas";
+        let entradaEnEdicion = null;
+        let imagenActual = null; // Para la imagen que se está subiendo
+        
+        // ============================================
+        // ===== 2. FUNCIONES DE DATOS =====
+        // ============================================
+        
+        // Cargar entradas al iniciar
+        function cargarEntradas() {
+            const guardadas = localStorage.getItem('observatorio');
+            
+            if (guardadas) {
+                todasLasEntradas = JSON.parse(guardadas);
+            } else {
+                // Datos de ejemplo
+                todasLasEntradas = [
+                    {
+                        id: Date.now() - 86400000,
+                        titulo: "Primer avistamiento del mes",
+                        tag: "observatorio",
+                        contenido: "Hoy comienza el observatorio. Registro todo lo que veo en el universo digital.",
+                        imagen: null,
+                        fecha: formatearFecha(new Date(Date.now() - 86400000)),
+                        timestamp: Date.now() - 86400000
+                    }
+                ];
+                guardarEntradas();
+            }
+            
+            ordenarEntradas();
+            actualizarContadorMes();
+            mostrarEntradas(todasLasEntradas);
+        }
+        
+        // Guardar en localStorage
+        function guardarEntradas() {
+            localStorage.setItem('observatorio', JSON.stringify(todasLasEntradas));
+            actualizarContadorMes();
+        }
+        
+        // Ordenar por fecha (más reciente primero)
+        function ordenarEntradas() {
+            todasLasEntradas.sort((a, b) => b.timestamp - a.timestamp);
+        }
+        
+        // Formatear fecha
+        function formatearFecha(fecha) {
+            const dia = fecha.getDate().toString().padStart(2, '0');
+            const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+            const año = fecha.getFullYear();
+            const horas = fecha.getHours().toString().padStart(2, '0');
+            const minutos = fecha.getMinutes().toString().padStart(2, '0');
+            return `${dia}/${mes}/${año} ${horas}:${minutos}`;
+        }
+        
+        // ============================================
+        // ===== 3. FUNCIONES DEL EDITOR =====
+        // ============================================
+        
+        function mostrarEditor() {
+            const clave = prompt("🔑 Ingresa la clave de editor:");
+            
+            if (clave === CLAVE_EDITOR) {
+                editorActivo = true;
+                document.getElementById('panelEditor').style.display = 'block';
+                document.getElementById('btnMostrarEditor').style.display = 'none';
+                document.getElementById('editId').value = "";
+                document.getElementById('editTitulo').value = "";
+                document.getElementById('editTag').value = "hadas";
+                document.getElementById('editContenido').value = "";
+                quitarImagen();
+                
+                // Actualizar vista para mostrar botones de edición
+                if (filtroActivo === "todas") {
+                    mostrarEntradas(todasLasEntradas);
+                } else {
+                    filtrarPorTag(filtroActivo);
+                }
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta");
+            }
+        }
+        
+        function ocultarEditor() {
+            editorActivo = false;
+            document.getElementById('panelEditor').style.display = 'none';
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            entradaEnEdicion = null;
+            quitarImagen();
+            
+            // Actualizar vista
+            if (filtroActivo === "todas") {
+                mostrarEntradas(todasLasEntradas);
+            } else {
+                filtrarPorTag(filtroActivo);
+            }
+        }
+        
+        function cancelarEdicion() {
+            entradaEnEdicion = null;
+            document.getElementById('editId').value = "";
+            document.getElementById('editTitulo').value = "";
+            document.getElementById('editTag').value = "hadas";
+            document.getElementById('editContenido').value = "";
+            quitarImagen();
+            ocultarEditor();
+        }
+        
+        // ============================================
+        // ===== 4. FUNCIONES DE IMAGEN =====
+        // ============================================
+        
+        function previsualizarImagen(input) {
+            if (input.files && input.files[0]) {
+                const archivo = input.files[0];
+                
+                // Verificar tamaño (máximo 500KB)
+                if (archivo.size > 500 * 1024) {
+                    alert("⚠️ La imagen es muy grande. Máximo 500KB. Compímela o elija otra.");
+                    input.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Comprimir imagen
+                    comprimirImagen(e.target.result, 0.7, 800).then(imagenComprimida => {
+                        imagenActual = {
+                            nombre: archivo.name,
+                            datos: imagenComprimida,
+                            tamaño: archivo.size
+                        };
+                        
+                        document.getElementById('imgPreview').src = imagenComprimida;
+                        document.getElementById('vistaPrevia').style.display = 'block';
+                    });
+                };
+                reader.readAsDataURL(archivo);
+            }
+        }
+        
+        function comprimirImagen(base64, calidad = 0.7, maxAncho = 800) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = base64;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let ancho = img.width;
+                    let alto = img.height;
+                    
+                    if (ancho > maxAncho) {
+                        alto = (maxAncho * alto) / ancho;
+                        ancho = maxAncho;
+                    }
+                    
+                    canvas.width = ancho;
+                    canvas.height = alto;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, ancho, alto);
+                    
+                    const nuevaBase64 = canvas.toDataURL('image/jpeg', calidad);
+                    resolve(nuevaBase64);
+                };
+            });
+        }
+        
+        function quitarImagen() {
+            imagenActual = null;
+            document.getElementById('vistaPrevia').style.display = 'none';
+            document.getElementById('imagenEntrada').value = '';
+        }
+        
+        // ============================================
+        // ===== 5. GUARDAR Y EDITAR ENTRADAS =====
+        // ============================================
+        
+        function guardarEntrada() {
+            const id = document.getElementById('editId').value;
+            const titulo = document.getElementById('editTitulo').value.trim();
+            const tag = document.getElementById('editTag').value;
+            const contenido = document.getElementById('editContenido').value.trim();
+            
+            if (!titulo || !contenido) {
+                alert("⚠️ El título y el contenido son obligatorios");
+                return;
+            }
+            
+            // Verificar límite mensual solo para entradas nuevas
+            if (!id && todasLasEntradas.length >= MAX_ENTRADAS_POR_MES) {
+                alert(`⚠️ Has alcanzado el límite de ${MAX_ENTRADAS_POR_MES} entradas por mes. Usa "NUEVO MES" para empezar de nuevo.`);
+                return;
+            }
+            
+            const ahora = new Date();
+            
+            if (id) {
+                // EDITAR entrada existente
+                for (let i = 0; i < todasLasEntradas.length; i++) {
+                    if (todasLasEntradas[i].id == id) {
+                        todasLasEntradas[i].titulo = titulo;
+                        todasLasEntradas[i].tag = tag;
+                        todasLasEntradas[i].contenido = contenido;
+                        
+                        // Actualizar imagen solo si se subió una nueva
+                        if (imagenActual) {
+                            todasLasEntradas[i].imagen = imagenActual;
+                        }
+                        break;
+                    }
+                }
+                alert("✅ Entrada actualizada");
+            } else {
+                // NUEVA entrada
+                const nuevaEntrada = {
+                    id: Date.now(),
+                    titulo: titulo,
+                    tag: tag,
+                    contenido: contenido,
+                    imagen: imagenActual, // Puede ser null
+                    fecha: formatearFecha(ahora),
+                    timestamp: ahora.getTime()
+                };
+                
+                todasLasEntradas.unshift(nuevaEntrada);
+                alert("✅ Entrada guardada");
+            }
+            
+            ordenarEntradas();
+            guardarEntradas();
+            
+            // Actualizar vista
+            if (filtroActivo === "todas") {
+                mostrarEntradas(todasLasEntradas);
+            } else {
+                filtrarPorTag(filtroActivo);
+            }
+            
+            cancelarEdicion();
+        }
+        
+        function editarEntrada(id) {
+            if (!editorActivo) return;
+            
+            const entrada = todasLasEntradas.find(e => e.id == id);
+            if (!entrada) return;
+            
+            entradaEnEdicion = entrada;
+            document.getElementById('editId').value = entrada.id;
+            document.getElementById('editTitulo').value = entrada.titulo;
+            document.getElementById('editTag').value = entrada.tag;
+            document.getElementById('editContenido').value = entrada.contenido;
+            
+            // Si tiene imagen, cargarla en preview
+            if (entrada.imagen) {
+                imagenActual = entrada.imagen;
+                document.getElementById('imgPreview').src = entrada.imagen.datos;
+                document.getElementById('vistaPrevia').style.display = 'block';
+            } else {
+                quitarImagen();
+            }
+            
+            document.getElementById('panelEditor').style.display = 'block';
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+        }
+        
+        function eliminarEntrada(id) {
+            if (!editorActivo) return;
+            
+            if (confirm("⚠️ ¿Eliminar esta entrada?")) {
+                todasLasEntradas = todasLasEntradas.filter(e => e.id != id);
+                guardarEntradas();
+                
+                if (filtroActivo === "todas") {
+                    mostrarEntradas(todasLasEntradas);
+                } else {
+                    filtrarPorTag(filtroActivo);
+                }
+            }
+        }
+        
+        // ============================================
+        // ===== 6. MOSTRAR ENTRADAS =====
+        // ============================================
+        
+        function mostrarEntradas(lista) {
+            const contenedor = document.getElementById('contenedorEntradas');
+            
+            if (lista.length === 0) {
+                contenedor.innerHTML = '<p style="color: var(--neon-blue); text-align: center; padding: 40px;">🔭 No hay registros en el observatorio</p>';
+                return;
+            }
+            
+            let html = '';
+            
+            for (let i = 0; i < lista.length; i++) {
+                const e = lista[i];
+                
+                // Color según tag
+                let colorTag = getColorPorTag(e.tag);
+                
+                html += `
+                    <div class="entrada" style="border-left-color: ${colorTag};">
+                        <div class="entrada-header">
+                            <span class="entrada-titulo">📌 ${e.titulo}</span>
+                            <span class="entrada-fecha">${e.fecha}</span>
+                        </div>
+                        
+                        <div class="entrada-tags">
+                            <span class="tag tag-${e.tag}">#${e.tag}</span>
+                        </div>
+                `;
+                
+                // IMAGEN (si existe)
+                if (e.imagen) {
+                    html += `
+                        <div class="entrada-imagen">
+                            <img src="${e.imagen.datos}" 
+                                 onclick="verImagenGrande('${e.imagen.datos}')"
+                                 title="Click para ver más grande">
+                        </div>
+                    `;
+                }
+                
+                html += `
+                        <div class="entrada-contenido">
+                            ${e.contenido.replace(/\n/g, '<br>')}
+                        </div>
+                `;
+                
+                // Botones de edición (solo si editor activo)
+                if (editorActivo) {
+                    html += `
+                        <div class="entrada-acciones">
+                            <button onclick="editarEntrada('${e.id}')" class="btn-secondary" style="padding: 5px 10px;">✏️ EDITAR</button>
+                            <button onclick="eliminarEntrada('${e.id}')" class="btn-danger" style="padding: 5px 10px;">🗑️ ELIMINAR</button>
+                        </div>
+                    `;
+                }
+                
+                html += `</div>`;
+            }
+            
+            contenedor.innerHTML = html;
+            actualizarContadorEntradas(lista.length);
+        }
+        
+        function getColorPorTag(tag) {
+            const colores = {
+                hadas: '#ff88ff',
+                ias: '#88ff88',
+                pensamientos: '#ffaa00',
+                eventos: '#00aaff',
+                observatorio: '#ff66aa'
+            };
+            return colores[tag] || 'var(--neon-green)';
+        }
+        
+        function verImagenGrande(datosImagen) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `<img src="${datosImagen}">`;
+            modal.onclick = () => document.body.removeChild(modal);
+            document.body.appendChild(modal);
+        }
+        
+        // ============================================
+        // ===== 7. FILTROS =====
+        // ============================================
+        
+        function filtrarPorTag(tag) {
+            filtroActivo = tag;
+            
+            // Actualizar clase activa de botones
+            document.querySelectorAll('.filtro-btn').forEach(btn => {
+                btn.classList.remove('activo');
+            });
+            
+            if (tag !== "todas") {
+                document.getElementById(`filtro-${tag}`).classList.add('activo');
+            } else {
+                document.getElementById('filtro-todas').classList.add('activo');
+            }
+            
+            if (tag === "todas") {
+                mostrarEntradas(todasLasEntradas);
+            } else {
+                const filtradas = todasLasEntradas.filter(e => e.tag === tag);
+                mostrarEntradas(filtradas);
+            }
+        }
+        
+        // ============================================
+        // ===== 8. FUNCIONES DEL MES =====
+        // ============================================
+        
+        function actualizarContadorMes() {
+            const total = todasLasEntradas.length;
+            const restantes = MAX_ENTRADAS_POR_MES - total;
+            
+            let mensaje = `📊 Este mes: ${total}/${MAX_ENTRADAS_POR_MES} entradas`;
+            
+            if (restantes > 0) {
+                mensaje += ` · Te quedan ${restantes} entradas`;
+            } else {
+                mensaje += ` · ¡Límite alcanzado!`;
+            }
+            
+            document.getElementById('contadorMes').innerHTML = mensaje;
+            actualizarContadorEntradas(total);
+        }
+        
+        function actualizarContadorEntradas(total) {
+            document.getElementById('contadorEntradas').innerHTML = `(${total}/${MAX_ENTRADAS_POR_MES})`;
+        }
+        
+        function nuevoMes() {
+            if (!editorActivo) {
+                alert("🔒 Debes estar en modo editor para usar esta función");
+                return;
+            }
+            
+            const confirmacion1 = confirm("⚠️ ¿NUEVO MES? Esto borrará TODAS las entradas actuales.");
+            
+            if (confirmacion1) {
+                const confirmacion2 = prompt("Escribe 'BORRAR OBSERVATORIO' para confirmar:");
+                
+                if (confirmacion2 === "BORRAR OBSERVATORIO") {
+                    todasLasEntradas = [];
+                    guardarEntradas();
+                    mostrarEntradas([]);
+                    ocultarEditor();
+                    alert("✅ Observatorio listo para el nuevo mes");
+                } else {
+                    alert("❌ Confirmación incorrecta. No se borró nada.");
+                }
+            }
+        }
+        
+        // ============================================
+        // ===== 9. INICIALIZACIÓN =====
+        // ============================================
+        
+        cargarEntradas();
+        
+        console.log('%c🔭 Observatorio iniciado', 'color: #ff00ff; font-size: 16px;');
+        console.log('%c> 10 entradas por mes · 1 imagen por entrada', 'color: #00aaff;');
+    </script>
+</body>
+</html>

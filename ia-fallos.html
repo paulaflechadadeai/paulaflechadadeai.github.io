@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Fallos · paulaflechadadeai</title>
+    <style>
+        :root {
+            --neon-green: #00ff00;
+            --neon-pink: #ff00ff;
+            --neon-blue: #00aaff;
+            --meta-color: #ff5555;
+            --chatgpt-color: #ffaa00;
+            --claude-color: #88ff88;
+            --gemini-color: #66aaff;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-dark);
+            color: var(--neon-green);
+            line-height: 1.6;
+        }
+
+        .header {
+            border-bottom: 2px dashed var(--neon-pink);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .glitch-title {
+            font-size: clamp(1.8em, 5vw, 2.8em);
+            color: var(--neon-pink);
+            text-shadow: 3px 0 var(--neon-blue), -2px 0 var(--neon-green);
+            animation: glitch 3s infinite;
+            margin: 0;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-3px, 1px); }
+            20% { transform: translate(2px, -2px); }
+            30% { transform: translate(-2px, 3px); }
+        }
+
+        .terminal {
+            background: var(--bg-darker);
+            border: 2px solid var(--neon-green);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .terminal-line {
+            margin: 12px 0;
+        }
+        .prompt { color: var(--neon-pink); font-weight: bold; }
+        .cmd { color: var(--neon-blue); }
+
+        /* ===== GRÁFICOS ASCII ===== */
+        .stats-container {
+            background: black;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px dashed var(--neon-pink);
+        }
+
+        .stat-bar {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .stat-label {
+            width: 100px;
+            color: var(--neon-blue);
+        }
+
+        .bar-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bar {
+            height: 20px;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+            min-width: 4px;
+        }
+
+        .bar-number {
+            color: var(--neon-green);
+            min-width: 40px;
+        }
+
+        .ascii-graph {
+            font-family: 'Courier New', monospace;
+            color: var(--neon-green);
+            white-space: pre;
+            line-height: 1.2;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        /* ===== FORMULARIOS ===== */
+        input, select, textarea {
+            background: black;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 15px;
+            font-family: 'Courier New';
+        }
+
+        button {
+            background: black;
+            border: 2px solid;
+            padding: 8px 16px;
+            font-family: 'Courier New';
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .btn-primary { color: var(--neon-pink); border-color: var(--neon-pink); }
+        .btn-secondary { color: var(--neon-blue); border-color: var(--neon-blue); }
+        .btn-danger { color: #ff5555; border-color: #ff5555; }
+
+        .fail-entry {
+            border-left: 4px solid;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.7);
+        }
+
+        .fail-meta { border-left-color: #ff5555; }
+        .fail-chatgpt { border-left-color: #ffaa00; }
+        .fail-claude { border-left-color: #88ff88; }
+        .fail-gemini { border-left-color: #66aaff; }
+
+        .contador-mes {
+            background: rgba(255,0,255,0.1);
+            border: 1px solid var(--neon-pink);
+            padding: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        .filtros {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .filtro-btn {
+            padding: 8px 15px;
+            border: 2px solid;
+            background: black;
+            cursor: pointer;
+            border-radius: 20px;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .stat-bar { flex-direction: column; align-items: flex-start; }
+            .bar-container { width: 100%; margin-top: 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="glitch-title">~/ia-fallos $</h1>
+        <p class="subheader">> Registro de errores · Meta · ChatGPT · Claude · Gemini</p>
+    </div>
+
+    <div class="volver">
+        <a href="/">← INICIO</a> · 
+        <a href="/observatorio">← OBSERVATORIO</a>
+    </div>
+
+    <!-- ===== PANEL EDITOR ===== -->
+    <div id="panelEditor" style="display: none;" class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">registrar_fail --nuevo</span>
+        </div>
+        
+        <form id="formEditor" onsubmit="event.preventDefault(); guardarFail();">
+            <div>
+                <label>🤖 IA QUE FALLÓ:</label>
+                <select id="editIa" required>
+                    <option value="meta">🔥 META (Instagram/Facebook)</option>
+                    <option value="chatgpt">🤔 CHATGPT</option>
+                    <option value="claude">🌿 CLAUDE</option>
+                    <option value="gemini">💎 GEMINI</option>
+                </select>
+            </div>
+            
+            <div>
+                <label>📌 TÍTULO DEL FAIL:</label>
+                <input type="text" id="editTitulo" placeholder="Ej: Baneó mi cuenta sin razón" required>
+            </div>
+            
+            <div>
+                <label>📝 DESCRIPCIÓN:</label>
+                <textarea id="editDescripcion" rows="4" placeholder="¿Qué pasó? ¿Cuándo? ¿Cómo?" required></textarea>
+            </div>
+            
+            <input type="hidden" id="editId" value="">
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn-primary">💾 REGISTRAR FAIL</button>
+                <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ===== BOTONES ===== -->
+    <div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0;">
+        <button onclick="mostrarEditor()" id="btnMostrarEditor" class="btn-secondary">
+            🔧 REGISTRAR FAIL
+        </button>
+        <button onclick="nuevoMes()" class="btn-danger">
+            📅 NUEVO MES
+        </button>
+    </div>
+
+    <!-- ===== CONTADOR ===== -->
+    <div class="contador-mes" id="contadorMes">
+        Cargando...
+    </div>
+
+    <!-- ===== GRÁFICOS ===== -->
+    <div class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">estadisticas --ia-fails</span>
+        </div>
+        
+        <div class="stats-container" id="statsContainer">
+            <!-- Se llena con JS -->
+        </div>
+        
+        <div class="ascii-graph" id="asciiGraph">
+            <!-- Gráfico ASCII -->
+        </div>
+    </div>
+
+    <!-- ===== FILTROS ===== -->
+    <div class="filtros">
+        <button onclick="filtrarPorIa('todas')" id="filtro-todas" class="filtro-btn" style="border-color: var(--neon-green); color: var(--neon-green);">📋 TODAS</button>
+        <button onclick="filtrarPorIa('meta')" id="filtro-meta" class="filtro-btn" style="border-color: #ff5555; color: #ff5555;">🔥 META</button>
+        <button onclick="filtrarPorIa('chatgpt')" id="filtro-chatgpt" class="filtro-btn" style="border-color: #ffaa00; color: #ffaa00;">🤔 CHATGPT</button>
+        <button onclick="filtrarPorIa('claude')" id="filtro-claude" class="filtro-btn" style="border-color: #88ff88; color: #88ff88;">🌿 CLAUDE</button>
+        <button onclick="filtrarPorIa('gemini')" id="filtro-gemini" class="filtro-btn" style="border-color: #66aaff; color: #66aaff;">💎 GEMINI</button>
+    </div>
+
+    <!-- ===== LISTA DE FAILS ===== -->
+    <div class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">fails --lista</span>
+            <span id="contadorFails" style="color: var(--neon-pink); margin-left: 15px;">(0/10)</span>
+        </div>
+        
+        <div id="contenedorFails" style="margin: 20px 0;">
+            <p style="color: var(--neon-blue); text-align: center;">Cargando registro de fails...</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>📍 Registro de Fails de IAs · 10 por mes · Porque fallar es humano, las IAs también</p>
+    </div>
+
+    <script>
+        // ============================================
+        const CLAVE_EDITOR = "___CLAVE_SECRETA_EDITOR___";
+        const MAX_FAILS_POR_MES = 10;
+        
+        let todosLosFails = [];
+        let editorActivo = false;
+        let filtroActivo = "todas";
+        
+        // ============================================
+        // ===== CARGAR DATOS =====
+        // ============================================
+        function cargarFails() {
+            const guardados = localStorage.getItem('iaFallos');
+            if (guardados) {
+                todosLosFails = JSON.parse(guardados);
+            } else {
+                // Datos de ejemplo
+                todosLosFails = [
+                    {
+                        id: Date.now() - 86400000,
+                        ia: "meta",
+                        titulo: "Baneó mi cuenta sin razón",
+                        descripcion: "Instagram eliminó mi post sobre hadas. Otra vez.",
+                        fecha: formatearFecha(new Date(Date.now() - 86400000)),
+                        timestamp: Date.now() - 86400000
+                    },
+                    {
+                        id: Date.now() - 172800000,
+                        ia: "chatgpt",
+                        titulo: "Alucinó una respuesta falsa",
+                        descripcion: "Inventó un estudio que no existe sobre hadas digitales.",
+                        fecha: formatearFecha(new Date(Date.now() - 172800000)),
+                        timestamp: Date.now() - 172800000
+                    }
+                ];
+                guardarFails();
+            }
+            ordenarFails();
+            actualizarTodo();
+        }
+        
+        function guardarFails() {
+            localStorage.setItem('iaFallos', JSON.stringify(todosLosFails));
+        }
+        
+        function ordenarFails() {
+            todosLosFails.sort((a, b) => b.timestamp - a.timestamp);
+        }
+        
+        function formatearFecha(fecha) {
+            const dia = fecha.getDate().toString().padStart(2, '0');
+            const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+            const año = fecha.getFullYear();
+            const horas = fecha.getHours().toString().padStart(2, '0');
+            const minutos = fecha.getMinutes().toString().padStart(2, '0');
+            return `${dia}/${mes}/${año} ${horas}:${minutos}`;
+        }
+        
+        // ============================================
+        // ===== GRÁFICOS =====
+        // ============================================
+        function generarEstadisticas() {
+            const stats = {
+                meta: todosLosFails.filter(f => f.ia === 'meta').length,
+                chatgpt: todosLosFails.filter(f => f.ia === 'chatgpt').length,
+                claude: todosLosFails.filter(f => f.ia === 'claude').length,
+                gemini: todosLosFails.filter(f => f.ia === 'gemini').length
+            };
+            
+            const max = Math.max(...Object.values(stats), 1);
+            
+            // Gráfico de barras visual
+            let html = '';
+            let ascii = '';
+            
+            const nombres = {
+                meta: 'META',
+                chatgpt: 'CHATGPT',
+                claude: 'CLAUDE',
+                gemini: 'GEMINI'
+            };
+            
+            const colores = {
+                meta: '#ff5555',
+                chatgpt: '#ffaa00',
+                claude: '#88ff88',
+                gemini: '#66aaff'
+            };
+            
+            for (let [ia, count] of Object.entries(stats)) {
+                const porcentaje = (count / max) * 100;
+                html += `
+                    <div class="stat-bar">
+                        <span class="stat-label" style="color: ${colores[ia]}">${nombres[ia]}</span>
+                        <div class="bar-container">
+                            <div class="bar" style="width: ${porcentaje}%; background: ${colores[ia]}"></div>
+                            <span class="bar-number">${count}</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Gráfico ASCII
+                const barras = Math.floor(count * 20 / max);
+                ascii += `${nombres[ia].padEnd(8)} [${'█'.repeat(barras)}${'░'.repeat(20-barras)}] ${count}\n`;
+            }
+            
+            document.getElementById('statsContainer').innerHTML = html;
+            document.getElementById('asciiGraph').innerHTML = ascii;
+        }
+        
+        // ============================================
+        // ===== EDITOR =====
+        // ============================================
+        function mostrarEditor() {
+            const clave = prompt("🔑 Clave para registrar fails:");
+            if (clave === CLAVE_EDITOR) {
+                editorActivo = true;
+                document.getElementById('panelEditor').style.display = 'block';
+                document.getElementById('btnMostrarEditor').style.display = 'none';
+                document.getElementById('editId').value = "";
+                document.getElementById('editIa').value = "meta";
+                document.getElementById('editTitulo').value = "";
+                document.getElementById('editDescripcion').value = "";
+                
+                if (filtroActivo === "todas") {
+                    mostrarFails(todosLosFails);
+                } else {
+                    filtrarPorIa(filtroActivo);
+                }
+            }
+        }
+        
+        function ocultarEditor() {
+            editorActivo = false;
+            document.getElementById('panelEditor').style.display = 'none';
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            
+            if (filtroActivo === "todas") {
+                mostrarFails(todosLosFails);
+            } else {
+                filtrarPorIa(filtroActivo);
+            }
+        }
+        
+        function cancelarEdicion() {
+            ocultarEditor();
+        }
+        
+        // ============================================
+        // ===== GUARDAR FAIL =====
+        // ============================================
+        function guardarFail() {
+            const id = document.getElementById('editId').value;
+            const ia = document.getElementById('editIa').value;
+            const titulo = document.getElementById('editTitulo').value.trim();
+            const descripcion = document.getElementById('editDescripcion').value.trim();
+            
+            if (!titulo || !descripcion) {
+                alert("⚠️ Título y descripción obligatorios");
+                return;
+            }
+            
+            if (!id && todosLosFails.length >= MAX_FAILS_POR_MES) {
+                alert(`⚠️ Límite de ${MAX_FAILS_POR_MES} fails por mes`);
+                return;
+            }
+            
+            const ahora = new Date();
+            
+            if (id) {
+                for (let i = 0; i < todosLosFails.length; i++) {
+                    if (todosLosFails[i].id == id) {
+                        todosLosFails[i].ia = ia;
+                        todosLosFails[i].titulo = titulo;
+                        todosLosFails[i].descripcion = descripcion;
+                        break;
+                    }
+                }
+                alert("✅ Fail actualizado");
+            } else {
+                todosLosFails.unshift({
+                    id: Date.now(),
+                    ia: ia,
+                    titulo: titulo,
+                    descripcion: descripcion,
+                    fecha: formatearFecha(ahora),
+                    timestamp: ahora.getTime()
+                });
+                alert("✅ Fail registrado");
+            }
+            
+            ordenarFails();
+            guardarFails();
+            actualizarTodo();
+            ocultarEditor();
+        }
+        
+        function editarFail(id) {
+            if (!editorActivo) return;
+            
+            const fail = todosLosFails.find(f => f.id == id);
+            if (!fail) return;
+            
+            document.getElementById('editId').value = fail.id;
+            document.getElementById('editIa').value = fail.ia;
+            document.getElementById('editTitulo').value = fail.titulo;
+            document.getElementById('editDescripcion').value = fail.descripcion;
+            
+            document.getElementById('panelEditor').style.display = 'block';
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+        }
+        
+        function eliminarFail(id) {
+            if (!editorActivo) return;
+            
+            if (confirm("⚠️ ¿Eliminar este fail?")) {
+                todosLosFails = todosLosFails.filter(f => f.id != id);
+                guardarFails();
+                actualizarTodo();
+            }
+        }
+        
+        // ============================================
+        // ===== MOSTRAR FAILS =====
+        // ============================================
+        function mostrarFails(lista) {
+            const contenedor = document.getElementById('contenedorFails');
+            
+            if (lista.length === 0) {
+                contenedor.innerHTML = '<p style="color: var(--neon-blue); text-align: center;">🤖 No hay fails registrados este mes</p>';
+                return;
+            }
+            
+            let html = '';
+            
+            for (let i = 0; i < lista.length; i++) {
+                const f = lista[i];
+                const clase = `fail-entry fail-${f.ia}`;
+                
+                html += `
+                    <div class="${clase}">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--neon-pink); font-weight: bold;">${f.titulo}</span>
+                            <span style="color: var(--neon-blue);">${f.fecha}</span>
+                        </div>
+                        <div style="margin: 10px 0; color: var(--neon-green);">${f.descripcion}</div>
+                        ${editorActivo ? `
+                            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                                <button onclick="editarFail('${f.id}')" class="btn-secondary">✏️ EDITAR</button>
+                                <button onclick="eliminarFail('${f.id}')" class="btn-danger">🗑️ ELIMINAR</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            contenedor.innerHTML = html;
+            document.getElementById('contadorFails').innerHTML = `(${lista.length}/${MAX_FAILS_POR_MES})`;
+        }
+        
+        // ============================================
+        // ===== FILTROS =====
+        // ============================================
+        function filtrarPorIa(ia) {
+            filtroActivo = ia;
+            
+            document.querySelectorAll('.filtro-btn').forEach(btn => {
+                btn.classList.remove('activo');
+            });
+            
+            if (ia !== "todas") {
+                document.getElementById(`filtro-${ia}`).classList.add('activo');
+                const filtradas = todosLosFails.filter(f => f.ia === ia);
+                mostrarFails(filtradas);
+            } else {
+                document.getElementById('filtro-todas').classList.add('activo');
+                mostrarFails(todosLosFails);
+            }
+        }
+        
+        // ============================================
+        // ===== FUNCIONES DEL MES =====
+        // ============================================
+        function actualizarContadorMes() {
+            const total = todosLosFails.length;
+            document.getElementById('contadorMes').innerHTML = 
+                `📊 Este mes: ${total}/${MAX_FAILS_POR_MES} fails registrados · ${MAX_FAILS_POR_MES - total} restantes`;
+        }
+        
+        function nuevoMes() {
+            if (!editorActivo) {
+                alert("🔒 Debes estar en modo editor");
+                return;
+            }
+            
+            if (confirm("⚠️ ¿NUEVO MES? Esto borrará TODOS los fails.")) {
+                if (prompt("Escribe 'BORRAR FAILS' para confirmar") === "BORRAR FAILS") {
+                    todosLosFails = [];
+                    guardarFails();
+                    actualizarTodo();
+                    ocultarEditor();
+                    alert("✅ Listo para nuevos fails");
+                }
+            }
+        }
+        
+        function actualizarTodo() {
+            generarEstadisticas();
+            actualizarContadorMes();
+            if (filtroActivo === "todas") {
+                mostrarFails(todosLosFails);
+            } else {
+                filtrarPorIa(filtroActivo);
+            }
+        }
+        
+        // ============================================
+        cargarFails();
+        console.log('%c🤖 Sistema de Fails de IAs iniciado', 'color: #ff00ff;');
+    </script>
+</body>
+  </html>
