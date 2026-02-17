@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hadas Malvadas · paulaflechadadeai</title>
+    <title>Hadas Malvadas · paulaflechadadeai · TikTok + YouTube</title>
     <style>
-        /* Mismos estilos, solo cambian colores a tonos más rosas/morados */
+        /* Mismos estilos base, solo se añade .youtube-container */
         :root {
             --neon-green: #00ff00;
             --neon-pink: #ff00ff;
@@ -177,6 +177,7 @@
             margin: 15px 0;
         }
 
+        /* Contenedor TikTok (altura fija) */
         .tiktok-container {
             position: relative;
             width: 100%;
@@ -189,6 +190,26 @@
         .tiktok-container iframe {
             width: 100%;
             height: 600px;
+            border: none;
+        }
+
+        /* Contenedor YouTube (16:9) */
+        .youtube-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 */
+            margin: 20px 0;
+            background: black;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .youtube-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             border: none;
         }
 
@@ -246,12 +267,26 @@
             body { padding: 10px; }
             .tiktok-container iframe { height: 400px; }
         }
+
+        .platform-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: bold;
+            margin-left: 10px;
+            text-transform: uppercase;
+            background: var(--bg-darker);
+            border: 1px solid currentColor;
+        }
+        .platform-tiktok { color: #ff0050; }
+        .platform-youtube { color: #ff0000; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1 class="glitch-title">~/hadasmalvadas $</h1>
-        <p class="subheader">> Cazando hadas en TikTok · 10 por mes · Sin sponsors</p>
+        <p class="subheader">> Cazando hadas en TikTok y YouTube · 10 por mes · Sin sponsors</p>
     </div>
 
     <div class="volver">
@@ -281,15 +316,15 @@
             </div>
             
             <div>
-                <label>🔗 URL DE TIKTOK:</label>
-                <input type="url" id="editTiktokUrl" 
-                       placeholder="https://www.tiktok.com/@hada/video/123456789" 
+                <label>🔗 URL DEL VIDEO (TikTok o YouTube):</label>
+                <input type="url" id="editVideoUrl" 
+                       placeholder="https://www.tiktok.com/@hada/video/123456789  o  https://youtu.be/abcd1234" 
                        required>
-                <small style="color: var(--hada-pink);">Pega la URL del video donde viste el hada</small>
+                <small style="color: var(--hada-pink);" id="plataformaDetectada"></small>
             </div>
             
             <div id="vistaPreviaTiktok" style="display: none; margin: 15px 0; text-align: center;">
-                <p style="color: var(--hada-pink);">🧚 ¡Hada detectada en el video!</p>
+                <p style="color: var(--hada-pink);" id="mensajeDetectado">🧚 ¡Hada detectada!</p>
                 <div class="url-preview" id="urlPreview"></div>
             </div>
             
@@ -298,8 +333,10 @@
                 <textarea id="editContenido" rows="3" placeholder="Describe cómo identificaste al hada..."></textarea>
             </div>
             
+            <!-- Campos ocultos para la edición -->
             <input type="hidden" id="editId" value="">
-            <input type="hidden" id="editTiktokId" value="">
+            <input type="hidden" id="editPlataforma" value="">
+            <input type="hidden" id="editVideoId" value="">
             
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button type="submit" class="btn-primary">💾 REGISTRAR HADA</button>
@@ -362,7 +399,7 @@
         let filtroActivo = "todas";
         
         // ============================================
-        // ===== FUNCIONES DE TIKTOK =====
+        // ===== FUNCIONES DE EXTRACCIÓN =====
         // ============================================
         function extraerTikTokId(url) {
             if (!url) return null;
@@ -382,18 +419,58 @@
             return null;
         }
         
-        function generarIframeTikTok(videoId) {
+        function extraerYouTubeId(url) {
+            if (!url) return null;
+            const patrones = [
+                /youtube\.com\/watch\?v=([^&]+)/,
+                /youtu\.be\/([^?]+)/,
+                /youtube\.com\/embed\/([^?]+)/,
+                /youtube\.com\/shorts\/([^?]+)/
+            ];
+            for (let patron of patrones) {
+                const match = url.match(patron);
+                if (match) return match[1];
+            }
+            return null;
+        }
+        
+        function detectarPlataforma(url) {
+            if (extraerTikTokId(url)) return "tiktok";
+            if (extraerYouTubeId(url)) return "youtube";
+            return null;
+        }
+        
+        // ============================================
+        // ===== GENERADOR DE EMBED =====
+        // ============================================
+        function generarEmbed(plataforma, videoId) {
             if (!videoId) return '<p style="color: red;">❌ Hada perdida, ID inválido</p>';
             
-            return `
-                <div class="tiktok-container">
-                    <iframe 
-                        src="https://www.tiktok.com/player/v1/${videoId}?music_info=1&description=1"
-                        allow="fullscreen"
-                        loading="lazy">
-                    </iframe>
-                </div>
-            `;
+            if (plataforma === "tiktok") {
+                return `
+                    <div class="tiktok-container">
+                        <iframe 
+                            src="https://www.tiktok.com/player/v1/${videoId}?music_info=1&description=1"
+                            allow="fullscreen"
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                `;
+            } else if (plataforma === "youtube") {
+                return `
+                    <div class="youtube-container">
+                        <iframe 
+                            src="https://www.youtube.com/embed/${videoId}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                `;
+            } else {
+                return '<p style="color: red;">❌ Plataforma no soportada</p>';
+            }
         }
         
         // ============================================
@@ -402,24 +479,48 @@
         function cargarVideos() {
             const guardados = localStorage.getItem('hadasMalvadas');
             if (guardados) {
-                todosLosVideos = JSON.parse(guardados);
+                let parsed = JSON.parse(guardados);
+                // Migrar datos antiguos (sin plataforma) al nuevo formato
+                todosLosVideos = parsed.map(v => {
+                    if (!v.plataforma) {
+                        // Es un video antiguo de TikTok
+                        v.plataforma = "tiktok";
+                        v.videoId = v.tiktokId;
+                        v.url = v.tiktokUrl;
+                    }
+                    return v;
+                });
             } else {
-                // Datos de ejemplo
+                // Datos de ejemplo con ambos formatos (uno TikTok y otro YouTube demo)
                 todosLosVideos = [
                     {
                         id: Date.now() - 86400000,
-                        titulo: "Primer hada avistada",
+                        titulo: "Primer hada avistada (TikTok)",
                         tag: "hadas",
                         contenido: "Apareció en un live de madrugada",
                         tiktokUrl: "https://www.tiktok.com/@scout2015/video/6718335390845095173",
                         tiktokId: "6718335390845095173",
+                        plataforma: "tiktok",
+                        videoId: "6718335390845095173",
+                        url: "https://www.tiktok.com/@scout2015/video/6718335390845095173",
                         fecha: formatearFecha(new Date(Date.now() - 86400000)),
                         timestamp: Date.now() - 86400000
+                    },
+                    {
+                        id: Date.now() - 172800000,
+                        titulo: "Hada en YouTube (demo)",
+                        tag: "avistamientos",
+                        contenido: "Video de ejemplo de YouTube (no es un hada real)",
+                        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                        plataforma: "youtube",
+                        videoId: "dQw4w9WgXcQ",
+                        fecha: formatearFecha(new Date(Date.now() - 172800000)),
+                        timestamp: Date.now() - 172800000
                     }
                 ];
-                guardarVideos();
             }
             ordenarVideos();
+            guardarVideos(); // guarda ya migrados
             actualizarContadorMes();
             mostrarVideos(todosLosVideos);
         }
@@ -448,18 +549,20 @@
         function mostrarEditor() {
             const clave = prompt("🔑 Clave de cazadora:");
             
-            // La constante CLAVE_EDITOR ya tiene el valor inyectado por GitHub Actions
             if (clave === CLAVE_EDITOR) {
                 editorActivo = true;
                 document.getElementById('panelEditor').style.display = 'block';
                 document.getElementById('btnMostrarEditor').style.display = 'none';
+                // Limpiar formulario
                 document.getElementById('editId').value = "";
                 document.getElementById('editTitulo').value = "";
                 document.getElementById('editTag').value = "hadas";
                 document.getElementById('editContenido').value = "";
-                document.getElementById('editTiktokUrl').value = "";
-                document.getElementById('editTiktokId').value = "";
+                document.getElementById('editVideoUrl').value = "";
+                document.getElementById('editPlataforma').value = "";
+                document.getElementById('editVideoId').value = "";
                 document.getElementById('vistaPreviaTiktok').style.display = 'none';
+                document.getElementById('plataformaDetectada').innerText = "";
                 
                 if (filtroActivo === "todas") {
                     mostrarVideos(todosLosVideos);
@@ -487,27 +590,56 @@
             ocultarEditor();
         }
         
+        // Detección en tiempo real al escribir la URL (opcional)
+        document.getElementById('editVideoUrl')?.addEventListener('input', function(e) {
+            const url = e.target.value;
+            const plataforma = detectarPlataforma(url);
+            const msg = document.getElementById('plataformaDetectada');
+            if (plataforma === 'tiktok') {
+                msg.innerText = '📱 Plataforma detectada: TikTok';
+                msg.style.color = '#ff0050';
+            } else if (plataforma === 'youtube') {
+                msg.innerText = '▶️ Plataforma detectada: YouTube';
+                msg.style.color = '#ff0000';
+            } else {
+                msg.innerText = '';
+            }
+        });
+        
         // ============================================
-        // ===== GUARDAR VIDEO =====
+        // ===== GUARDAR VIDEO (CREAR O EDITAR) =====
         // ============================================
         function guardarEntrada() {
             const id = document.getElementById('editId').value;
             const titulo = document.getElementById('editTitulo').value.trim();
             const tag = document.getElementById('editTag').value;
             const contenido = document.getElementById('editContenido').value.trim();
-            const tiktokUrl = document.getElementById('editTiktokUrl').value.trim();
+            const url = document.getElementById('editVideoUrl').value.trim();
             
-            if (!titulo || !tiktokUrl) {
+            if (!titulo || !url) {
                 alert("⚠️ Título y URL son obligatorios");
                 return;
             }
             
-            const tiktokId = extraerTikTokId(tiktokUrl);
-            if (!tiktokId) {
-                alert("❌ No se pudo detectar el hada en esa URL");
+            const plataforma = detectarPlataforma(url);
+            if (!plataforma) {
+                alert("❌ No se pudo detectar la plataforma. Asegúrate de que sea un enlace válido de TikTok o YouTube.");
                 return;
             }
             
+            let videoId = null;
+            if (plataforma === "tiktok") {
+                videoId = extraerTikTokId(url);
+            } else if (plataforma === "youtube") {
+                videoId = extraerYouTubeId(url);
+            }
+            
+            if (!videoId) {
+                alert("❌ No se pudo extraer el ID del video de la URL.");
+                return;
+            }
+            
+            // Verificar límite solo si es nueva entrada
             if (!id && todosLosVideos.length >= MAX_ENTRADAS_POR_MES) {
                 alert(`⚠️ Límite de ${MAX_ENTRADAS_POR_MES} hadas por mes alcanzado`);
                 return;
@@ -516,25 +648,36 @@
             const ahora = new Date();
             
             if (id) {
-                for (let i = 0; i < todosLosVideos.length; i++) {
-                    if (todosLosVideos[i].id == id) {
-                        todosLosVideos[i].titulo = titulo;
-                        todosLosVideos[i].tag = tag;
-                        todosLosVideos[i].contenido = contenido;
-                        todosLosVideos[i].tiktokUrl = tiktokUrl;
-                        todosLosVideos[i].tiktokId = tiktokId;
-                        break;
-                    }
+                // Editar existente
+                const index = todosLosVideos.findIndex(v => v.id == id);
+                if (index !== -1) {
+                    todosLosVideos[index] = {
+                        ...todosLosVideos[index],
+                        titulo,
+                        tag,
+                        contenido,
+                        url,
+                        plataforma,
+                        videoId,
+                        // Mantenemos compatibilidad con campos antiguos
+                        tiktokUrl: plataforma === 'tiktok' ? url : null,
+                        tiktokId: plataforma === 'tiktok' ? videoId : null,
+                    };
                 }
                 alert("✅ Registro de hada actualizado");
             } else {
+                // Nuevo
                 const nuevoVideo = {
                     id: Date.now(),
-                    titulo: titulo,
-                    tag: tag,
-                    contenido: contenido,
-                    tiktokUrl: tiktokUrl,
-                    tiktokId: tiktokId,
+                    titulo,
+                    tag,
+                    contenido,
+                    url,
+                    plataforma,
+                    videoId,
+                    // compatibilidad
+                    tiktokUrl: plataforma === 'tiktok' ? url : null,
+                    tiktokId: plataforma === 'tiktok' ? videoId : null,
                     fecha: formatearFecha(ahora),
                     timestamp: ahora.getTime()
                 };
@@ -554,6 +697,60 @@
             ocultarEditor();
         }
         
+        // ============================================
+        // ===== MOSTRAR VIDEOS =====
+        // ============================================
+        function mostrarVideos(videos) {
+            const contenedor = document.getElementById('contenedorVideos');
+            const contadorSpan = document.getElementById('contadorVideos');
+            
+            if (!videos || videos.length === 0) {
+                contenedor.innerHTML = '<p style="color: var(--hada-pink); text-align: center;">🕸️ No hay hadas registradas este mes...</p>';
+                contadorSpan.innerText = '(0/10)';
+                return;
+            }
+            
+            let html = '';
+            videos.forEach(video => {
+                const embedHtml = generarEmbed(video.plataforma, video.videoId);
+                const plataformaClase = video.plataforma === 'tiktok' ? 'platform-tiktok' : 'platform-youtube';
+                const plataformaNombre = video.plataforma === 'tiktok' ? 'TikTok' : 'YouTube';
+                
+                html += `
+                    <div class="entrada" data-id="${video.id}" data-tag="${video.tag}">
+                        <div class="entrada-header">
+                            <span class="entrada-titulo">
+                                ${video.titulo}
+                                <span class="platform-badge ${plataformaClase}">${plataformaNombre}</span>
+                            </span>
+                            <span class="entrada-fecha">${video.fecha}</span>
+                        </div>
+                        <div class="entrada-tags">
+                            <span class="tag tag-${video.tag}">${obtenerNombreTag(video.tag)}</span>
+                        </div>
+                        ${embedHtml}
+                        <div class="entrada-contenido">${video.contenido || ''}</div>
+                        ${editorActivo ? `
+                            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                <button onclick="editarVideo(${video.id})" class="btn-secondary">✏️ EDITAR</button>
+                                <button onclick="eliminarVideo(${video.id})" class="btn-danger">🗑️ ELIMINAR</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            contenedor.innerHTML = html;
+            contadorSpan.innerText = `(${videos.length}/${MAX_ENTRADAS_POR_MES})`;
+        }
+        
+        function obtenerNombreTag(tag) {
+            if (tag === 'hadas') return '🧚 HADAS MALVADAS';
+            if (tag === 'avistamientos') return '🔍 AVISTAMIENTOS';
+            if (tag === 'cazas') return '⚔️ CAZAS EXITOSAS';
+            return tag;
+        }
+        
         function editarVideo(id) {
             if (!editorActivo) return;
             
@@ -563,24 +760,35 @@
             document.getElementById('editId').value = video.id;
             document.getElementById('editTitulo').value = video.titulo;
             document.getElementById('editTag').value = video.tag;
-            document.getElementById('editContenido').value = video.contenido || "";
-            document.getElementById('editTiktokUrl').value = video.tiktokUrl;
-            document.getElementById('editTiktokId').value = video.tiktokId;
+            document.getElementById('editContenido').value = video.contenido || '';
+            document.getElementById('editVideoUrl').value = video.url || '';
+            document.getElementById('editPlataforma').value = video.plataforma;
+            document.getElementById('editVideoId').value = video.videoId;
             
-            document.getElementById('vistaPreviaTiktok').style.display = 'block';
-            document.getElementById('urlPreview').textContent = `ID del hada: ${video.tiktokId}`;
+            // Mostrar panel si no está visible
+            if (!editorActivo) {
+                mostrarEditor(); // pero esto pediría clave otra vez, mejor aseguramos que editorActivo=true
+            } else {
+                document.getElementById('panelEditor').style.display = 'block';
+                document.getElementById('btnMostrarEditor').style.display = 'none';
+            }
             
-            document.getElementById('panelEditor').style.display = 'block';
-            document.getElementById('btnMostrarEditor').style.display = 'none';
+            // Actualizar mensaje de plataforma detectada
+            const msg = document.getElementById('plataformaDetectada');
+            if (video.plataforma === 'tiktok') {
+                msg.innerText = '📱 Plataforma detectada: TikTok';
+                msg.style.color = '#ff0050';
+            } else if (video.plataforma === 'youtube') {
+                msg.innerText = '▶️ Plataforma detectada: YouTube';
+                msg.style.color = '#ff0000';
+            }
         }
         
         function eliminarVideo(id) {
             if (!editorActivo) return;
-            
-            if (confirm("⚠️ ¿Eliminar este registro de hada?")) {
+            if (confirm('¿Seguro que quieres eliminar este avistamiento de hada?')) {
                 todosLosVideos = todosLosVideos.filter(v => v.id != id);
                 guardarVideos();
-                
                 if (filtroActivo === "todas") {
                     mostrarVideos(todosLosVideos);
                 } else {
@@ -590,135 +798,53 @@
         }
         
         // ============================================
-        // ===== MOSTRAR VIDEOS =====
-        // ============================================
-        function mostrarVideos(lista) {
-            const contenedor = document.getElementById('contenedorVideos');
-            
-            if (lista.length === 0) {
-                contenedor.innerHTML = '<p style="color: var(--hada-pink); text-align: center;">🧚 No hay hadas registradas este mes</p>';
-                return;
-            }
-            
-            let html = '';
-            
-            for (let i = 0; i < lista.length; i++) {
-                const v = lista[i];
-                
-                let colorTag = '#ff88ff';
-                if (v.tag === 'avistamientos') colorTag = '#cc66ff';
-                if (v.tag === 'cazas') colorTag = '#ff55ff';
-                
-                html += `
-                    <div class="entrada" style="border-left-color: ${colorTag};">
-                        <div class="entrada-header">
-                            <span class="entrada-titulo">🧚 ${v.titulo}</span>
-                            <span class="entrada-fecha">${v.fecha}</span>
-                        </div>
-                        
-                        <div class="entrada-tags">
-                            <span class="tag tag-${v.tag}">#${v.tag}</span>
-                        </div>
-                `;
-                
-                html += generarIframeTikTok(v.tiktokId);
-                
-                if (v.contenido) {
-                    html += `<div class="entrada-contenido">${v.contenido}</div>`;
-                }
-                
-                if (editorActivo) {
-                    html += `
-                        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
-                            <button onclick="editarVideo('${v.id}')" class="btn-secondary">✏️ EDITAR</button>
-                            <button onclick="eliminarVideo('${v.id}')" class="btn-danger">🗑️ ELIMINAR</button>
-                        </div>
-                    `;
-                }
-                
-                html += `</div>`;
-            }
-            
-            contenedor.innerHTML = html;
-            actualizarContadorVideos(lista.length);
-        }
-        
-        // ============================================
         // ===== FILTROS =====
         // ============================================
         function filtrarPorTag(tag) {
             filtroActivo = tag;
             
-            document.querySelectorAll('.filtro-btn').forEach(btn => {
-                btn.classList.remove('activo');
-            });
+            // Actualizar clases de botones
+            document.querySelectorAll('.filtro-btn').forEach(btn => btn.classList.remove('activo'));
+            document.getElementById(`filtro-${tag}`).classList.add('activo');
             
-            if (tag !== "todas") {
-                document.getElementById(`filtro-${tag}`).classList.add('activo');
+            let filtrados;
+            if (tag === 'todas') {
+                filtrados = todosLosVideos;
             } else {
-                document.getElementById('filtro-todas').classList.add('activo');
+                filtrados = todosLosVideos.filter(v => v.tag === tag);
             }
-            
-            if (tag === "todas") {
-                mostrarVideos(todosLosVideos);
-            } else {
-                const filtradas = todosLosVideos.filter(v => v.tag === tag);
-                mostrarVideos(filtradas);
-            }
+            mostrarVideos(filtrados);
         }
         
         // ============================================
-        // ===== FUNCIONES DEL MES =====
+        // ===== CONTADOR MES =====
         // ============================================
         function actualizarContadorMes() {
+            const contadorDiv = document.getElementById('contadorMes');
             const total = todosLosVideos.length;
             const restantes = MAX_ENTRADAS_POR_MES - total;
-            document.getElementById('contadorMes').innerHTML = 
-                `📊 Este mes: ${total}/${MAX_ENTRADAS_POR_MES} hadas · Quedan ${restantes} por cazar`;
-        }
-        
-        function actualizarContadorVideos(total) {
-            document.getElementById('contadorVideos').innerHTML = `(${total}/${MAX_ENTRADAS_POR_MES})`;
+            contadorDiv.innerHTML = `🧚 HADAS CAZADAS ESTE MES: ${total} / ${MAX_ENTRADAS_POR_MES} (quedan ${restantes} cupos)`;
         }
         
         function nuevoMes() {
-            if (!editorActivo) {
-                alert("🔒 Debes estar en modo cazadora");
-                return;
-            }
-            
-            if (confirm("⚠️ ¿NUEVO MES? Esto borrará TODOS los registros de hadas.")) {
-                const confirmacion = prompt("Escribe 'BORRAR HADAS' para confirmar:");
-                if (confirmacion === "BORRAR HADAS") {
-                    todosLosVideos = [];
-                    guardarVideos();
-                    mostrarVideos([]);
-                    ocultarEditor();
-                    alert("✅ Listo para cazar nuevas hadas este mes");
-                }
+            if (editorActivo && confirm('¿Estás segura de querer limpiar todo el registro? Esta acción no se puede deshacer.')) {
+                todosLosVideos = [];
+                guardarVideos();
+                mostrarVideos(todosLosVideos);
+                actualizarContadorMes();
+            } else if (!editorActivo) {
+                alert('🔒 Debes estar en modo cazadora para limpiar el mes.');
             }
         }
         
         // ============================================
         // ===== INICIALIZACIÓN =====
         // ============================================
-        
-        document.getElementById('editTiktokUrl')?.addEventListener('input', function(e) {
-            const url = e.target.value;
-            const id = extraerTikTokId(url);
-            
-            if (id) {
-                document.getElementById('editTiktokId').value = id;
-                document.getElementById('vistaPreviaTiktok').style.display = 'block';
-                document.getElementById('urlPreview').textContent = `🧚 Hada detectada · ID: ${id}`;
-            } else {
-                document.getElementById('vistaPreviaTiktok').style.display = 'none';
-            }
-        });
-        
-        cargarVideos();
-        
-        console.log('%c🧚 Sistema de Caza de Hadas iniciado', 'color: #ff88ff; font-size: 16px;');
+        window.onload = function() {
+            cargarVideos();
+            // Inicialmente filtro 'todas' activo
+            document.getElementById('filtro-todas').classList.add('activo');
+        };
     </script>
 </body>
 </html>
