@@ -7,19 +7,16 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
 
     steps:
       - name: Descargar código
-        uses: actions/checkout@v3
-
-      - name: Inyectar clave secreta
-        run: |
-          find . -name "*.html" -type f
-          echo "Clave inyectada correctamente"
+        uses: actions/checkout@v4
 
       - name: Desplegar a GitHub Pages
-        uses: peaceiris/actions-gh-page-action@v1
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
-          publish_branch: gh-pages
