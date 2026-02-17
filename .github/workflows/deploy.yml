@@ -1,0 +1,29 @@
+name: Desplegar con clave secreta
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Descargar código
+        uses: actions/checkout@v3
+      
+      - name: 🔑 Inyectar clave secreta en HTML
+        run: |
+          # Reemplaza el marcador con la clave real desde Secrets
+          find . -name "*.html" -type f -exec sed -i "s/___CLAVE_SECRETA_EDITOR___/${{ secrets.CLAVE_EDITOR }}/g" {} +
+          
+          echo "✅ Clave inyectada correctamente en todos los archivos"
+      
+      - name: 📂 Desplegar a GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages
+        
+          
