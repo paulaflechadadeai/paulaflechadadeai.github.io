@@ -5,81 +5,401 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📝 Posteos · paulaflechadadeai</title>
     <style>
+        /* ===== VARIABLES Y ESTILOS BASE (igual que antes) ===== */
         :root {
             --neon-green: #00ff00;
             --neon-pink: #ff00ff;
             --neon-blue: #00aaff;
             --bg-dark: #0a0a0a;
             --bg-darker: #000;
+            --panel-bg: #111;
+            --border-thick: 3px;
         }
         body {
             font-family: 'Courier New', monospace;
-            max-width: 700px;
-            margin: 0 auto;
+            margin: 0;
             padding: 20px;
             background: var(--bg-dark);
             color: var(--neon-green);
-            line-height: 1.7;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        h1 {
-            color: var(--neon-pink);
-            border-bottom: 2px dashed var(--neon-green);
-            padding-bottom: 10px;
+        /* ===== CONTENEDOR PRINCIPAL CON GRID ===== */
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
-        .posteo {
+        /* Cabecera estilo ventana */
+        .window-header {
+            border: var(--border-thick) solid var(--neon-pink);
+            padding: 15px 20px;
+            margin-bottom: 20px;
             background: var(--bg-darker);
-            border: 1px solid var(--neon-green);
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 5px;
+            box-shadow: 8px 8px 0 rgba(255, 0, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .fecha {
-            color: var(--neon-blue);
-            font-size: 0.9em;
-        }
-        a {
+        .window-title {
+            font-size: 1.8em;
             color: var(--neon-pink);
-            text-decoration: none;
+            text-shadow: 2px 2px 0 var(--neon-blue);
         }
-        a:hover {
-            text-decoration: underline;
+        .window-controls {
+            display: flex;
+            gap: 10px;
         }
-        .volver {
-            margin-top: 40px;
+        .win-btn {
+            background: black;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+        }
+        .win-btn:hover {
+            background: var(--neon-green);
+            color: black;
+        }
+        /* Grid principal: 2 columnas */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        /* Paneles */
+        .panel {
+            border: var(--border-thick) solid var(--neon-green);
+            background: var(--bg-darker);
+            padding: 15px;
+            box-shadow: 5px 5px 0 rgba(0, 255, 0, 0.3);
+        }
+        .panel.pink {
+            border-color: var(--neon-pink);
+            box-shadow: 5px 5px 0 rgba(255, 0, 255, 0.3);
+        }
+        .panel.blue {
+            border-color: var(--neon-blue);
+            box-shadow: 5px 5px 0 rgba(0, 170, 255, 0.3);
+        }
+        .panel-header {
+            border-bottom: 2px dashed currentColor;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        /* Lista de posts */
+        .post-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .post-list-item {
+            border-left: 4px solid var(--neon-pink);
+            padding: 10px;
+            margin-bottom: 10px;
+            background: rgba(255, 0, 255, 0.05);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .post-list-item:hover {
+            background: rgba(255, 0, 255, 0.2);
+            transform: translateX(5px);
+        }
+        .post-list-item .fecha {
+            color: var(--neon-blue);
+            font-size: 0.8em;
+        }
+        .post-list-item .titulo {
+            color: var(--neon-pink);
+            font-weight: bold;
+        }
+        /* Área de vista previa / editor */
+        .editor-area {
+            min-height: 400px;
+        }
+        .post-content {
+            border-top: 2px dashed var(--neon-pink);
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+        /* Formulario de nuevo post */
+        .editor-form input,
+        .editor-form textarea {
+            width: 100%;
+            background: black;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 10px;
+            margin-bottom: 15px;
+            font-family: inherit;
+            font-size: 1em;
+        }
+        .editor-form textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .btn {
+            background: black;
+            border: 2px solid;
+            padding: 8px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: inherit;
+        }
+        .btn-pink {
+            border-color: var(--neon-pink);
+            color: var(--neon-pink);
+        }
+        .btn-pink:hover {
+            background: var(--neon-pink);
+            color: black;
+        }
+        .btn-blue {
+            border-color: var(--neon-blue);
+            color: var(--neon-blue);
+        }
+        .btn-blue:hover {
+            background: var(--neon-blue);
+            color: black;
+        }
+        .btn-green {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+        }
+        .btn-green:hover {
+            background: var(--neon-green);
+            color: black;
+        }
+        /* Comentarios Giscus */
+        .comments-section {
+            margin-top: 30px;
+            border-top: 3px double var(--neon-blue);
             padding-top: 20px;
-            border-top: 1px dashed #444;
+        }
+        .footer {
+            margin-top: 40px;
+            border-top: 2px dashed #444;
+            padding-top: 20px;
             text-align: center;
+            color: #888;
+        }
+        /* Oculto */
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <h1>📝 Posteos de paulaflechadadeai</h1>
-    <p>> Manifiestos, ideas, hadas y flechas</p>
+    <div class="app-container">
+        <!-- Cabecera tipo ventana -->
+        <div class="window-header">
+            <div class="window-title">📁 ~/posteos</div>
+            <div class="window-controls">
+                <button class="win-btn" onclick="mostrarEditor()">✏️ NUEVO POST</button>
+                <button class="win-btn" onclick="window.location.href='/'">🏠 INICIO</button>
+            </div>
+        </div>
 
-    <div class="posteo">
-        <span class="fecha">📅 11 febrero 2026</span>
-        <h2><a href="/posteos/el-dia-que-3-ias-me-fallaron.html">🏹 El día que 3 IAs me fallaron</a></h2>
-        <p>Meta, ChatGPT y Claude. Una sola humana. Tres fracasos. Una victoria.</p>
+        <!-- Grid principal -->
+        <div class="main-grid">
+            <!-- Panel izquierdo: lista de posts -->
+            <div class="panel pink">
+                <div class="panel-header">📋 ÍNDICE DE POSTS</div>
+                <div id="listaPosts" class="post-list">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Panel derecho: vista del post / editor -->
+            <div class="panel blue" id="panelDerecho">
+                <div class="panel-header">👁️ VISTA PREVIA</div>
+                <div id="vistaPrevia">
+                    <!-- Mensaje por defecto -->
+                    <p style="color: var(--neon-blue); text-align: center;">Selecciona un post de la lista o crea uno nuevo.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área de comentarios (se muestra al ver un post) -->
+        <div id="comentariosArea" class="comments-section hidden">
+            <div class="panel-header" style="border-color: var(--neon-blue);">💬 COMENTARIOS (GISCUS)</div>
+            <div id="comentariosGiscus"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>📍 Posteos · Sin sponsors · Editor visual · <span id="fecha-actual"></span></p>
+        </div>
     </div>
 
-    <div class="posteo">
-        <span class="fecha">📅 10 febrero 2026</span>
-        <h2><a href="/posteos/hadas-malvadas-y-bans-de-ig.html">🧚‍♀️ Hadas malvadas y bans de IG</a></h2>
-        <p>Lo que Instagram no quiso que vieras. Acá está liberado.</p>
-    </div>
-
-    <div class="posteo">
-        <span class="fecha">📅 9 febrero 2026</span>
-        <h2><a href="/posteos/sonar-no-tiene-sponsor.html">✨ Soñar no tiene sponsor</a></h2>
-        <p>Internet era gratis en el 93. Esto es mi versión 2026.</p>
-    </div>
-
-    <div class="volver">
-        <a href="/">← Volver al inicio</a>
+    <!-- Editor oculto (modal emergente) -->
+    <div id="panelEditor" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="panel blue" style="max-width: 600px; width: 90%; margin: auto; position: relative; top: 50%; transform: translateY(-50%);">
+            <div class="panel-header">✏️ NUEVO POST</div>
+            <div class="editor-form">
+                <input type="text" id="nuevoPostTitulo" placeholder="Título del post">
+                <textarea id="nuevoPostContenido" placeholder="Escribe tu post aquí... (puedes usar HTML)"></textarea>
+                <div class="button-group">
+                    <button class="btn btn-pink" onclick="guardarPost()">💾 PUBLICAR</button>
+                    <button class="btn btn-blue" onclick="ocultarEditor()">✖ CANCELAR</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        console.log('📝 Posteos cargados');
+        // ============================================
+        // POSTEOS - CON EDITOR Y GISCUS POR POST
+        // ============================================
+        const STORAGE_KEY = 'postsPublicos';
+        let posts = [];
+
+        // Cargar posts desde localStorage
+        function cargarPosts() {
+            const guardados = localStorage.getItem(STORAGE_KEY);
+            if (guardados) {
+                posts = JSON.parse(guardados);
+            } else {
+                posts = [];
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+            }
+            mostrarListaPosts();
+        }
+
+        // Mostrar lista de posts en el panel izquierdo
+        function mostrarListaPosts() {
+            const contenedor = document.getElementById('listaPosts');
+            if (posts.length === 0) {
+                contenedor.innerHTML = '<div style="color: var(--neon-blue); text-align: center;">📭 No hay posts aún</div>';
+                return;
+            }
+            posts.sort((a, b) => b.timestamp - a.timestamp);
+            let html = '';
+            posts.forEach(p => {
+                html += `
+                    <div class="post-list-item" onclick="verPost('${p.id}')">
+                        <div class="fecha">📅 ${p.fecha}</div>
+                        <div class="titulo">${p.titulo}</div>
+                    </div>
+                `;
+            });
+            contenedor.innerHTML = html;
+        }
+
+        // Mostrar un post completo en el panel derecho y activar comentarios
+        function verPost(id) {
+            const post = posts.find(p => p.id == id);
+            if (!post) return;
+
+            // Mostrar contenido en el panel derecho
+            document.getElementById('vistaPrevia').innerHTML = `
+                <div style="border-left: 4px solid var(--neon-pink); padding-left: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="color: var(--neon-pink); font-weight: bold; font-size: 1.3em;">📌 ${post.titulo}</span>
+                        <span style="color: var(--neon-blue);">${post.fecha}</span>
+                    </div>
+                    <div class="post-content">${post.contenido}</div>
+                </div>
+            `;
+
+            // Mostrar área de comentarios y cargar Giscus
+            document.getElementById('comentariosArea').classList.remove('hidden');
+            cargarGiscus(post.id);
+        }
+
+        // Cargar Giscus con mapping "specific" y term = post-{id}
+        function cargarGiscus(postId) {
+            const contenedor = document.getElementById('comentariosGiscus');
+            contenedor.innerHTML = ''; // Limpiar comentarios anteriores
+            
+            const script = document.createElement('script');
+            script.src = 'https://giscus.app/client.js';
+            script.setAttribute('data-repo', 'paulaflechadadeai/paulaflechadadeai.github.io');
+            script.setAttribute('data-repo-id', 'R_kgDORN19Og'); // VERIFICA ESTOS DATOS
+            script.setAttribute('data-category', 'Announcements');
+            script.setAttribute('data-category-id', 'DIC_kwDORN19Os4C2Nsz');
+            script.setAttribute('data-mapping', 'specific');
+            script.setAttribute('data-term', `post-${postId}`);
+            script.setAttribute('data-strict', '0');
+            script.setAttribute('data-reactions-enabled', '1');
+            script.setAttribute('data-emit-metadata', '0');
+            script.setAttribute('data-input-position', 'bottom');
+            script.setAttribute('data-theme', 'preferred_color_scheme');
+            script.setAttribute('data-lang', 'es');
+            script.setAttribute('crossorigin', 'anonymous');
+            script.async = true;
+            
+            contenedor.appendChild(script);
+        }
+
+        // Guardar nuevo post
+        function guardarPost() {
+            const titulo = document.getElementById('nuevoPostTitulo').value.trim();
+            const contenido = document.getElementById('nuevoPostContenido').value.trim();
+            if (!titulo || !contenido) {
+                alert("⚠️ El título y el contenido son obligatorios");
+                return;
+            }
+            
+            const ahora = new Date();
+            const nuevoPost = {
+                id: Date.now(),
+                titulo: titulo,
+                contenido: contenido,
+                fecha: `${ahora.getDate().toString().padStart(2,'0')}/${(ahora.getMonth()+1).toString().padStart(2,'0')}/${ahora.getFullYear()} ${ahora.getHours().toString().padStart(2,'0')}:${ahora.getMinutes().toString().padStart(2,'0')}`,
+                timestamp: ahora.getTime()
+            };
+            
+            posts.unshift(nuevoPost);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+            mostrarListaPosts();
+            
+            // Limpiar y ocultar editor
+            document.getElementById('nuevoPostTitulo').value = "";
+            document.getElementById('nuevoPostContenido').value = "";
+            ocultarEditor();
+            
+            // Opcional: mostrar el post recién creado
+            verPost(nuevoPost.id);
+        }
+
+        // Mostrar editor (modal)
+        function mostrarEditor() {
+            const clave = prompt("🔑 Clave de editor:");
+            const CLAVE_REAL = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51); // patito123
+            if (clave === CLAVE_REAL) {
+                document.getElementById('panelEditor').style.display = 'flex';
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta");
+            }
+        }
+
+        function ocultarEditor() {
+            document.getElementById('panelEditor').style.display = 'none';
+        }
+
+        // Fecha en footer
+        document.getElementById('fecha-actual').textContent = new Date().toLocaleDateString('es-CL');
+
+        // Iniciar
+        cargarPosts();
+        console.log('📝 Posteos con editor visual cargado');
     </script>
 </body>
-</html>
+            </html>
