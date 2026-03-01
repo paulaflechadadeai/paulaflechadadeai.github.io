@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👤 whoami · paulaflechadadeai</title>
+    <style>
+        /* Mismos estilos base que scan-ias (copia el bloque :root, body, header, etc.) */
+        :root {
+            --neon-green: #00ff00;
+            --neon-pink: #ff00ff;
+            --neon-blue: #00aaff;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000;
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-dark);
+            color: var(--neon-green);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 20%);
+        }
+        .header {
+            border-bottom: 2px dashed var(--neon-green);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        .glitch-title {
+            font-size: clamp(1.8em, 5vw, 2.8em);
+            color: var(--neon-pink);
+            text-shadow: 3px 0 var(--neon-blue), -2px 0 var(--neon-green);
+            animation: glitch 3s infinite;
+        }
+        @keyframes glitch {
+            0%,100%{transform:translate(0)}10%{transform:translate(-3px,1px)}20%{transform:translate(2px,-2px)}30%{transform:translate(-2px,3px)}
+        }
+        .terminal {
+            background: var(--bg-darker);
+            border: 2px solid var(--neon-green);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+        button {
+            background: black;
+            border: 2px solid;
+            padding: 8px 16px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px currentColor;
+        }
+        .btn-primary { color: var(--neon-pink); border-color: var(--neon-pink); }
+        .btn-secondary { color: var(--neon-blue); border-color: var(--neon-blue); }
+        .btn-danger { color: #ff5555; border-color: #ff5555; }
+        input, textarea {
+            background: black;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .campo {
+            margin-bottom: 20px;
+            border-left: 4px solid var(--neon-pink);
+            padding-left: 15px;
+        }
+        .campo-label {
+            color: var(--neon-blue);
+            font-weight: bold;
+        }
+        .campo-contenido {
+            white-space: pre-wrap;
+        }
+        .volver a {
+            color: var(--neon-blue);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="glitch-title">~/whoami $</h1>
+        <p class="subheader">> Perfil dinámico · 3 campos editables</p>
+    </div>
+    <div class="volver"><a href="/">← INICIO</a></div>
+
+    <!-- EDITOR (oculto) -->
+    <div id="panelEditor" style="display: none;" class="terminal">
+        <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">modo_editor --activado</span></div>
+        <form onsubmit="event.preventDefault(); guardarCampos();">
+            <label>📌 Campo 1 (ej: Nombre):</label>
+            <input type="text" id="campo1" placeholder="Tu nombre o usuario" required>
+
+            <label>📝 Campo 2 (ej: Bio):</label>
+            <textarea id="campo2" rows="2" placeholder="Breve descripción" required></textarea>
+
+            <label>🔗 Campo 3 (ej: Link favorito):</label>
+            <input type="text" id="campo3" placeholder="https://..." required>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn-primary">💾 GUARDAR</button>
+                <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Botón editor -->
+    <div style="text-align: right; margin: 20px 0;">
+        <button onclick="mostrarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 EDITAR PERFIL</button>
+    </div>
+
+    <!-- VISUALIZACIÓN -->
+    <div class="terminal">
+        <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">whoami --mostrar</span></div>
+        <div id="contenedorPerfil" style="margin: 20px 0;">
+            <!-- Se carga dinámicamente -->
+        </div>
+    </div>
+
+    <script>
+        const CLAVE_EDITOR = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51); // patito123
+        const STORAGE_KEY = 'whoami';
+
+        let campos = { campo1: '', campo2: '', campo3: '' };
+
+        function cargarCampos() {
+            const guardado = localStorage.getItem(STORAGE_KEY);
+            if (guardado) {
+                campos = JSON.parse(guardado);
+            } else {
+                // Valores por defecto
+                campos = {
+                    campo1: "paulaflechadadeai",
+                    campo2: "Cazadora de hadas, derrotadora de IAs",
+                    campo3: "https://paulaflechadadeai.github.io"
+                };
+                guardarCamposEnStorage();
+            }
+            mostrarCampos();
+        }
+
+        function guardarCamposEnStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(campos));
+        }
+
+        function mostrarCampos() {
+            const contenedor = document.getElementById('contenedorPerfil');
+            contenedor.innerHTML = `
+                <div class="campo">
+                    <div class="campo-label">📌 Campo 1:</div>
+                    <div class="campo-contenido">${campos.campo1}</div>
+                </div>
+                <div class="campo">
+                    <div class="campo-label">📝 Campo 2:</div>
+                    <div class="campo-contenido">${campos.campo2}</div>
+                </div>
+                <div class="campo">
+                    <div class="campo-label">🔗 Campo 3:</div>
+                    <div class="campo-contenido"><a href="${campos.campo3}" target="_blank">${campos.campo3}</a></div>
+                </div>
+            `;
+        }
+
+        function mostrarEditor() {
+            const clave = prompt("🔑 Clave de editor:");
+            if (clave === CLAVE_EDITOR) {
+                document.getElementById('panelEditor').style.display = 'block';
+                document.getElementById('btnMostrarEditor').style.display = 'none';
+                // Rellenar con valores actuales
+                document.getElementById('campo1').value = campos.campo1;
+                document.getElementById('campo2').value = campos.campo2;
+                document.getElementById('campo3').value = campos.campo3;
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta");
+            }
+        }
+
+        function cancelarEdicion() {
+            document.getElementById('panelEditor').style.display = 'none';
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+        }
+
+        function guardarCampos() {
+            campos.campo1 = document.getElementById('campo1').value.trim();
+            campos.campo2 = document.getElementById('campo2').value.trim();
+            campos.campo3 = document.getElementById('campo3').value.trim();
+            if (!campos.campo1 || !campos.campo2 || !campos.campo3) {
+                alert("Todos los campos son obligatorios");
+                return;
+            }
+            guardarCamposEnStorage();
+            mostrarCampos();
+            cancelarEdicion();
+            alert("✅ Perfil actualizado");
+        }
+
+        cargarCampos();
+    </script>
+</body>
+</html>
