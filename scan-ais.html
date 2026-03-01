@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📸 scan-ias · paulaflechadadeai</title>
+    <style>
+        /* ===== ESTILOS BASE (mismos que observatorio) ===== */
+        :root {
+            --neon-green: #00ff00;
+            --neon-pink: #ff00ff;
+            --neon-blue: #00aaff;
+            --neon-yellow: #ffff00;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-dark);
+            color: var(--neon-green);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 20%);
+        }
+
+        .header {
+            border-bottom: 2px dashed var(--neon-green);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .glitch-title {
+            font-size: clamp(1.8em, 5vw, 2.8em);
+            color: var(--neon-pink);
+            text-shadow: 3px 0 var(--neon-blue), -2px 0 var(--neon-green);
+            animation: glitch 3s infinite;
+            margin: 0;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-3px, 1px); }
+            20% { transform: translate(2px, -2px); }
+            30% { transform: translate(-2px, 3px); }
+        }
+
+        .subheader {
+            color: var(--neon-blue);
+            margin: 10px 0 0 0;
+        }
+
+        .terminal {
+            background: var(--bg-darker);
+            border: 2px solid var(--neon-green);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .terminal-line {
+            margin: 12px 0;
+        }
+
+        .prompt { color: var(--neon-pink); }
+        .cmd { color: var(--neon-blue); }
+
+        /* Botones */
+        button {
+            background: black;
+            border: 2px solid;
+            padding: 8px 16px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px currentColor;
+        }
+        .btn-primary { color: var(--neon-pink); border-color: var(--neon-pink); }
+        .btn-secondary { color: var(--neon-blue); border-color: var(--neon-blue); }
+        .btn-danger { color: #ff5555; border-color: #ff5555; }
+        .btn-success { color: var(--neon-green); border-color: var(--neon-green); }
+
+        /* Formularios */
+        input, textarea {
+            background: black;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 10px;
+            font-family: inherit;
+            width: 100%;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+        }
+        label {
+            color: var(--neon-blue);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Entrada (cada captura) */
+        .entrada {
+            border-left: 6px solid var(--neon-pink);
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 0 8px 8px 0;
+        }
+        .entrada-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .entrada-titulo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--neon-pink);
+        }
+        .entrada-fecha {
+            color: var(--neon-blue);
+        }
+        .entrada-imagen {
+            margin: 20px 0;
+            text-align: center;
+            background: black;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .entrada-imagen img {
+            max-width: 100%;
+            max-height: 600px;
+            border: 3px solid var(--neon-pink);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .entrada-imagen img:hover {
+            transform: scale(1.02);
+            border-color: var(--neon-blue);
+        }
+        .entrada-descripcion {
+            color: var(--neon-green);
+            white-space: pre-wrap;
+            border-top: 1px dashed #333;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+        .entrada-acciones {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+        /* Comentarios Giscus */
+        .comentarios {
+            margin-top: 30px;
+            border-top: 2px dashed var(--neon-blue);
+            padding-top: 20px;
+        }
+
+        /* Vista previa imagen */
+        .preview-container {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.5);
+            border: 1px dashed var(--neon-blue);
+            text-align: center;
+        }
+        .preview-container img {
+            max-width: 200px;
+            max-height: 200px;
+            border: 2px solid var(--neon-pink);
+        }
+
+        /* Modal para ampliar */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border: 3px solid var(--neon-pink);
+        }
+
+        .volver {
+            margin: 20px 0;
+        }
+        .volver a {
+            color: var(--neon-blue);
+            text-decoration: none;
+        }
+        .volver a:hover {
+            color: var(--neon-pink);
+        }
+
+        .footer {
+            margin-top: 60px;
+            border-top: 1px dashed #444;
+            padding-top: 20px;
+            text-align: center;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="glitch-title">~/scan-ias $</h1>
+        <p class="subheader">> Capturas de IAs derrotadas · 2026</p>
+    </div>
+
+    <div class="volver">
+        <a href="/">← INICIO</a> · 
+        <a href="/posteos.html">← POSTEOS</a> · 
+        <a href="/observatorio.html">← OBSERVATORIO</a>
+    </div>
+
+    <!-- ===== EDITOR (oculto) ===== -->
+    <div id="panelEditor" style="display: none;" class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+        </div>
+        <form id="formEditor" onsubmit="event.preventDefault(); guardarEntrada();">
+            <label>📌 TÍTULO:</label>
+            <input type="text" id="editTitulo" placeholder="Ej: Meta intentó shadowbanearme" required>
+
+            <label>📝 DESCRIPCIÓN:</label>
+            <textarea id="editContenido" rows="3" placeholder="¿Qué pasó?" required></textarea>
+
+            <label>🖼️ CAPTURA (imagen):</label>
+            <input type="file" id="imagenEntrada" accept="image/*" onchange="previsualizarImagen(this)" required>
+            <small style="color: var(--neon-blue);">Máx 500KB · Se comprimirá automáticamente</small>
+
+            <div id="vistaPrevia" class="preview-container" style="display: none;">
+                <img id="imgPreview">
+                <p><button type="button" onclick="quitarImagen()" class="btn-danger" style="padding:5px 10px;">✖ QUITAR</button></p>
+            </div>
+
+            <input type="hidden" id="editId" value="">
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn-primary">💾 GUARDAR</button>
+                <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Botones de control -->
+    <div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0;">
+        <button onclick="mostrarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
+    </div>
+
+    <!-- Lista de capturas -->
+    <div class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">scan_ias --lista</span>
+        </div>
+        <div id="contenedorEntradas" style="margin: 20px 0;">
+            <!-- Se carga dinámicamente -->
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>📸 Capturas de IAs derrotadas · Cada imagen con su propio hilo de comentarios vía Giscus</p>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        const CLAVE_EDITOR = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51); // patito123
+        const STORAGE_KEY = 'scanias';
+
+        let entradas = [];
+        let editorActivo = false;
+        let imagenActual = null;
+
+        // ============================================
+        // FUNCIONES DE DATOS
+        // ============================================
+        function cargarEntradas() {
+            const guardadas = localStorage.getItem(STORAGE_KEY);
+            if (guardadas) {
+                entradas = JSON.parse(guardadas);
+            } else {
+                // Entrada de ejemplo
+                entradas = [{
+                    id: Date.now() - 86400000,
+                    titulo: "Primera captura",
+                    contenido: "Meta intentó bloquear mi publicación. La IA falló.",
+                    imagen: null,
+                    fecha: formatearFecha(new Date(Date.now() - 86400000)),
+                    timestamp: Date.now() - 86400000
+                }];
+                guardarEntradas();
+            }
+            ordenarEntradas();
+            mostrarEntradas(entradas);
+        }
+
+        function guardarEntradas() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(entradas));
+        }
+
+        function ordenarEntradas() {
+            entradas.sort((a, b) => b.timestamp - a.timestamp);
+        }
+
+        function formatearFecha(fecha) {
+            const dia = fecha.getDate().toString().padStart(2,'0');
+            const mes = (fecha.getMonth()+1).toString().padStart(2,'0');
+            const año = fecha.getFullYear();
+            const horas = fecha.getHours().toString().padStart(2,'0');
+            const minutos = fecha.getMinutes().toString().padStart(2,'0');
+            return `${dia}/${mes}/${año} ${horas}:${minutos}`;
+        }
+
+        // ============================================
+        // MOSTRAR ENTRADAS
+        // ============================================
+        function mostrarEntradas(lista) {
+            const contenedor = document.getElementById('contenedorEntradas');
+            if (lista.length === 0) {
+                contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay capturas aún</p>';
+                return;
+            }
+
+            let html = '';
+            lista.forEach(e => {
+                html += `
+                    <div class="entrada" id="entrada-${e.id}">
+                        <div class="entrada-header">
+                            <span class="entrada-titulo">📌 ${e.titulo}</span>
+                            <span class="entrada-fecha">${e.fecha}</span>
+                        </div>
+                `;
+
+                if (e.imagen) {
+                    html += `
+                        <div class="entrada-imagen">
+                            <img src="${e.imagen.datos}" 
+                                 onclick="verImagenGrande('${e.imagen.datos}')"
+                                 title="Click para ampliar">
+                        </div>
+                    `;
+                }
+
+                html += `
+                        <div class="entrada-descripcion">${e.contenido}</div>
+                `;
+
+                if (editorActivo) {
+                    html += `
+                        <div class="entrada-acciones">
+                            <button onclick="editarEntrada('${e.id}')" class="btn-secondary">✏️ EDITAR</button>
+                            <button onclick="eliminarEntrada('${e.id}')" class="btn-danger">🗑️ ELIMINAR</button>
+                        </div>
+                    `;
+                }
+
+                // Añadir Giscus para esta entrada
+                html += `<div class="comentarios" id="giscus-${e.id}"></div>`;
+                html += `</div>`;
+            });
+
+            contenedor.innerHTML = html;
+
+            // Cargar Giscus para cada entrada
+            lista.forEach(e => {
+                if (e.id) cargarGiscus(e.id);
+            });
+        }
+
+        // ============================================
+        // GISCUS POR ENTRADA
+        // ============================================
+        function cargarGiscus(entradaId) {
+            const contenedor = document.getElementById(`giscus-${entradaId}`);
+            if (!contenedor) return;
+
+            // Limpiar por si acaso
+            contenedor.innerHTML = '';
+
+            const script = document.createElement('script');
+            script.src = 'https://giscus.app/client.js';
+            script.setAttribute('data-repo', 'paulaflechadadeai/paulaflechadadeai.github.io');
+            script.setAttribute('data-repo-id', 'R_kgDORN19Og'); // TUS DATOS
+            script.setAttribute('data-category', 'Announcements');
+            script.setAttribute('data-category-id', 'DIC_kwDORN19Os4C2Nsz');
+            script.setAttribute('data-mapping', 'specific');
+            script.setAttribute('data-term', `scanias-${entradaId}`); // Único por entrada
+            script.setAttribute('data-strict', '0');
+            script.setAttribute('data-reactions-enabled', '1');
+            script.setAttribute('data-emit-metadata', '0');
+            script.setAttribute('data-input-position', 'bottom');
+            script.setAttribute('data-theme', 'preferred_color_scheme');
+            script.setAttribute('data-lang', 'es');
+            script.setAttribute('crossorigin', 'anonymous');
+            script.async = true;
+            contenedor.appendChild(script);
+        }
+
+        // ============================================
+        // FUNCIONES DE IMAGEN (compresión)
+        // ============================================
+        function previsualizarImagen(input) {
+            if (input.files && input.files[0]) {
+                const archivo = input.files[0];
+                if (archivo.size > 500 * 1024) {
+                    alert("⚠️ La imagen es muy grande. Máximo 500KB.");
+                    input.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    comprimirImagen(e.target.result, 0.7, 800).then(comprimida => {
+                        imagenActual = {
+                            nombre: archivo.name,
+                            datos: comprimida
+                        };
+                        document.getElementById('imgPreview').src = comprimida;
+                        document.getElementById('vistaPrevia').style.display = 'block';
+                    });
+                };
+                reader.readAsDataURL(archivo);
+            }
+        }
+
+        function comprimirImagen(base64, calidad, maxAncho) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = base64;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let ancho = img.width;
+                    let alto = img.height;
+                    if (ancho > maxAncho) {
+                        alto = (maxAncho * alto) / ancho;
+                        ancho = maxAncho;
+                    }
+                    canvas.width = ancho;
+                    canvas.height = alto;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, ancho, alto);
+                    resolve(canvas.toDataURL('image/jpeg', calidad));
+                };
+            });
+        }
+
+        function quitarImagen() {
+            imagenActual = null;
+            document.getElementById('vistaPrevia').style.display = 'none';
+            document.getElementById('imagenEntrada').value = '';
+        }
+
+        function verImagenGrande(datos) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `<img src="${datos}">`;
+            modal.onclick = () => document.body.removeChild(modal);
+            document.body.appendChild(modal);
+        }
+
+        // ============================================
+        // EDITOR: GUARDAR, EDITAR, ELIMINAR
+        // ============================================
+        function mostrarEditor() {
+            const clave = prompt("🔑 Clave de editor:");
+            if (clave === CLAVE_EDITOR) {
+                editorActivo = true;
+                document.getElementById('panelEditor').style.display = 'block';
+                document.getElementById('btnMostrarEditor').style.display = 'none';
+                // Limpiar campos
+                document.getElementById('editId').value = '';
+                document.getElementById('editTitulo').value = '';
+                document.getElementById('editContenido').value = '';
+                quitarImagen();
+                // Refrescar vista para mostrar botones de edición
+                mostrarEntradas(entradas);
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta");
+            }
+        }
+
+        function ocultarEditor() {
+            editorActivo = false;
+            document.getElementById('panelEditor').style.display = 'none';
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            mostrarEntradas(entradas);
+        }
+
+        function cancelarEdicion() {
+            document.getElementById('editId').value = '';
+            document.getElementById('editTitulo').value = '';
+            document.getElementById('editContenido').value = '';
+            quitarImagen();
+            ocultarEditor();
+        }
+
+        function guardarEntrada() {
+            const id = document.getElementById('editId').value;
+            const titulo = document.getElementById('editTitulo').value.trim();
+            const contenido = document.getElementById('editContenido').value.trim();
+
+            if (!titulo || !contenido) {
+                alert("⚠️ El título y la descripción son obligatorios");
+                return;
+            }
+            if (!imagenActual && !id) {
+                alert("⚠️ Debes seleccionar una imagen");
+                return;
+            }
+
+            const ahora = new Date();
+
+            if (id) {
+                // Editar
+                for (let i = 0; i < entradas.length; i++) {
+                    if (entradas[i].id == id) {
+                        entradas[i].titulo = titulo;
+                        entradas[i].contenido = contenido;
+                        if (imagenActual) entradas[i].imagen = imagenActual;
+                        break;
+                    }
+                }
+                alert("✅ Captura actualizada");
+            } else {
+                // Nueva
+                const nueva = {
+                    id: Date.now(),
+                    titulo: titulo,
+                    contenido: contenido,
+                    imagen: imagenActual,
+                    fecha: formatearFecha(ahora),
+                    timestamp: ahora.getTime()
+                };
+                entradas.unshift(nueva);
+                alert("✅ Captura guardada");
+            }
+
+            ordenarEntradas();
+            guardarEntradas();
+            mostrarEntradas(entradas);
+            cancelarEdicion();
+        }
+
+        function editarEntrada(id) {
+            if (!editorActivo) return;
+            const entrada = entradas.find(e => e.id == id);
+            if (!entrada) return;
+
+            document.getElementById('editId').value = entrada.id;
+            document.getElementById('editTitulo').value = entrada.titulo;
+            document.getElementById('editContenido').value = entrada.contenido;
+
+            if (entrada.imagen) {
+                imagenActual = entrada.imagen;
+                document.getElementById('imgPreview').src = entrada.imagen.datos;
+                document.getElementById('vistaPrevia').style.display = 'block';
+            } else {
+                quitarImagen();
+            }
+
+            document.getElementById('panelEditor').style.display = 'block';
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+        }
+
+        function eliminarEntrada(id) {
+            if (!editorActivo) return;
+            if (confirm("¿Eliminar esta captura?")) {
+                entradas = entradas.filter(e => e.id != id);
+                guardarEntradas();
+                mostrarEntradas(entradas);
+            }
+        }
+
+        // ============================================
+        // INICIO
+        // ============================================
+        cargarEntradas();
+        console.log('📸 scan-ias listo');
+    </script>
+</body>
+</html>
