@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💭 philosophy · paulaflechadadeai</title>
+    <style>
+        :root {
+            --neon-green: #00ff00;
+            --neon-pink: #ff00ff;
+            --neon-blue: #00aaff;
+            --neon-yellow: #ffff00;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-dark);
+            color: var(--neon-green);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 255, 0, 0.05) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.05) 0%, transparent 20%);
+        }
+
+        .header {
+            border-bottom: 2px dashed var(--neon-yellow);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .glitch-title {
+            font-size: clamp(1.8em, 5vw, 2.8em);
+            color: var(--neon-yellow);
+            text-shadow: 3px 0 var(--neon-pink), -2px 0 var(--neon-blue);
+            animation: glitch 3s infinite;
+            margin: 0;
+        }
+
+        @keyframes glitch {
+            0%,100%{transform:translate(0)}10%{transform:translate(-3px,1px)}20%{transform:translate(2px,-2px)}30%{transform:translate(-2px,3px)}
+        }
+
+        .subheader {
+            color: var(--neon-yellow);
+            margin: 10px 0 0 0;
+        }
+
+        .terminal {
+            background: var(--bg-darker);
+            border: 2px solid var(--neon-yellow);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .terminal-line {
+            margin: 12px 0;
+        }
+
+        .prompt { color: var(--neon-pink); }
+        .cmd { color: var(--neon-blue); }
+
+        button {
+            background: black;
+            border: 2px solid;
+            padding: 8px 16px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px currentColor;
+        }
+        .btn-primary { color: var(--neon-yellow); border-color: var(--neon-yellow); }
+        .btn-secondary { color: var(--neon-blue); border-color: var(--neon-blue); }
+        .btn-danger { color: #ff5555; border-color: #ff5555; }
+        .btn-success { color: var(--neon-green); border-color: var(--neon-green); }
+
+        input, textarea {
+            background: black;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-yellow);
+            padding: 10px;
+            font-family: inherit;
+            width: 100%;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        label {
+            color: var(--neon-yellow);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Entrada de pregunta */
+        .pregunta {
+            border-left: 6px solid var(--neon-yellow);
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 0, 0.05);
+            border-radius: 0 8px 8px 0;
+        }
+        .pregunta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .pregunta-titulo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--neon-yellow);
+        }
+        .pregunta-fecha {
+            color: var(--neon-blue);
+            font-size: 0.85em;
+        }
+        .pregunta-texto {
+            color: var(--neon-green);
+            font-size: 1.2em;
+            white-space: pre-wrap;
+            border-top: 1px dashed #333;
+            border-bottom: 1px dashed #333;
+            padding: 20px 0;
+            margin: 20px 0;
+        }
+        .pregunta-acciones {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin: 15px 0;
+        }
+        .compartir-btn {
+            background: black;
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .compartir-btn:hover {
+            background: var(--neon-blue);
+            color: black;
+        }
+
+        .contador-mes {
+            background: rgba(255, 255, 0, 0.1);
+            border: 1px solid var(--neon-yellow);
+            padding: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        .volver {
+            margin: 20px 0;
+        }
+        .volver a {
+            color: var(--neon-blue);
+            text-decoration: none;
+        }
+        .volver a:hover {
+            color: var(--neon-yellow);
+        }
+
+        .footer {
+            margin-top: 60px;
+            border-top: 1px dashed #444;
+            padding-top: 20px;
+            text-align: center;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="glitch-title">💭 ~/philosophy</h1>
+        <p class="subheader">> Preguntas que invitan a pensar · Máx 5 al mes</p>
+    </div>
+
+    <div class="volver">
+        <a href="/">← INICIO</a> · 
+        <a href="/whoami.html">← WHOAMI</a> · 
+        <a href="/check-status.html">← CHECK STATUS</a> · 
+        <a href="/scan-ias.html">← SCAN IAS</a> · 
+        <a href="/locate-hadas.html">← LOCATE HADAS</a>
+    </div>
+
+    <!-- EDITOR (oculto) -->
+    <div id="panelEditor" style="display: none;" class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+        </div>
+        <form id="formEditor" onsubmit="event.preventDefault(); guardarPregunta();">
+            <label>📌 TÍTULO DE LA PREGUNTA (opcional):</label>
+            <input type="text" id="editTitulo" placeholder="Ej: Reflexión del día">
+
+            <label>❓ PREGUNTA:</label>
+            <textarea id="editContenido" rows="3" placeholder="Escribe aquí tu pregunta filosófica..." required></textarea>
+
+            <input type="hidden" id="editId" value="">
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn-primary">💾 GUARDAR PREGUNTA</button>
+                <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Botones de control -->
+    <div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0;">
+        <button onclick="mostrarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
+        <button onclick="nuevoMes()" id="btnNuevoMes" class="btn-danger">📅 NUEVO MES (borrar todo)</button>
+    </div>
+
+    <!-- Contador mensual -->
+    <div class="contador-mes" id="contadorMes">Cargando...</div>
+
+    <!-- Lista de preguntas -->
+    <div class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">philosophy --lista</span>
+        </div>
+        <div id="contenedorPreguntas" style="margin: 20px 0;">
+            <!-- Se carga dinámicamente -->
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>💭 Preguntas para pensar · Comparte cada una con su enlace único · Giscus para comentar</p>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        const CLAVE_EDITOR = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51); // patito123
+        const STORAGE_KEY = 'philosophy';
+        const MAX_POR_MES = 5;
+
+        let preguntas = [];
+        let editorActivo = false;
+
+        // ============================================
+        // FUNCIONES DE DATOS
+        // ============================================
+        function cargarPreguntas() {
+            const guardadas = localStorage.getItem(STORAGE_KEY);
+            if (guardadas) {
+                preguntas = JSON.parse(guardadas);
+            } else {
+                // Pregunta de ejemplo
+                preguntas = [
+                    {
+                        id: Date.now() - 86400000,
+                        titulo: "Primera pregunta",
+                        contenido: "¿Es la autenticidad un acto de rebeldía en la era digital?",
+                        fecha: formatearFecha(new Date(Date.now() - 86400000)),
+                        timestamp: Date.now() - 86400000
+                    }
+                ];
+                guardarPreguntas();
+            }
+            ordenarPreguntas();
+            mostrarPreguntas(preguntas);
+            actualizarContador();
+        }
+
+        function guardarPreguntas() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(preguntas));
+        }
+
+        function ordenarPreguntas() {
+            preguntas.sort((a, b) => b.timestamp - a.timestamp);
+        }
+
+        function formatearFecha(fecha) {
+            const dia = fecha.getDate().toString().padStart(2,'0');
+            const mes = (fecha.getMonth()+1).toString().padStart(2,'0');
+            const año = fecha.getFullYear();
+            const horas = fecha.getHours().toString().padStart(2,'0');
+            const minutos = fecha.getMinutes().toString().padStart(2,'0');
+            return `${dia}/${mes}/${año} ${horas}:${minutos}`;
+        }
+
+        // ============================================
+        // MOSTRAR PREGUNTAS
+        // ============================================
+        function mostrarPreguntas(lista) {
+            const contenedor = document.getElementById('contenedorPreguntas');
+            if (lista.length === 0) {
+                contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay preguntas aún</p>';
+                return;
+            }
+
+            let html = '';
+            lista.forEach(p => {
+                // Generar URL para compartir (con el id como hash)
+                const shareUrl = `${window.location.origin}${window.location.pathname}#pregunta-${p.id}`;
+
+                html += `
+                    <div class="pregunta" id="pregunta-${p.id}">
+                        <div class="pregunta-header">
+                            <span class="pregunta-titulo">${p.titulo || '❓ Pregunta'}</span>
+                            <span class="pregunta-fecha">${p.fecha}</span>
+                        </div>
+                        <div class="pregunta-texto">${p.contenido}</div>
+
+                        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 15px;">
+                            <button class="compartir-btn" onclick="copiarEnlace('${shareUrl}')">🔗 COPIAR ENLACE</button>
+                        </div>
+                `;
+
+                if (editorActivo) {
+                    html += `
+                        <div class="pregunta-acciones">
+                            <button onclick="editarPregunta('${p.id}')" class="btn-secondary">✏️ EDITAR</button>
+                            <button onclick="eliminarPregunta('${p.id}')" class="btn-danger">🗑️ ELIMINAR</button>
+                        </div>
+                    `;
+                }
+
+                // Añadir Giscus para esta pregunta
+                html += `<div class="comentarios" id="giscus-${p.id}"></div>`;
+                html += `</div>`;
+            });
+
+            contenedor.innerHTML = html;
+
+            // Cargar Giscus para cada pregunta
+            lista.forEach(p => {
+                if (p.id) cargarGiscus(p.id);
+            });
+
+            // Hacer scroll si hay un hash en la URL
+            if (window.location.hash) {
+                const id = window.location.hash.replace('#pregunta-', '');
+                const elemento = document.getElementById(`pregunta-${id}`);
+                if (elemento) {
+                    elemento.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+
+        // ============================================
+        // GISCUS POR PREGUNTA
+        // ============================================
+        function cargarGiscus(preguntaId) {
+            const contenedor = document.getElementById(`giscus-${preguntaId}`);
+            if (!contenedor) return;
+
+            contenedor.innerHTML = '';
+
+            const script = document.createElement('script');
+            script.src = 'https://giscus.app/client.js';
+            script.setAttribute('data-repo', 'paulaflechadadeai/paulaflechadadeai.github.io');
+            script.setAttribute('data-repo-id', 'R_kgDORN19Og');
+            script.setAttribute('data-category', 'Announcements');
+            script.setAttribute('data-category-id', 'DIC_kwDORN19Os4C2Nsz');
+            script.setAttribute('data-mapping', 'specific');
+            script.setAttribute('data-term', `philosophy-${preguntaId}`);
+            script.setAttribute('data-strict', '0');
+            script.setAttribute('data-reactions-enabled', '1');
+            script.setAttribute('data-emit-metadata', '0');
+            script.setAttribute('data-input-position', 'bottom');
+            script.setAttribute('data-theme', 'preferred_color_scheme');
+            script.setAttribute('data-lang', 'es');
+            script.setAttribute('crossorigin', 'anonymous');
+            script.async = true;
+            contenedor.appendChild(script);
+        }
+
+        // ============================================
+        // FUNCIÓN PARA COMPARTIR
+        // ============================================
+        function copiarEnlace(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                alert("✅ Enlace copiado al portapapeles");
+            }).catch(() => {
+                alert("❌ No se pudo copiar. Hazlo manualmente.");
+            });
+        }
+
+        // ============================================
+        // FUNCIONES DEL EDITOR
+        // ============================================
+        function mostrarEditor() {
+            const clave = prompt("🔑 Clave de editor:");
+            if (clave === CLAVE_EDITOR) {
+                editorActivo = true;
+                document.getElementById('panelEditor').style.display = 'block';
+                document.getElementById('btnMostrarEditor').style.display = 'none';
+                document.getElementById('editId').value = '';
+                document.getElementById('editTitulo').value = '';
+                document.getElementById('editContenido').value = '';
+                mostrarPreguntas(preguntas);
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta");
+            }
+        }
+
+        function ocultarEditor() {
+            editorActivo = false;
+            document.getElementById('panelEditor').style.display = 'none';
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            mostrarPreguntas(preguntas);
+        }
+
+        function cancelarEdicion() {
+            document.getElementById('editId').value = '';
+            document.getElementById('editTitulo').value = '';
+            document.getElementById('editContenido').value = '';
+            ocultarEditor();
+        }
+
+        function guardarPregunta() {
+            const id = document.getElementById('editId').value;
+            const titulo = document.getElementById('editTitulo').value.trim();
+            const contenido = document.getElementById('editContenido').value.trim();
+
+            if (!contenido) {
+                alert("⚠️ La pregunta es obligatoria");
+                return;
+            }
+
+            if (!id && preguntas.length >= MAX_POR_MES) {
+                alert(`⚠️ Has alcanzado el límite de ${MAX_POR_MES} preguntas por mes. Usa "NUEVO MES" para empezar de nuevo.`);
+                return;
+            }
+
+            const ahora = new Date();
+
+            if (id) {
+                for (let i = 0; i < preguntas.length; i++) {
+                    if (preguntas[i].id == id) {
+                        preguntas[i].titulo = titulo;
+                        preguntas[i].contenido = contenido;
+                        break;
+                    }
+                }
+                alert("✅ Pregunta actualizada");
+            } else {
+                const nueva = {
+                    id: Date.now(),
+                    titulo: titulo,
+                    contenido: contenido,
+                    fecha: formatearFecha(ahora),
+                    timestamp: ahora.getTime()
+                };
+                preguntas.unshift(nueva);
+                alert("✅ Pregunta guardada");
+            }
+
+            ordenarPreguntas();
+            guardarPreguntas();
+            mostrarPreguntas(preguntas);
+            actualizarContador();
+            cancelarEdicion();
+        }
+
+        function editarPregunta(id) {
+            if (!editorActivo) return;
+            const pregunta = preguntas.find(p => p.id == id);
+            if (!pregunta) return;
+
+            document.getElementById('editId').value = pregunta.id;
+            document.getElementById('editTitulo').value = pregunta.titulo || '';
+            document.getElementById('editContenido').value = pregunta.contenido;
+
+            document.getElementById('panelEditor').style.display = 'block';
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+        }
+
+        function eliminarPregunta(id) {
+            if (!editorActivo) return;
+            if (confirm("¿Eliminar esta pregunta?")) {
+                preguntas = preguntas.filter(p => p.id != id);
+                guardarPreguntas();
+                mostrarPreguntas(preguntas);
+                actualizarContador();
+            }
+        }
+
+        // ============================================
+        // FUNCIONES DEL MES
+        // ============================================
+        function actualizarContador() {
+            const total = preguntas.length;
+            const restantes = MAX_POR_MES - total;
+            let mensaje = `💭 Este mes: ${total}/${MAX_POR_MES} preguntas`;
+            if (restantes > 0) {
+                mensaje += ` · Te quedan ${restantes}`;
+            } else {
+                mensaje += ` · ¡Límite alcanzado!`;
+            }
+            document.getElementById('contadorMes').innerHTML = mensaje;
+        }
+
+        function nuevoMes() {
+            if (!editorActivo) {
+                alert("🔒 Debes estar en modo editor para usar esta función");
+                return;
+            }
+
+            const confirmacion1 = confirm("⚠️ ¿NUEVO MES? Esto borrará TODAS las preguntas actuales.");
+            if (confirmacion1) {
+                const confirmacion2 = prompt("Escribe 'BORRAR PHILOSOPHY' para confirmar:");
+                if (confirmacion2 === "BORRAR PHILOSOPHY") {
+                    preguntas = [];
+                    guardarPreguntas();
+                    mostrarPreguntas([]);
+                    actualizarContador();
+                    ocultarEditor();
+                    alert("✅ Philosophy listo para el nuevo mes");
+                } else {
+                    alert("❌ Confirmación incorrecta. No se borró nada.");
+                }
+            }
+        }
+
+        // ============================================
+        // INICIO
+        // ============================================
+        cargarPreguntas();
+        console.log('💭 philosophy iniciado');
+    </script>
+</body>
+</html>
