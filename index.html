@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>paulaflechadadeai · Sin Sponsors</title>
     <style>
-        /* Estilo terminal glitch */
+        /* ===== ESTILOS BASE (tus originales) ===== */
         :root {
             --neon-green: #00ff00;
             --neon-pink: #ff00ff;
@@ -65,8 +65,57 @@
 
         .prompt { color: var(--neon-pink); }
         .cmd { color: var(--neon-blue); }
-        .output { color: var(--neon-green); }
 
+        /* ===== NUEVOS ESTILOS PARA INTERACTIVIDAD ===== */
+        .comando {
+            cursor: pointer;
+            transition: background 0.2s, border-left 0.2s;
+            border-left: 2px solid transparent;
+            padding-left: 5px;
+        }
+        .comando:hover {
+            background: rgba(255, 0, 255, 0.1);
+            border-left-color: var(--neon-pink);
+        }
+        .output {
+            margin-left: 2rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--neon-blue);
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--neon-green);
+            font-family: 'Courier New', monospace;
+            white-space: pre-line;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .preview-item {
+            border-left: 4px solid;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+        }
+        .preview-item .fecha {
+            color: var(--neon-blue);
+            font-size: 0.85em;
+        }
+        .preview-item .titulo {
+            font-weight: bold;
+        }
+        .preview-item .contenido {
+            margin: 5px 0;
+        }
+        .preview-link {
+            color: var(--neon-pink);
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        .preview-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== RESTO DE TUS ESTILOS (menú, música, contador, manifiesto) ===== */
         .menu {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -202,35 +251,46 @@
         <p>> Reconstruyendo internet como en el 93, pero con rabia del 2026</p>
     </div>
 
+    <!-- ===== TERMINAL CON COMANDOS INTERACTIVOS ===== -->
     <div class="terminal">
-        <div class="terminal-line">
+        <!-- whoami -->
+        <div class="terminal-line comando" data-cmd="whoami">
             <span class="prompt">$</span> <span class="cmd">whoami</span>
-            <div class="output">> Usuario: paulaflechadadeai</div>
+            <div id="output-whoami" class="output hidden"></div>
         </div>
-        <div class="terminal-line">
+        
+        <!-- check_status -->
+        <div class="terminal-line comando" data-cmd="status">
             <span class="prompt">$</span> <span class="cmd">check_status</span>
-            <div class="output">> Estado: Famosa sin sponsors ✓</div>
+            <div id="output-status" class="output hidden"></div>
         </div>
-        <div class="terminal-line">
+        
+        <!-- scan_ias -->
+        <div class="terminal-line comando" data-cmd="ias">
             <span class="prompt">$</span> <span class="cmd">scan_ias</span>
-            <div class="output">> IAs derrotadas: [Meta ✓] [ChatGPT ✓] [Claude ✓]</div>
+            <div id="output-ias" class="output hidden"></div>
         </div>
-        <div class="terminal-line">
+        
+        <!-- locate_hadas -->
+        <div class="terminal-line comando" data-cmd="hadas">
             <span class="prompt">$</span> <span class="cmd">locate_hadas</span>
-            <div class="output">> Hadas malvadas: [███████] (recuperando de IG...)</div>
+            <div id="output-hadas" class="output hidden"></div>
         </div>
-        <div class="terminal-line">
+        
+        <!-- philosophy -->
+        <div class="terminal-line comando" data-cmd="philosophy">
             <span class="prompt">$</span> <span class="cmd">philosophy</span>
-            <div class="output">> Soñar no tiene affiliate links</div>
+            <div id="output-philosophy" class="output hidden"></div>
         </div>
     </div>
 
+    <!-- ===== MENÚ DE NAVEGACIÓN ===== -->
     <div class="menu">
         <div class="menu-item">
-    <a href="/hadasmalvadas.html">🧚 /hadasmalvadas</a>
-    <div class="desc">Cazando hadas en TikTok · 10 por mes</div>
+            <a href="/hadasmalvadas.html">🧚 /hadasmalvadas</a>
+            <div class="desc">Cazando hadas en TikTok · 10 por mes</div>
         </div>
-    <div class="menu-item">
+        <div class="menu-item">
             <a href="/observatorio">/observatorio</a>
             <div class="desc">Visor de APIs sociales sin middlemen</div>
         </div>
@@ -238,43 +298,31 @@
             <a href="/bitacora.html">📖 /bitacora-v2</a>
             <div class="desc">Bitácora completa con todo: filtros, stats, exportar</div>
         </div>
-<div class="menu-item">
-    <a href="/ia-fallos.html">🤖 /ia-fallos</a>
-    <div class="desc">Gráficos y registro de fails de IAs</div>
-</div>
-   <div class="menu-item">
+        <div class="menu-item">
+            <a href="/ia-fallos.html">🤖 /ia-fallos</a>
+            <div class="desc">Gráficos y registro de fails de IAs</div>
+        </div>
+        <div class="menu-item">
             <a href="/posteos.html">📝 /posteos</a>
             <div class="desc">Manifiestos, crónicas, ideas bomba</div>
         </div>
     </div>
 
-    <!-- ======================================== -->
     <!-- ===== REPRODUCTOR DE MÚSICA ===== -->
-    <!-- ======================================== -->
     <div class="music-player">
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">sistema_audio --play</span>
         </div>
 
-        <!-- ✅ NOMBRE CORREGIDO: himno-sin-sponsors.mp3 -->
         <audio id="musicaFondo" loop preload="auto">
             <source src="/musica/himno-sin-sponsors.mp3" type="audio/mpeg">
             Tu navegador no soporta audio HTML5.
         </audio>
 
         <div class="music-controls">
-            <button onclick="document.getElementById('musicaFondo').play()" class="music-btn btn-play">
-                ▶ PLAY
-            </button>
-            
-            <button onclick="document.getElementById('musicaFondo').pause()" class="music-btn btn-pause">
-                ⏸ PAUSE
-            </button>
-            
-            <button onclick="document.getElementById('musicaFondo').currentTime = 0; document.getElementById('musicaFondo').play()" class="music-btn btn-replay">
-                ↺ REPLAY
-            </button>
-            
+            <button onclick="document.getElementById('musicaFondo').play()" class="music-btn btn-play">▶ PLAY</button>
+            <button onclick="document.getElementById('musicaFondo').pause()" class="music-btn btn-pause">⏸ PAUSE</button>
+            <button onclick="document.getElementById('musicaFondo').currentTime = 0; document.getElementById('musicaFondo').play()" class="music-btn btn-replay">↺ REPLAY</button>
             <span style="color: var(--neon-green);">🔊</span>
             <input type="range" id="controlVolumen" class="volume-slider" min="0" max="1" step="0.1" value="0.3">
             <span id="volumenDisplay" style="color: var(--neon-blue);">30%</span>
@@ -286,22 +334,19 @@
         </div>
     </div>
 
-    <!-- ======================================== -->
     <!-- ===== CONTADOR DE VISITAS ===== -->
-    <!-- ======================================== -->
     <div class="counter-box">
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">visitas_contador</span>
         </div>
-        
         <div class="counter-number" id="contadorVisitas">[--]</div>
-        
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">visitante_status</span>
             <div class="output" id="mensajeVisitas"></div>
         </div>
     </div>
 
+    <!-- ===== MANIFIESTO ===== -->
     <div class="manifesto">
         <h2>📜 Manifiesto del espacio sin sponsors:</h2>
         <p>1. Este sitio no tiene affiliate links, ads encubiertos ni patrocinios.</p>
@@ -311,6 +356,7 @@
         <p>5. La fama se construye con autenticidad, no con engagement.</p>
     </div>
 
+    <!-- ===== FOOTER ===== -->
     <div class="footer">
         <p>📍 En vivo desde Chile · <span id="fecha-chile"></span></p>
         <p>Hosteado en GitHub Pages · Código 100% propio</p>
@@ -320,8 +366,10 @@
 
     <script>
         // ========================================
-        // ===== 1. FECHA EN FORMATO CHILE =====
+        // ===== 1. TUS FUNCIONES ORIGINALES =====
         // ========================================
+        
+        // Fecha Chile
         const ahora = new Date();
         const opciones = { 
             timeZone: 'America/Santiago',
@@ -335,72 +383,44 @@
         document.getElementById('fecha-chile').textContent = 
             ahora.toLocaleDateString('es-CL', opciones);
 
-        // ========================================
-        // ===== 2. CONTROL DE VOLUMEN =====
-        // ========================================
+        // Control de volumen
         const controlVolumen = document.getElementById('controlVolumen');
         const musica = document.getElementById('musicaFondo');
         const volumenDisplay = document.getElementById('volumenDisplay');
-
         controlVolumen.addEventListener('input', function() {
             musica.volume = this.value;
             volumenDisplay.textContent = Math.round(this.value * 100) + '%';
         });
 
-        // ========================================
-        // ===== 3. CONTADOR DE VISITAS =====
-        // ========================================
+        // Contador de visitas
         const NOMBRE_CONTADOR = 'visitas_paulaflechadadeai';
         let visitasGuardadas = localStorage.getItem(NOMBRE_CONTADOR);
         let contadorNumero = document.getElementById('contadorVisitas');
         let mensajeVisitas = document.getElementById('mensajeVisitas');
 
         if (visitasGuardadas === null) {
-            // Primera visita
             localStorage.setItem(NOMBRE_CONTADOR, '1');
             contadorNumero.innerHTML = '[001]';
             mensajeVisitas.innerHTML = '> Primera visita · Bienvenida al espacio sin sponsors';
         } else {
-            // Ya ha visitado antes
             let visitas = parseInt(visitasGuardadas) + 1;
             localStorage.setItem(NOMBRE_CONTADOR, visitas);
+            if (visitas < 10) contadorNumero.innerHTML = '[00' + visitas + ']';
+            else if (visitas < 100) contadorNumero.innerHTML = '[0' + visitas + ']';
+            else contadorNumero.innerHTML = '[' + visitas + ']';
             
-            // Formato de 3 dígitos
-            if (visitas < 10) {
-                contadorNumero.innerHTML = '[00' + visitas + ']';
-            } else if (visitas < 100) {
-                contadorNumero.innerHTML = '[0' + visitas + ']';
-            } else {
-                contadorNumero.innerHTML = '[' + visitas + ']';
-            }
-            
-            // Mensajes personalizados
-            if (visitas === 2) {
-                mensajeVisitas.innerHTML = '> Segunda visita · Ya somos casi amigas';
-            } else if (visitas === 5) {
-                mensajeVisitas.innerHTML = '> 5 visitas · Eres de la familia';
-            } else if (visitas === 10) {
-                mensajeVisitas.innerHTML = '> 10 visitas · ¡Fan número 1! 🏆';
-            } else if (visitas === 20) {
-                mensajeVisitas.innerHTML = '> 20 visitas · Ya eres parte del mobiliario';
-            } else {
-                mensajeVisitas.innerHTML = '> Nos has visitado ' + visitas + ' veces';
-            }
+            if (visitas === 2) mensajeVisitas.innerHTML = '> Segunda visita · Ya somos casi amigas';
+            else if (visitas === 5) mensajeVisitas.innerHTML = '> 5 visitas · Eres de la familia';
+            else if (visitas === 10) mensajeVisitas.innerHTML = '> 10 visitas · ¡Fan número 1! 🏆';
+            else if (visitas === 20) mensajeVisitas.innerHTML = '> 20 visitas · Ya eres parte del mobiliario';
+            else mensajeVisitas.innerHTML = '> Nos has visitado ' + visitas + ' veces';
         }
 
-        // ========================================
-        // ===== 4. EFECTOS VISUALES =====
-        // ========================================
-        
-        // Efecto de escritura en consola
-        console.log('%c 🔮 Bienvenid@ al espacio sin sponsors', 
-                   'color: #00ff00; font-size: 16px; font-weight: bold;');
-        console.log('%c > Usuario:', 'color: #ff00ff;', 
-                   window.location.hostname.split('.')[0]);
-        console.log('%c > Fecha:', 'color: #00aaff;', 
-                   new Date().toLocaleString('es-CL'));
+        // Efectos visuales
+        console.log('%c 🔮 Bienvenid@ al espacio sin sponsors', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+        console.log('%c > Usuario:', 'color: #ff00ff;', window.location.hostname.split('.')[0]);
+        console.log('%c > Fecha:', 'color: #00aaff;', new Date().toLocaleString('es-CL'));
 
-        // Glitch aleatorio en título
         setInterval(() => {
             const title = document.querySelector('.glitch-title');
             if (Math.random() > 0.7) {
@@ -409,23 +429,157 @@
                     0 ${Math.random() * 4}px var(--neon-green)
                 `;
                 setTimeout(() => {
-                    title.style.textShadow = 
-                        '2px 0 var(--neon-blue), -1px 0 var(--neon-green)';
+                    title.style.textShadow = '2px 0 var(--neon-blue), -1px 0 var(--neon-green)';
                 }, 100);
             }
         }, 500);
 
-        // Intento de reproducción automática (silenciosa)
         window.addEventListener('load', function() {
-            // Intentar reproducir (puede que el navegador lo bloquee)
             let playPromise = musica.play();
-            
             if (playPromise !== undefined) {
                 playPromise.catch(() => {
                     console.log("Autoplay bloqueado. Usa los botones para reproducir.");
                 });
             }
         });
+
+        // ========================================
+        // ===== 2. INTEGRACIÓN DE COMANDOS =====
+        // ========================================
+
+        // Función para obtener últimas entradas
+        function obtenerUltimos(key, limite = 3) {
+            const data = localStorage.getItem(key);
+            if (!data) return [];
+            let items = JSON.parse(data);
+            items.sort((a, b) => b.timestamp - a.timestamp);
+            return items.slice(0, limite);
+        }
+
+        // Función para copiar enlace (philosophy)
+        window.copiarEnlace = function(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                alert("✅ Enlace copiado");
+            }).catch(() => {
+                alert("❌ No se pudo copiar");
+            });
+        };
+
+        // Configuración de cada comando
+        const comandosConfig = {
+            whoami: {
+                key: 'whoami',
+                template: (items) => {
+                    if (items.length === 0) return '> No hay perfil definido. <a href="/whoami.html" class="preview-link">Editar →</a>';
+                    const p = items[0]; // whoami solo tiene un registro
+                    return `
+                        <div class="preview-item" style="border-left-color: var(--neon-pink);">
+                            <div class="titulo">📌 ${p.campo1}</div>
+                            <div class="contenido">${p.campo2}</div>
+                            <div><a href="${p.campo3}" target="_blank">${p.campo3}</a></div>
+                            <a href="/whoami.html" class="preview-link">✏️ Editar perfil →</a>
+                        </div>
+                    `;
+                }
+            },
+            status: {
+                key: 'checkstatus',
+                template: (items) => {
+                    if (items.length === 0) return '> No hay proyectos. <a href="/check-status.html" class="preview-link">Crear →</a>';
+                    let html = '';
+                    items.forEach(p => {
+                        html += `
+                            <div class="preview-item" style="border-left-color: var(--neon-blue);">
+                                <div class="fecha">📅 ${p.fecha}</div>
+                                <div class="titulo">📌 ${p.titulo}</div>
+                                <div class="contenido">${p.descripcion.substring(0,80)}…</div>
+                                <a href="/check-status.html" class="preview-link">🔗 Ver en check-status →</a>
+                            </div>
+                        `;
+                    });
+                    return html;
+                }
+            },
+            ias: {
+                key: 'scanias',
+                template: (items) => {
+                    if (items.length === 0) return '> No hay capturas. <a href="/scan-ias.html" class="preview-link">Subir →</a>';
+                    let html = '';
+                    items.forEach(c => {
+                        html += `
+                            <div class="preview-item" style="border-left-color: var(--neon-pink);">
+                                <div class="fecha">📅 ${c.fecha}</div>
+                                <div class="titulo">📌 ${c.titulo}</div>
+                                ${c.imagen ? `<img src="${c.imagen.datos}" style="max-width:150px; max-height:150px; margin:5px 0;">` : ''}
+                                <div class="contenido">${c.contenido.substring(0,60)}…</div>
+                                <a href="/scan-ias.html" class="preview-link">🔗 Ver en scan-ias →</a>
+                            </div>
+                        `;
+                    });
+                    return html;
+                }
+            },
+            hadas: {
+                key: 'locatehadas',
+                template: (items) => {
+                    if (items.length === 0) return '> No hay pensamientos. <a href="/locate-hadas.html" class="preview-link">Crear →</a>';
+                    let html = '';
+                    items.forEach(p => {
+                        html += `
+                            <div class="preview-item" style="border-left-color: #aa00ff;">
+                                <div class="fecha">📅 ${p.fecha}</div>
+                                <div class="titulo">✨ ${p.titulo || 'Pensamiento'}</div>
+                                <div class="contenido">${p.contenido.substring(0,80)}…</div>
+                                <a href="/locate-hadas.html" class="preview-link">🔗 Ver en locate-hadas →</a>
+                            </div>
+                        `;
+                    });
+                    return html;
+                }
+            },
+            philosophy: {
+                key: 'philosophy',
+                template: (items) => {
+                    if (items.length === 0) return '> No hay preguntas. <a href="/philosophy.html" class="preview-link">Crear →</a>';
+                    let html = '';
+                    items.forEach(p => {
+                        const shareUrl = `${window.location.origin}/philosophy.html#pregunta-${p.id}`;
+                        html += `
+                            <div class="preview-item" style="border-left-color: #ffff00;">
+                                <div class="fecha">📅 ${p.fecha}</div>
+                                <div class="titulo">❓ ${p.titulo || 'Pregunta'}</div>
+                                <div class="contenido">${p.contenido.substring(0,80)}…</div>
+                                <div style="margin:5px 0;">
+                                    <button onclick="copiarEnlace('${shareUrl}')" style="background:black; border:1px solid var(--neon-blue); color:var(--neon-blue); padding:2px 8px; cursor:pointer;">🔗 Copiar enlace</button>
+                                </div>
+                                <a href="/philosophy.html" class="preview-link">🔗 Ver en philosophy →</a>
+                            </div>
+                        `;
+                    });
+                    return html;
+                }
+            }
+        };
+
+        // Activar clics en los comandos
+        document.querySelectorAll('.comando').forEach(comando => {
+            const cmd = comando.dataset.cmd;
+            const outputDiv = document.getElementById(`output-${cmd}`);
+            const config = comandosConfig[cmd];
+
+            comando.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (outputDiv.classList.contains('hidden')) {
+                    const items = obtenerUltimos(config.key, 3);
+                    outputDiv.innerHTML = config.template(items);
+                    outputDiv.classList.remove('hidden');
+                } else {
+                    outputDiv.classList.add('hidden');
+                }
+            });
+        });
+
+        console.log('🎯 Index completamente integrado');
     </script>
 </body>
 </html>
