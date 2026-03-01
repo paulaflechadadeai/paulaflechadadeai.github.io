@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 check-status · paulaflechadadeai</title>
+    <style>
+        /* ===== ESTILOS BASE (mismos que usamos en scan-ias) ===== */
+        :root {
+            --neon-green: #00ff00;
+            --neon-pink: #ff00ff;
+            --neon-blue: #00aaff;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-dark);
+            color: var(--neon-green);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 20%);
+        }
+
+        .header {
+            border-bottom: 2px dashed var(--neon-green);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .glitch-title {
+            font-size: clamp(1.8em, 5vw, 2.8em);
+            color: var(--neon-pink);
+            text-shadow: 3px 0 var(--neon-blue), -2px 0 var(--neon-green);
+            animation: glitch 3s infinite;
+            margin: 0;
+        }
+
+        @keyframes glitch {
+            0%,100%{transform:translate(0)}10%{transform:translate(-3px,1px)}20%{transform:translate(2px,-2px)}30%{transform:translate(-2px,3px)}
+        }
+
+        .subheader {
+            color: var(--neon-blue);
+            margin: 10px 0 0 0;
+        }
+
+        .terminal {
+            background: var(--bg-darker);
+            border: 2px solid var(--neon-green);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .terminal-line {
+            margin: 12px 0;
+        }
+
+        .prompt { color: var(--neon-pink); }
+        .cmd { color: var(--neon-blue); }
+
+        button {
+            background: black;
+            border: 2px solid;
+            padding: 8px 16px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px currentColor;
+        }
+        .btn-primary { color: var(--neon-pink); border-color: var(--neon-pink); }
+        .btn-secondary { color: var(--neon-blue); border-color: var(--neon-blue); }
+        .btn-danger { color: #ff5555; border-color: #ff5555; }
+        .btn-success { color: var(--neon-green); border-color: var(--neon-green); }
+
+        input, textarea {
+            background: black;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 10px;
+            font-family: inherit;
+            width: 100%;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        label {
+            color: var(--neon-blue);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Entrada de proyecto */
+        .proyecto {
+            border-left: 6px solid var(--neon-blue);
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 0 8px 8px 0;
+        }
+        .proyecto-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .proyecto-titulo {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--neon-blue);
+        }
+        .proyecto-fecha {
+            color: var(--neon-pink);
+            font-size: 0.85em;
+        }
+        .proyecto-descripcion {
+            color: var(--neon-green);
+            white-space: pre-wrap;
+            border-top: 1px dashed #333;
+            padding-top: 15px;
+            margin-top: 10px;
+        }
+        .proyecto-acciones {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+
+        .contador-mes {
+            background: rgba(0, 170, 255, 0.1);
+            border: 1px solid var(--neon-blue);
+            padding: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        .volver {
+            margin: 20px 0;
+        }
+        .volver a {
+            color: var(--neon-blue);
+            text-decoration: none;
+        }
+        .volver a:hover {
+            color: var(--neon-pink);
+        }
+
+        .footer {
+            margin-top: 60px;
+            border-top: 1px dashed #444;
+            padding-top: 20px;
+            text-align: center;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="glitch-title">~/check-status $</h1>
+        <p class="subheader">> Proyectos activos · Máximo 10 por mes</p>
+    </div>
+
+    <div class="volver">
+        <a href="/">← INICIO</a> · 
+        <a href="/whoami.html">← WHOAMI</a> · 
+        <a href="/scan-ias.html">← SCAN IAS</a>
+    </div>
+
+    <!-- ===== EDITOR (oculto) ===== -->
+    <div id="panelEditor" style="display: none;" class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+        </div>
+        <form id="formEditor" onsubmit="event.preventDefault(); guardarProyecto();">
+            <label>📌 TÍTULO DEL PROYECTO:</label>
+            <input type="text" id="editTitulo" placeholder="Ej: antiCopyright_bot" required>
+
+            <label>📝 DESCRIPCIÓN LARGA:</label>
+            <textarea id="editDescripcion" rows="4" placeholder="Describe el proyecto, estado, tecnologías..." required></textarea>
+
+            <input type="hidden" id="editId" value="">
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn-primary">💾 GUARDAR PROYECTO</button>
+                <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Botones de control -->
+    <div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0;">
+        <button onclick="mostrarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
+        <button onclick="nuevoMes()" id="btnNuevoMes" class="btn-danger">📅 NUEVO MES (borrar todo)</button>
+    </div>
+
+    <!-- Contador mensual -->
+    <div class="contador-mes" id="contadorMes">Cargando...</div>
+
+    <!-- Lista de proyectos -->
+    <div class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">check_status --lista</span>
+        </div>
+        <div id="contenedorProyectos" style="margin: 20px 0;">
+            <!-- Se carga dinámicamente -->
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>📊 Proyectos activos · Máximo 10 por mes · Se reinicia manualmente</p>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        const CLAVE_EDITOR = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51); // patito123
+        const STORAGE_KEY = 'checkstatus';
+        const MAX_POR_MES = 10;
+
+        let proyectos = [];
+        let editorActivo = false;
+
+        // ============================================
+        // FUNCIONES DE DATOS
+        // ============================================
+        function cargarProyectos() {
+            const guardados = localStorage.getItem(STORAGE_KEY);
+            if (guardados) {
+                proyectos = JSON.parse(guardados);
+            } else {
+                // Proyectos de ejemplo
+                proyectos = [
+                    {
+                        id: Date.now() - 86400000,
+                        titulo: "antiCopyright_bot",
+                        descripcion: "Bot que libera contenido automáticamente. En desarrollo.",
+                        fecha: formatearFecha(new Date(Date.now() - 86400000)),
+                        timestamp: Date.now() - 86400000
+                    },
+                    {
+                        id: Date.now() - 172800000,
+                        titulo: "hadas_malvadas_db",
+                        descripcion: "Base de datos colaborativa de hadas malvadas. +50 registros.",
+                        fecha: formatearFecha(new Date(Date.now() - 172800000)),
+                        timestamp: Date.now() - 172800000
+                    }
+                ];
+                guardarProyectos();
+            }
+            ordenarProyectos();
+            mostrarProyectos(proyectos);
+            actualizarContador();
+        }
+
+        function guardarProyectos() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(proyectos));
+        }
+
+        function ordenarProyectos() {
+            proyectos.sort((a, b) => b.timestamp - a.timestamp);
+        }
+
+        function formatearFecha(fecha) {
+            const dia = fecha.getDate().toString().padStart(2,'0');
+            const mes = (fecha.getMonth()+1).toString().padStart(2,'0');
+            const año = fecha.getFullYear();
+            const horas = fecha.getHours().toString().padStart(2,'0');
+            const minutos = fecha.getMinutes().toString().padStart(2,'0');
+            return `${dia}/${mes}/${año} ${horas}:${minutos}`;
+        }
+
+        // ============================================
+        // MOSTRAR PROYECTOS
+        // ============================================
+        function mostrarProyectos(lista) {
+            const contenedor = document.getElementById('contenedorProyectos');
+            if (lista.length === 0) {
+                contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay proyectos aún</p>';
+                return;
+            }
+
+            let html = '';
+            lista.forEach(p => {
+                html += `
+                    <div class="proyecto" id="proyecto-${p.id}">
+                        <div class="proyecto-header">
+                            <span class="proyecto-titulo">📌 ${p.titulo}</span>
+                            <span class="proyecto-fecha">${p.fecha}</span>
+                        </div>
+                        <div class="proyecto-descripcion">${p.descripcion}</div>
+                `;
+
+                if (editorActivo) {
+                    html += `
+                        <div class="proyecto-acciones">
+                            <button onclick="editarProyecto('${p.id}')" class="btn-secondary">✏️ EDITAR</button>
+                            <button onclick="eliminarProyecto('${p.id}')" class="btn-danger">🗑️ ELIMINAR</button>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+            });
+
+            contenedor.innerHTML = html;
+        }
+
+        // ============================================
+        // FUNCIONES DEL EDITOR
+        // ============================================
+        function mostrarEditor() {
+            const clave = prompt("🔑 Clave de editor:");
+            if (clave === CLAVE_EDITOR) {
+                editorActivo = true;
+                document.getElementById('panelEditor').style.display = 'block';
+                document.getElementById('btnMostrarEditor').style.display = 'none';
+                // Limpiar campos
+                document.getElementById('editId').value = '';
+                document.getElementById('editTitulo').value = '';
+                document.getElementById('editDescripcion').value = '';
+                // Refrescar vista para mostrar botones de edición
+                mostrarProyectos(proyectos);
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta");
+            }
+        }
+
+        function ocultarEditor() {
+            editorActivo = false;
+            document.getElementById('panelEditor').style.display = 'none';
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            mostrarProyectos(proyectos);
+        }
+
+        function cancelarEdicion() {
+            document.getElementById('editId').value = '';
+            document.getElementById('editTitulo').value = '';
+            document.getElementById('editDescripcion').value = '';
+            ocultarEditor();
+        }
+
+        function guardarProyecto() {
+            const id = document.getElementById('editId').value;
+            const titulo = document.getElementById('editTitulo').value.trim();
+            const descripcion = document.getElementById('editDescripcion').value.trim();
+
+            if (!titulo || !descripcion) {
+                alert("⚠️ El título y la descripción son obligatorios");
+                return;
+            }
+
+            // Verificar límite solo para nuevos proyectos
+            if (!id && proyectos.length >= MAX_POR_MES) {
+                alert(`⚠️ Has alcanzado el límite de ${MAX_POR_MES} proyectos por mes. Usa "NUEVO MES" para empezar de nuevo.`);
+                return;
+            }
+
+            const ahora = new Date();
+
+            if (id) {
+                // Editar existente
+                for (let i = 0; i < proyectos.length; i++) {
+                    if (proyectos[i].id == id) {
+                        proyectos[i].titulo = titulo;
+                        proyectos[i].descripcion = descripcion;
+                        break;
+                    }
+                }
+                alert("✅ Proyecto actualizado");
+            } else {
+                // Nuevo proyecto
+                const nuevo = {
+                    id: Date.now(),
+                    titulo: titulo,
+                    descripcion: descripcion,
+                    fecha: formatearFecha(ahora),
+                    timestamp: ahora.getTime()
+                };
+                proyectos.unshift(nuevo);
+                alert("✅ Proyecto guardado");
+            }
+
+            ordenarProyectos();
+            guardarProyectos();
+            mostrarProyectos(proyectos);
+            actualizarContador();
+            cancelarEdicion();
+        }
+
+        function editarProyecto(id) {
+            if (!editorActivo) return;
+            const proyecto = proyectos.find(p => p.id == id);
+            if (!proyecto) return;
+
+            document.getElementById('editId').value = proyecto.id;
+            document.getElementById('editTitulo').value = proyecto.titulo;
+            document.getElementById('editDescripcion').value = proyecto.descripcion;
+
+            document.getElementById('panelEditor').style.display = 'block';
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+        }
+
+        function eliminarProyecto(id) {
+            if (!editorActivo) return;
+            if (confirm("¿Eliminar este proyecto?")) {
+                proyectos = proyectos.filter(p => p.id != id);
+                guardarProyectos();
+                mostrarProyectos(proyectos);
+                actualizarContador();
+            }
+        }
+
+        // ============================================
+        // FUNCIONES DEL MES
+        // ============================================
+        function actualizarContador() {
+            const total = proyectos.length;
+            const restantes = MAX_POR_MES - total;
+            let mensaje = `📊 Este mes: ${total}/${MAX_POR_MES} proyectos`;
+            if (restantes > 0) {
+                mensaje += ` · Te quedan ${restantes}`;
+            } else {
+                mensaje += ` · ¡Límite alcanzado!`;
+            }
+            document.getElementById('contadorMes').innerHTML = mensaje;
+        }
+
+        function nuevoMes() {
+            if (!editorActivo) {
+                alert("🔒 Debes estar en modo editor para usar esta función");
+                return;
+            }
+
+            const confirmacion1 = confirm("⚠️ ¿NUEVO MES? Esto borrará TODOS los proyectos actuales.");
+            if (confirmacion1) {
+                const confirmacion2 = prompt("Escribe 'BORRAR CHECKSTATUS' para confirmar:");
+                if (confirmacion2 === "BORRAR CHECKSTATUS") {
+                    proyectos = [];
+                    guardarProyectos();
+                    mostrarProyectos([]);
+                    actualizarContador();
+                    ocultarEditor();
+                    alert("✅ Check-status listo para el nuevo mes");
+                } else {
+                    alert("❌ Confirmación incorrecta. No se borró nada.");
+                }
+            }
+        }
+
+        // ============================================
+        // INICIO
+        // ============================================
+        cargarProyectos();
+        console.log('📊 check-status iniciado');
+    </script>
+</body>
+  </html>
