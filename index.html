@@ -470,8 +470,14 @@
             whoami: {
                 key: 'whoami',
                 template: (items) => {
-                    if (items.length === 0) return '> No hay perfil definido. <a href="/whoami.html" class="preview-link">Editar →</a>';
-                    const p = items[0]; // whoami solo tiene un registro
+                    if (items.length === 0) {
+                        return '> No hay perfil definido. <a href="/whoami.html" class="preview-link">Editar →</a>';
+                    }
+                    const p = items[0]; // whoami guarda un solo objeto
+                    // Verificar que las propiedades existen
+                    if (!p.campo1 || !p.campo2 || !p.campo3) {
+                        return '> El perfil tiene datos incorrectos. <a href="/whoami.html" class="preview-link">Revisar →</a>';
+                    }
                     return `
                         <div class="preview-item" style="border-left-color: var(--neon-pink);">
                             <div class="titulo">📌 ${p.campo1}</div>
@@ -479,7 +485,7 @@
                             <div><a href="${p.campo3}" target="_blank">${p.campo3}</a></div>
                             <a href="/whoami.html" class="preview-link">✏️ Editar perfil →</a>
                         </div>
-                    `;        
+                    `;
                 }
             },
             status: {
@@ -567,16 +573,18 @@
             const outputDiv = document.getElementById(`output-${cmd}`);
             const config = comandosConfig[cmd];
 
-            comando.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (outputDiv.classList.contains('hidden')) {
-                    const items = obtenerUltimos(config.key, 3);
-                    outputDiv.innerHTML = config.template(items);
-                    outputDiv.classList.remove('hidden');
-                } else {
-                    outputDiv.classList.add('hidden');
-                }
-            });
+            if (config) { // por si acaso
+                comando.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (outputDiv.classList.contains('hidden')) {
+                        const items = obtenerUltimos(config.key, 3);
+                        outputDiv.innerHTML = config.template(items);
+                        outputDiv.classList.remove('hidden');
+                    } else {
+                        outputDiv.classList.add('hidden');
+                    }
+                });
+            }
         });
 
         console.log('🎯 Index completamente integrado');
