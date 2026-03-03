@@ -62,47 +62,8 @@
 
         .prompt { color: var(--neon-pink); }
         .cmd { color: var(--neon-blue); }
+        .output { color: var(--neon-green); }
 
-        /* ===== ESTILOS PARA INTERACTIVIDAD ===== */
-        .comando {
-            cursor: pointer;
-            transition: background 0.2s, border-left 0.2s;
-            border-left: 2px solid transparent;
-            padding-left: 5px;
-        }
-        .comando:hover {
-            background: rgba(255, 0, 255, 0.1);
-            border-left-color: var(--neon-pink);
-        }
-        .output {
-            margin-left: 2rem;
-            padding-left: 1rem;
-            border-left: 2px solid var(--neon-blue);
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            color: var(--neon-green);
-            font-family: 'Courier New', monospace;
-            white-space: pre-line;
-        }
-        .hidden {
-            display: none !important;
-        }
-        .preview-item {
-            border-left: 4px solid;
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(0,0,0,0.5);
-        }
-        .preview-item .fecha {
-            color: var(--neon-blue);
-            font-size: 0.85em;
-        }
-        .preview-item .titulo {
-            font-weight: bold;
-        }
-        .preview-item .contenido {
-            margin: 5px 0;
-        }
         .preview-link {
             color: var(--neon-pink);
             text-decoration: none;
@@ -224,27 +185,35 @@
         <p>> Reconstruyendo internet como en el 93, pero con rabia del 2026</p>
     </div>
 
-    <!-- ===== TERMINAL CON COMANDOS INTERACTIVOS ===== -->
+    <!-- ===== TERMINAL ESTÁTICA CON WHOAMI DINÁMICO ===== -->
     <div class="terminal">
-        <div class="terminal-line comando" data-cmd="whoami">
+        <!-- whoami (cargado desde localStorage) -->
+        <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">whoami</span>
-            <div id="output-whoami" class="output hidden"></div>
+            <div class="output" id="whoami-output">
+                Cargando...
+            </div>
+            <div style="margin-left:2rem; margin-top:5px;">
+                <a href="/whoami.html" class="preview-link">✏️ Editar perfil</a>
+            </div>
         </div>
-        <div class="terminal-line comando" data-cmd="status">
+
+        <!-- Los demás comandos (estáticos) -->
+        <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">check_status</span>
-            <div id="output-status" class="output hidden"></div>
+            <div class="output">> Famosa sin sponsors · Proyectos: antiCopyright_bot, hadas_malvadas_db, observatorio_apis</div>
         </div>
-        <div class="terminal-line comando" data-cmd="ias">
+        <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">scan_ias</span>
-            <div id="output-ias" class="output hidden"></div>
+            <div class="output">> IAs derrotadas: [Meta] [ChatGPT] [Claude]</div>
         </div>
-        <div class="terminal-line comando" data-cmd="hadas">
+        <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">locate_hadas</span>
-            <div id="output-hadas" class="output hidden"></div>
+            <div class="output">> Hadas malvadas: [███████] (recuperando de IG...)</div>
         </div>
-        <div class="terminal-line comando" data-cmd="philosophy">
+        <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">philosophy</span>
-            <div id="output-philosophy" class="output hidden"></div>
+            <div class="output">> Soñar no tiene affiliate links · <a href="/philosophy.html">Ir a philosophy →</a></div>
         </div>
     </div>
 
@@ -395,171 +364,39 @@
         });
 
         // ========================================
-        // ===== 2. INTEGRACIÓN DE COMANDOS =====
+        // ===== 2. MOSTRAR WHOAMI ESTÁTICO =====
         // ========================================
-        function obtenerUltimos(key, limite = 3) {
-            const data = localStorage.getItem(key);
-            if (!data) return [];
-            let items = JSON.parse(data);
-            items.sort((a, b) => b.timestamp - a.timestamp);
-            return items.slice(0, limite);
+        function mostrarWhoami() {
+            const output = document.getElementById('whoami-output');
+            if (!output) return;
+
+            // Valores por defecto
+            let campo1 = 'paulaflechadadeai';
+            let campo2 = '📷 instagram.com/paulaflechadadeai';
+            let campo3 = '🐙 github.com/paulaflechadadeai';
+
+            // Intentar leer desde localStorage
+            const data = localStorage.getItem('whoami');
+            if (data) {
+                try {
+                    const items = JSON.parse(data);
+                    if (items.length > 0) {
+                        const p = items[0];
+                        if (p.campo1) campo1 = p.campo1;
+                        if (p.campo2) campo2 = p.campo2;
+                        if (p.campo3) campo3 = p.campo3;
+                    }
+                } catch (e) {
+                    console.error('Error al parsear whoami', e);
+                }
+            }
+
+            // Mostrar en el output
+            output.innerHTML = `> ${campo1}<br>> ${campo2}<br>> ${campo3}`;
         }
 
-        window.copiarEnlace = function(url) {
-            navigator.clipboard.writeText(url).then(() => alert("✅ Enlace copiado"))
-                .catch(() => alert("❌ No se pudo copiar"));
-        };
-
-        // Función para guardar whoami desde el índice
-        window.guardarWhoami = function() {
-            const campo1 = document.getElementById('whoami-campo1').value.trim();
-            const campo2 = document.getElementById('whoami-campo2').value.trim();
-            const campo3 = document.getElementById('whoami-campo3').value.trim();
-            if (!campo1 || !campo2 || !campo3) {
-                document.getElementById('whoami-mensaje').innerText = '⚠️ Todos los campos son obligatorios';
-                return;
-            }
-            const perfil = {
-                campo1: campo1,
-                campo2: campo2,
-                campo3: campo3,
-                timestamp: Date.now()
-            };
-            localStorage.setItem('whoami', JSON.stringify([perfil]));
-            document.getElementById('whoami-mensaje').innerText = '✅ Perfil actualizado';
-            setTimeout(() => document.getElementById('whoami-mensaje').innerText = '', 3000);
-        };
-
-        const comandosConfig = {
-            whoami: {
-                key: 'whoami',
-                template: (items) => {
-                    const p = items.length > 0 ? items[0] : { campo1: '', campo2: '', campo3: '' };
-                    // Escapar comillas para evitar errores en el HTML
-                    const campo1 = (p.campo1 || '').replace(/"/g, '&quot;');
-                    const campo2 = (p.campo2 || '').replace(/"/g, '&quot;');
-                    const campo3 = (p.campo3 || '').replace(/"/g, '&quot;');
-                    return `
-                        <div class="preview-item" style="border-left-color: var(--neon-pink);">
-                            <div style="margin-bottom:10px;">
-                                <label style="color:var(--neon-blue);">📌 Campo 1:</label>
-                                <input type="text" id="whoami-campo1" value="${campo1}" style="width:100%; background:black; color:var(--neon-green); border:1px solid var(--neon-pink); padding:5px;">
-                            </div>
-                            <div style="margin-bottom:10px;">
-                                <label style="color:var(--neon-blue);">📝 Campo 2:</label>
-                                <textarea id="whoami-campo2" rows="2" style="width:100%; background:black; color:var(--neon-green); border:1px solid var(--neon-pink); padding:5px;">${campo2}</textarea>
-                            </div>
-                            <div style="margin-bottom:10px;">
-                                <label style="color:var(--neon-blue);">🔗 Campo 3 (URL):</label>
-                                <input type="url" id="whoami-campo3" value="${campo3}" style="width:100%; background:black; color:var(--neon-green); border:1px solid var(--neon-pink); padding:5px;">
-                            </div>
-                            <div style="display:flex; gap:10px; justify-content:flex-end;">
-                                <button onclick="guardarWhoami()" class="preview-link" style="background:black; border:2px solid var(--neon-pink); color:var(--neon-pink); padding:5px 15px;">💾 GUARDAR</button>
-                                <a href="/whoami.html" class="preview-link" style="background:black; border:2px solid var(--neon-blue); color:var(--neon-blue); padding:5px 15px; text-decoration:none;">✏️ EDITAR EN PÁGINA</a>
-                            </div>
-                            <div id="whoami-mensaje" style="margin-top:10px; color:var(--neon-green);"></div>
-                        </div>
-                    `;
-                }
-            },
-            status: {
-                key: 'checkstatus',
-                template: (items) => {
-                    if (items.length === 0) return '> No hay proyectos. <a href="/check-status.html" class="preview-link">Crear →</a>';
-                    let html = '';
-                    items.forEach(p => {
-                        html += `
-                            <div class="preview-item" style="border-left-color: var(--neon-blue);">
-                                <div class="fecha">📅 ${p.fecha}</div>
-                                <div class="titulo">📌 ${p.titulo}</div>
-                                <div class="contenido">${(p.descripcion || '').substring(0,80)}…</div>
-                                <a href="/check-status.html" class="preview-link">🔗 Ver en check-status →</a>
-                            </div>
-                        `;
-                    });
-                    return html;
-                }
-            },
-            ias: {
-                key: 'scanias',
-                template: (items) => {
-                    if (items.length === 0) return '> No hay capturas. <a href="/scan-ias.html" class="preview-link">Subir →</a>';
-                    let html = '';
-                    items.forEach(c => {
-                        html += `
-                            <div class="preview-item" style="border-left-color: var(--neon-pink);">
-                                <div class="fecha">📅 ${c.fecha}</div>
-                                <div class="titulo">📌 ${c.titulo}</div>
-                                ${c.imagen ? `<img src="${c.imagen.datos}" style="max-width:150px; max-height:150px; margin:5px 0;">` : ''}
-                                <div class="contenido">${(c.contenido || '').substring(0,60)}…</div>
-                                <a href="/scan-ias.html" class="preview-link">🔗 Ver en scan-ias →</a>
-                            </div>
-                        `;
-                    });
-                    return html;
-                }
-            },
-            hadas: {
-                key: 'locatehadas',
-                template: (items) => {
-                    if (items.length === 0) return '> No hay pensamientos. <a href="/locate-hadas.html" class="preview-link">Crear →</a>';
-                    let html = '';
-                    items.forEach(p => {
-                        html += `
-                            <div class="preview-item" style="border-left-color: #aa00ff;">
-                                <div class="fecha">📅 ${p.fecha}</div>
-                                <div class="titulo">✨ ${p.titulo || 'Pensamiento'}</div>
-                                <div class="contenido">${(p.contenido || '').substring(0,80)}…</div>
-                                <a href="/locate-hadas.html" class="preview-link">🔗 Ver en locate-hadas →</a>
-                            </div>
-                        `;
-                    });
-                    return html;
-                }
-            },
-            philosophy: {
-                key: 'philosophy',
-                template: (items) => {
-                    if (items.length === 0) return '> No hay preguntas. <a href="/philosophy.html" class="preview-link">Crear →</a>';
-                    let html = '';
-                    items.forEach(p => {
-                        const shareUrl = `${window.location.origin}/philosophy.html#pregunta-${p.id}`;
-                        html += `
-                            <div class="preview-item" style="border-left-color: #ffff00;">
-                                <div class="fecha">📅 ${p.fecha}</div>
-                                <div class="titulo">❓ ${p.titulo || 'Pregunta'}</div>
-                                <div class="contenido">${(p.contenido || '').substring(0,80)}…</div>
-                                <div style="margin:5px 0;">
-                                    <button onclick="copiarEnlace('${shareUrl}')" style="background:black; border:1px solid var(--neon-blue); color:var(--neon-blue); padding:2px 8px; cursor:pointer;">🔗 Copiar enlace</button>
-                                </div>
-                                <a href="/philosophy.html" class="preview-link">🔗 Ver en philosophy →</a>
-                            </div>
-                        `;
-                    });
-                    return html;
-                }
-            }
-        };
-
-        document.querySelectorAll('.comando').forEach(comando => {
-            const cmd = comando.dataset.cmd;
-            const outputDiv = document.getElementById(`output-${cmd}`);
-            const config = comandosConfig[cmd];
-            if (config && outputDiv) {
-                comando.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    if (outputDiv.classList.contains('hidden')) {
-                        const items = obtenerUltimos(config.key, 3);
-                        outputDiv.innerHTML = config.template(items);
-                        outputDiv.classList.remove('hidden');
-                    } else {
-                        outputDiv.classList.add('hidden');
-                    }
-                });
-            }
-        });
-
-        console.log('🎯 Index completamente integrado');
+        // Ejecutar al cargar la página
+        mostrarWhoami();
     </script>
 </body>
 </html>
