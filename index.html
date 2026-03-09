@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>paulaflechadadeai · Sin Sponsors</title>
     <style>
-        /* ===== TUS ESTILOS ORIGINALES (los mantengo todos) ===== */
+        /* ===== ESTILOS BASE ===== */
         :root {
             --neon-green: #00ff00;
             --neon-pink: #ff00ff;
@@ -139,73 +139,6 @@
             margin-top: 8px;
         }
 
-        /* ===== NUEVOS ESTILOS PARA LOS CARRUSELES ===== */
-        .carrusel-seccion {
-            margin: 40px 0;
-        }
-        .carrusel-seccion h2 {
-            color: var(--neon-pink);
-            font-size: 1.3em;
-            text-transform: uppercase;
-            border-left: 4px solid var(--neon-blue);
-            padding-left: 15px;
-            margin-bottom: 20px;
-        }
-        .carrusel {
-            display: flex;
-            overflow-x: auto;
-            gap: 20px;
-            padding: 15px 5px;
-            scroll-behavior: smooth;
-            background: var(--bg-darker);
-            border: 1px dashed var(--neon-green);
-            border-radius: 12px;
-        }
-        .carrusel::-webkit-scrollbar {
-            height: 8px;
-            background: #1a2a24;
-        }
-        .carrusel::-webkit-scrollbar-thumb {
-            background: var(--neon-pink);
-            border-radius: 10px;
-        }
-        .pieza {
-            min-width: 220px;
-            max-width: 220px;
-            background: #0f1310;
-            border: 2px solid var(--neon-green);
-            border-radius: 12px;
-            padding: 10px;
-            transition: 0.2s;
-        }
-        .pieza:hover {
-            transform: translateY(-5px);
-            border-color: var(--neon-pink);
-        }
-        .pieza img, .pieza video {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid var(--neon-blue);
-        }
-        .titulo-pieza {
-            font-weight: bold;
-            color: #ffffaa;
-            margin: 8px 0 4px;
-            font-size: 0.95em;
-        }
-        .fecha-pieza {
-            color: #6a9f8a;
-            font-size: 0.7em;
-        }
-        .mensaje-carga {
-            color: var(--neon-blue);
-            font-style: italic;
-            padding: 20px;
-            min-width: 200px;
-        }
-
         .manifesto {
             background: rgba(0, 170, 255, 0.05);
             border-left: 4px solid var(--neon-blue);
@@ -222,6 +155,7 @@
             text-align: center;
         }
 
+        /* ===== REPRODUCTOR DE MÚSICA ===== */
         .music-player {
             background: var(--bg-darker);
             border: 1px solid var(--neon-pink);
@@ -275,6 +209,7 @@
             cursor: pointer;
         }
 
+        /* ===== CONTADOR ===== */
         .counter-box {
             background: rgba(255, 0, 255, 0.1);
             border: 1px solid var(--neon-pink);
@@ -290,6 +225,7 @@
             text-shadow: 0 0 10px var(--neon-pink);
         }
 
+        /* Responsive */
         @media (max-width: 600px) {
             body { padding: 15px; }
             .glitch-title { font-size: 1.8em; }
@@ -304,32 +240,36 @@
         <p>> Reconstruyendo internet como en el 93, pero con rabia del 2026</p>
     </div>
 
-    <!-- ===== TERMINAL CON TODAS LAS OPCIONES (igual que antes) ===== -->
+    <!-- ===== TERMINAL CON TODAS LAS OPCIONES ===== -->
     <div class="terminal">
-        <!-- whoami -->
+        <!-- whoami (dinámico desde localStorage) -->
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">whoami</span>
             <div class="output" id="whoami-output">Cargando...</div>
             <a href="/whoami.html" class="enlace-interno">✏️ Editar perfil</a>
         </div>
+
         <!-- check_status -->
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">check_status</span>
             <div class="output">> Proyectos: antiCopyright_bot, hadas_malvadas_db, observatorio_apis</div>
             <a href="/check-status.html" class="enlace-interno">📋 Ver proyectos</a>
         </div>
+
         <!-- scan_ias -->
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">scan_ias</span>
             <div class="output">> IAs derrotadas: Meta, ChatGPT, Claude</div>
             <a href="/scan-ias.html" class="enlace-interno">📸 Ver capturas</a>
         </div>
+
         <!-- locate_hadas -->
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">locate_hadas</span>
             <div class="output">> Hadas malvadas: [███████] (recuperando de IG...)</div>
             <a href="/locate-hadas.html" class="enlace-interno">🧚 Ver pensamientos</a>
         </div>
+
         <!-- philosophy -->
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">philosophy</span>
@@ -338,26 +278,7 @@
         </div>
     </div>
 
-    <!-- ===== NUEVA SECCIÓN: CARRUSEL DE FOTOS Y VÍDEOS ===== -->
-    <!-- Aquí es donde irán tus 5 fotos y 5 vídeos, justo como querías -->
-
-    <!-- FOTOS -->
-    <div class="carrusel-seccion">
-        <h2>📸 HADAS EN FOTOS (5) · SIN SPONSORS</h2>
-        <div id="carrusel-fotos" class="carrusel">
-            <div class="mensaje-carga">Cargando hadas fotografiadas...</div>
-        </div>
-    </div>
-
-    <!-- VÍDEOS -->
-    <div class="carrusel-seccion">
-        <h2>🎥 HADAS EN VÍDEO (5) · SIN ALGORITMOS</h2>
-        <div id="carrusel-videos" class="carrusel">
-            <div class="mensaje-carga">Cargando hadas en movimiento...</div>
-        </div>
-    </div>
-
-    <!-- ===== MENÚ DE NAVEGACIÓN (igual) ===== -->
+    <!-- ===== MENÚ DE NAVEGACIÓN ===== -->
     <div class="menu">
         <div class="menu-item">
             <a href="/hadasmalvadas.html">🧚 /hadasmalvadas</a>
@@ -381,15 +302,17 @@
         </div>
     </div>
 
-    <!-- ===== REPRODUCTOR DE MÚSICA (igual) ===== -->
+    <!-- ===== REPRODUCTOR DE MÚSICA ===== -->
     <div class="music-player">
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">sistema_audio --play</span>
         </div>
+
         <audio id="musicaFondo" loop preload="auto">
             <source src="/musica/himno-sin-sponsors.mp3" type="audio/mpeg">
             Tu navegador no soporta audio HTML5.
         </audio>
+
         <div class="music-controls">
             <button onclick="document.getElementById('musicaFondo').play()" class="music-btn btn-play">▶ PLAY</button>
             <button onclick="document.getElementById('musicaFondo').pause()" class="music-btn btn-pause">⏸ PAUSE</button>
@@ -398,13 +321,14 @@
             <input type="range" id="controlVolumen" class="volume-slider" min="0" max="1" step="0.1" value="0.3">
             <span id="volumenDisplay" style="color: var(--neon-blue);">30%</span>
         </div>
+
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">track_info</span>
             <div class="output" id="infoCancion">> Reproduciendo: himno sin sponsors · Loop infinito</div>
         </div>
     </div>
 
-    <!-- ===== CONTADOR DE VISITAS (igual) ===== -->
+    <!-- ===== CONTADOR DE VISITAS ===== -->
     <div class="counter-box">
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">visitas_contador</span>
@@ -416,7 +340,7 @@
         </div>
     </div>
 
-    <!-- ===== MANIFIESTO (ahora más abajo, como tú querías) ===== -->
+    <!-- ===== MANIFIESTO ===== -->
     <div class="manifesto">
         <h2>📜 Manifiesto del espacio sin sponsors:</h2>
         <p>1. Este sitio no tiene affiliate links, ads encubiertos ni patrocinios.</p>
@@ -426,7 +350,7 @@
         <p>5. La fama se construye con autenticidad, no con engagement.</p>
     </div>
 
-    <!-- ===== FOOTER (igual) ===== -->
+    <!-- ===== FOOTER ===== -->
     <div class="footer">
         <p>📍 En vivo desde Chile · <span id="fecha-chile"></span></p>
         <p>Hosteado en GitHub Pages · Código 100% propio</p>
@@ -434,90 +358,12 @@
         <p><em>"Internet era gratis en el 93. Soñar no tiene sponsor."</em></p>
     </div>
 
-    <!-- ===== CONEXIÓN CON SUPABASE ===== -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // TUS CREDENCIALES DE SUPABASE (las que me mostraste en las capturas)
-        const SUPABASE_URL = 'https://zcgmpwyntuedqezbgdyu.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjZ21wd3ludHVlZHFlemJnZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NzM2MjcsImV4cCI6MjA4ODU0OTYyN30.YsK-ByxL-gYv7woOlFmMGMlpusrHH-8gSmrxNpDKRqI';
-
-        // Inicializar Supabase
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // Función para cargar y mostrar las piezas
-        async function cargarGaleria() {
-            try {
-                // Pedir los datos a Supabase (ordenados por fecha, los 5 más recientes de cada tipo)
-                const { data: piezas, error } = await supabase
-                    .from('hadas_archive')
-                    .select('*')
-                    .order('created_at', { ascending: false });  // false = más recientes primero
-
-                if (error) {
-                    console.error('Error al conectar con Supabase:', error);
-                    document.getElementById('carrusel-fotos').innerHTML = '<div class="mensaje-carga">Error al cargar 😢</div>';
-                    document.getElementById('carrusel-videos').innerHTML = '<div class="mensaje-carga">Error al cargar 😢</div>';
-                    return;
-                }
-
-                // Separar fotos y vídeos, y limitar a 5 cada uno
-                const fotos = piezas.filter(p => p.tipo === 'foto').slice(0, 5);
-                const videos = piezas.filter(p => p.tipo === 'video').slice(0, 5);
-
-                // Mostrar fotos
-                const contenedorFotos = document.getElementById('carrusel-fotos');
-                contenedorFotos.innerHTML = '';  // Limpiar mensaje de carga
-                if (fotos.length === 0) {
-                    contenedorFotos.innerHTML = '<div class="mensaje-carga">✨ Aún no hay fotos de hadas. ¡Sé la primera en subir!</div>';
-                } else {
-                    fotos.forEach(foto => {
-                        const tarjeta = document.createElement('div');
-                        tarjeta.className = 'pieza';
-                        tarjeta.innerHTML = `
-                            <img src="${foto.url_publica}" alt="${foto.titulo || 'Hada sin título'}" loading="lazy">
-                            <div class="titulo-pieza">${foto.titulo || '🧚 hada anónima'}</div>
-                            <div class="fecha-pieza">📅 ${new Date(foto.created_at).toLocaleDateString()}</div>
-                        `;
-                        contenedorFotos.appendChild(tarjeta);
-                    });
-                }
-
-                // Mostrar vídeos
-                const contenedorVideos = document.getElementById('carrusel-videos');
-                contenedorVideos.innerHTML = '';
-                if (videos.length === 0) {
-                    contenedorVideos.innerHTML = '<div class="mensaje-carga">🎬 Aún no hay vídeos de hadas. ¡Graba alguna!</div>';
-                } else {
-                    videos.forEach(video => {
-                        const tarjeta = document.createElement('div');
-                        tarjeta.className = 'pieza';
-                        tarjeta.innerHTML = `
-                            <video controls preload="metadata">
-                                <source src="${video.url_publica}" type="video/mp4">
-                                Tu navegador no soporta vídeo.
-                            </video>
-                            <div class="titulo-pieza">${video.titulo || '🧚 hada en movimiento'}</div>
-                            <div class="fecha-pieza">📅 ${new Date(video.created_at).toLocaleDateString()}</div>
-                        `;
-                        contenedorVideos.appendChild(tarjeta);
-                    });
-                }
-
-            } catch (e) {
-                console.error('Error general:', e);
-                document.getElementById('carrusel-fotos').innerHTML = '<div class="mensaje-carga">Error inesperado 😵</div>';
-                document.getElementById('carrusel-videos').innerHTML = '<div class="mensaje-carga">Error inesperado 😵</div>';
-            }
-        }
-
-        // Llamar a la función cuando la página esté lista
-        window.addEventListener('DOMContentLoaded', cargarGaleria);
-
         // ========================================
-        // ===== TUS FUNCIONES ORIGINALES (las mantengo) =====
+        // ===== FUNCIONES ORIGINALES =====
         // ========================================
         
-        // Fecha Chile
+        // ----- Fecha Chile -----
         const ahora = new Date();
         const opciones = { 
             timeZone: 'America/Santiago',
@@ -531,20 +377,22 @@
         document.getElementById('fecha-chile').textContent = 
             ahora.toLocaleDateString('es-CL', opciones);
 
-        // Control de volumen
+        // ----- Control de volumen -----
         const controlVolumen = document.getElementById('controlVolumen');
         const musica = document.getElementById('musicaFondo');
         const volumenDisplay = document.getElementById('volumenDisplay');
+
         controlVolumen.addEventListener('input', function() {
             musica.volume = this.value;
             volumenDisplay.textContent = Math.round(this.value * 100) + '%';
         });
 
-        // Contador de visitas (localStorage)
+        // ----- Contador de visitas (localStorage) -----
         const NOMBRE_CONTADOR = 'visitas_paulaflechadadeai';
         let visitasGuardadas = localStorage.getItem(NOMBRE_CONTADOR);
         let contadorNumero = document.getElementById('contadorVisitas');
         let mensajeVisitas = document.getElementById('mensajeVisitas');
+
         if (visitasGuardadas === null) {
             localStorage.setItem(NOMBRE_CONTADOR, '1');
             contadorNumero.innerHTML = '[001]';
@@ -555,6 +403,7 @@
             if (visitas < 10) contadorNumero.innerHTML = '[00' + visitas + ']';
             else if (visitas < 100) contadorNumero.innerHTML = '[0' + visitas + ']';
             else contadorNumero.innerHTML = '[' + visitas + ']';
+            
             if (visitas === 2) mensajeVisitas.innerHTML = '> Segunda visita · Ya somos casi amigas';
             else if (visitas === 5) mensajeVisitas.innerHTML = '> 5 visitas · Eres de la familia';
             else if (visitas === 10) mensajeVisitas.innerHTML = '> 10 visitas · ¡Fan número 1! 🏆';
@@ -562,8 +411,11 @@
             else mensajeVisitas.innerHTML = '> Nos has visitado ' + visitas + ' veces';
         }
 
-        // Efectos glitch
+        // ----- Efectos visuales (glitch y console) -----
         console.log('%c 🔮 Bienvenid@ al espacio sin sponsors', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+        console.log('%c > Usuario:', 'color: #ff00ff;', window.location.hostname.split('.')[0]);
+        console.log('%c > Fecha:', 'color: #00aaff;', new Date().toLocaleString('es-CL'));
+
         setInterval(() => {
             const title = document.querySelector('.glitch-title');
             if (Math.random() > 0.7) {
@@ -577,7 +429,7 @@
             }
         }, 500);
 
-        // Intento autoplay
+        // Intento de autoplay (puede ser bloqueado)
         window.addEventListener('load', function() {
             let playPromise = musica.play();
             if (playPromise !== undefined) {
@@ -587,13 +439,18 @@
             }
         });
 
-        // Mostrar whoami desde localStorage
+        // ========================================
+        // ===== MOSTRAR WHOAMI DESDE LOCALSTORAGE =====
+        // ========================================
         function mostrarWhoami() {
             const output = document.getElementById('whoami-output');
             if (!output) return;
+
+            // Valores por defecto (si no hay datos)
             let campo1 = 'paulaflechadadeai';
             let campo2 = '📷 instagram.com/paulaflechadadeai';
             let campo3 = '🐙 github.com/paulaflechadadeai';
+
             try {
                 const data = localStorage.getItem('whoami');
                 if (data) {
@@ -608,9 +465,13 @@
             } catch (e) {
                 console.warn("Error al leer whoami, usando valores por defecto.");
             }
+
             output.innerHTML = `> ${campo1}<br>> ${campo2}<br>> ${campo3}`;
         }
+
+        // Llamar a la función al cargar la página
         mostrarWhoami();
     </script>
 </body>
-                </html>
+</html>
+
