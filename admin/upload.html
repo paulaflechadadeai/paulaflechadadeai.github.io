@@ -3,175 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Upload</title>
+    <title>Admin</title>
     <style>
-        body {
-            background: #0a0a0a;
-            color: #0f0;
-            font-family: monospace;
-            padding: 20px;
-            text-align: center;
-        }
-        .box {
-            border: 2px solid #f0f;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 500px;
-            margin: 50px auto;
-        }
-        input, button, select, textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: #000;
-            border: 1px solid #0f0;
-            color: #0f0;
-            font-family: monospace;
-        }
-        button {
-            background: #0f0;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .hidden { display: none; }
-        .error { color: #f00; border-color: #f00; }
-        .success { color: #0f0; border-color: #0f0; }
+        body { background: #000; color: #0f0; font-family: monospace; padding: 20px; }
+        .box { border: 2px solid #f0f; padding: 30px; border-radius: 10px; max-width: 500px; margin: 50px auto; text-align: center; }
+        input, button { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 2px solid #0f0; color: #0f0; font-size: 16px; }
+        button { background: #0f0; color: #000; font-weight: bold; cursor: pointer; }
+        button:active { transform: scale(0.95); }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <!-- LOGIN -->
-    <div id="loginBox" class="box">
+    <div id="login" class="box">
         <h1>🔐 Zona Restringida</h1>
-        <input type="password" id="pass" placeholder="Código de acceso">
-        <button onclick="check()">ACCEDER</button>
-        <div id="err" class="hidden error" style="margin-top:10px;padding:10px;border:1px solid;"></div>
+        <input type="password" id="p" placeholder="Código">
+        <button onclick="entrar()">ACCEDER</button>
     </div>
-    <!-- UPLOAD FORM -->
-    <div id="uploadBox" class="box hidden">
-        <h1>🔥 Subir Contenido</h1>
-        
-        <input type="file" id="file" accept="image/*,video/*">
-        <select id="type">
-            <option value="image">Imagen</option>
-            <option value="video">Video</option>
-        </select>
-        <textarea id="cap" placeholder="Descripción"></textarea>
-        <select id="level">
-            <option value="1">🔥 Nivel 1</option>
-            <option value="2">🔥🔥 Nivel 2</option>
-            <option value="3">🔥🔥 Nivel 3</option>
-            <option value="4">🔥🔥🔥 Nivel 4</option>
-            <option value="5">🔥🔥🔥 Nivel 5</option>
-        </select>
-        <input type="text" id="tags" placeholder="Tags (coma separados)">
-        
-        <button onclick="upload()">📤 SUBIR</button>
-        <button onclick="logout()" style="background:#f00;color:#fff;">🚪 SALIR</button>
-        <div id="msg" class="hidden" style="margin-top:10px;padding:10px;border:1px solid;"></div>
+
+    <div id="panel" class="box hidden">
+        <h1>✅ ACCESO CONCEDIDO</h1>
+        <p>Aquí va el formulario de subida</p>
+        <button onclick="salir()">SALIR</button>
     </div>
 
     <script>
-        // CLAVE
-        const CLAVE = String.fromCharCode(112,97,116,105,116,111,49,50,51);
+        var CLAVE = 'patito123';
         
-        // CHECK LOGIN
-        function check() {
-            const p = document.getElementById('pass').value;
-            const err = document.getElementById('err');
+        function entrar() {
+            var input = document.getElementById('p').value;
+            console.log('Intentando entrar con:', input);
+            console.log('Clave correcta:', CLAVE);
             
-            if (p === CLAVE) {
-                sessionStorage.setItem('ok', '1');
-                showUpload();
+            if (input === CLAVE) {
+                console.log('✓ Acceso concedido');
+                document.getElementById('login').classList.add('hidden');
+                document.getElementById('panel').classList.remove('hidden');
             } else {
-                err.textContent = '❌ Incorrecto';
-                err.classList.remove('hidden');
+                console.log('✗ Acceso denegado');
+                alert('❌ Incorrecto');
             }
         }
         
-        // SHOW UPLOAD
-        function showUpload() {
-            document.getElementById('loginBox').classList.add('hidden');
-            document.getElementById('uploadBox').classList.remove('hidden');
+        function salir() {
+            document.getElementById('panel').classList.add('hidden');
+            document.getElementById('login').classList.remove('hidden');
+            document.getElementById('p').value = '';
         }
         
-        // LOGOUT
-        function logout() {            sessionStorage.removeItem('ok');
-            location.reload();
-        }
+        // Enter key
+        document.getElementById('p').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') entrar();
+        });
         
-        // CHECK ON LOAD
-        window.onload = function() {
-            if (sessionStorage.getItem('ok') === '1') {
-                showUpload();
-            }
-        };
-        
-        // UPLOAD
-        async function upload() {
-            const file = document.getElementById('file').files[0];
-            const type = document.getElementById('type').value;
-            const cap = document.getElementById('cap').value;
-            const level = parseInt(document.getElementById('level').value);
-            const tags = document.getElementById('tags').value.split(',').map(t=>t.trim()).filter(t=>t);
-            const msg = document.getElementById('msg');
-            
-            if (!file) {
-                msg.textContent = '❌ Selecciona archivo';
-                msg.className = 'error';
-                msg.classList.remove('hidden');
-                return;
-            }
-            
-            msg.textContent = '⏳ Subiendo...';
-            msg.className = 'success';
-            msg.classList.remove('hidden');
-            
-            try {
-                // Import Supabase
-                const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-                const supabase = mod.createClient(
-                    'https://zcgmpwyntuedqezl.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjZ21wd3ludHVlZHFlemJnZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NzM2MjcsImV4cCI6MjA4ODU0OTYyN30.YsK-ByxL-gYv7woOlFmMGMlpusrHH-8gSmrxNpDKRqI'
-                );
-                
-                // Upload file
-                const name = Date.now() + '_' + file.name.replace(/\s/g, '_');
-                const { error: upErr } = await supabase.storage
-                    .from('controversial-content')
-                    .upload(name, file);
-                
-                if (upErr) throw upErr;
-                
-                // Get URL
-                const {  { publicUrl } } = supabase.storage
-                    .from('controversial-content')                    .getPublicUrl(name);
-                
-                // Save to DB
-                const { error: dbErr } = await supabase
-                    .from('controversial_content')
-                    .insert({
-                        type: type,
-                        url: publicUrl,
-                        caption: cap,
-                        controversy_level: level,
-                        tags: tags.length > 0 ? tags : null,
-                        is_active: true
-                    });
-                
-                if (dbErr) throw dbErr;
-                
-                msg.textContent = '✅ ¡Subido!';
-                document.getElementById('file').value = '';
-                document.getElementById('cap').value = '';
-                document.getElementById('tags').value = '';
-                
-            } catch (e) {
-                console.error(e);
-                msg.textContent = '❌ Error: ' + e.message;
-                msg.className = 'error';
-            }
-        }
+        console.log('Página cargada. CLAVE =', CLAVE);
     </script>
 </body>
 </html>
