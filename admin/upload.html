@@ -1,61 +1,311 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
+    <title>Admin Upload - PaulaFlechaDeAI</title>
     <style>
-        body { background: #000; color: #0f0; font-family: monospace; padding: 20px; }
-        .box { border: 2px solid #f0f; padding: 30px; border-radius: 10px; max-width: 500px; margin: 50px auto; text-align: center; }
-        input, button { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 2px solid #0f0; color: #0f0; font-size: 16px; }
-        button { background: #0f0; color: #000; font-weight: bold; cursor: pointer; }
-        button:active { transform: scale(0.95); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        
+        .box {
+            border: 3px solid #ff00ff;
+            border-radius: 15px;
+            padding: 30px 20px;
+            background: rgba(255, 0, 255, 0.05);
+            margin: 30px auto;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #ff00ff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px #00aaff;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: monospace;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #ff00ff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+                button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #00cc00;
+            transform: scale(1.02);
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
         .hidden { display: none !important; }
+        
+        .msg {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid;
+            display: none;
+        }
+        
+        .msg.show { display: block; }
+        .msg.ok { color: #00ff00; border-color: #00ff00; background: rgba(0, 255, 0, 0.1); }
+        .msg.err { color: #ff0000; border-color: #ff0000; background: rgba(255, 0, 0, 0.1); }
+        
+        .back-btn {
+            background: transparent;
+            border: 2px solid #00aaff;
+            color: #00aaff;
+        }
+        
+        .back-btn:hover {
+            background: rgba(0, 170, 255, 0.1);
+        }
     </style>
 </head>
-<body>
-    <div id="login" class="box">
-        <h1>🔐 Zona Restringida</h1>
-        <input type="password" id="p" placeholder="Código">
-        <button onclick="entrar()">ACCEDER</button>
-    </div>
+<body>    <div class="container">
+        <!-- ===== LOGIN SCREEN ===== -->
+        <div id="loginBox" class="box">
+            <h1>🔐 Zona Restringida</h1>
+            <p style="color: #888; margin-bottom: 20px;">Ingresa el código de acceso</p>
+            
+            <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="off">
+            <button onclick="checkPassword()">🔓 ACCEDER</button>
+            <button onclick="window.location.href='/'" class="back-btn">← Volver al inicio</button>
+            
+            <div id="errorMsg" class="msg err"></div>
+        </div>
 
-    <div id="panel" class="box hidden">
-        <h1>✅ ACCESO CONCEDIDO</h1>
-        <p>Aquí va el formulario de subida</p>
-        <button onclick="salir()">SALIR</button>
+        <!-- ===== UPLOAD FORM ===== -->
+        <div id="uploadBox" class="box hidden">
+            <h1>🔥 Subir Contenido</h1>
+            <p style="color: #888; margin-bottom: 20px;">Zona Controversial</p>
+            
+            <input type="file" id="fileInput" accept="image/*,video/*">
+            
+            <select id="typeSelect">
+                <option value="image">📷 Imagen</option>
+                <option value="video">🎥 Video</option>
+            </select>
+            
+            <textarea id="captionInput" placeholder="Descripción del contenido..." rows="3"></textarea>
+            
+            <select id="levelSelect">
+                <option value="1">🔥 Nivel 1 - Suave</option>
+                <option value="2">🔥 Nivel 2 - Medio</option>
+                <option value="3" selected>🔥 Nivel 3 - Picante</option>
+                <option value="4">🔥🔥 Nivel 4 - Fuerte</option>
+                <option value="5">🔥🔥🔥 Nivel 5 - Extremo</option>
+            </select>
+            
+            <input type="text" id="tagsInput" placeholder="Tags (separados por coma)">
+            
+            <button onclick="uploadContent()">📤 SUBIR CONTENIDO</button>
+            <button onclick="logout()" style="background: #ff0000; color: #fff;">🚪 CERRAR SESIÓN</button>
+            <button onclick="window.location.href='/'" class="back-btn">← Volver al inicio</button>
+            
+            <div id="message" class="msg"></div>
+        </div>
     </div>
 
     <script>
-        var CLAVE = 'patito123';
-        
-        function entrar() {
-            var input = document.getElementById('p').value;
-            console.log('Intentando entrar con:', input);
-            console.log('Clave correcta:', CLAVE);
+        // ===== CONFIGURACIÓN =====
+        const CLAVE_REAL = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51);
+        const SUPABASE_URL = 'https://zcgmpwyntuedqezl.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjZ21wd3ludHVlZHFlemJnZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NzM2MjcsImV4cCI6MjA4ODU0OTYyN30.YsK-ByxL-gYv7woOlFmMGMlpusrHH-8gSmrxNpDKRqI';        
+        let supabase = null;
+
+        // ===== FUNCIONES DE LOGIN =====
+        function checkPassword() {
+            const input = document.getElementById('passwordInput');
+            const errorMsg = document.getElementById('errorMsg');
             
-            if (input === CLAVE) {
-                console.log('✓ Acceso concedido');
-                document.getElementById('login').classList.add('hidden');
-                document.getElementById('panel').classList.remove('hidden');
+            if (input.value === CLAVE_REAL) {
+                sessionStorage.setItem('admin_logged_in', 'true');
+                showUploadSection();
+                errorMsg.classList.remove('show');
             } else {
-                console.log('✗ Acceso denegado');
-                alert('❌ Incorrecto');
+                errorMsg.textContent = '❌ Código incorrecto';
+                errorMsg.classList.add('show');
+                input.value = '';
             }
         }
-        
-        function salir() {
-            document.getElementById('panel').classList.add('hidden');
-            document.getElementById('login').classList.remove('hidden');
-            document.getElementById('p').value = '';
+
+        function showUploadSection() {
+            document.getElementById('loginBox').classList.add('hidden');
+            document.getElementById('uploadBox').classList.remove('hidden');
+            
+            // Cargar Supabase si no está cargado
+            if (!supabase) {
+                loadSupabase();
+            }
         }
-        
-        // Enter key
-        document.getElementById('p').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') entrar();
-        });
-        
-        console.log('Página cargada. CLAVE =', CLAVE);
+
+        function logout() {
+            sessionStorage.removeItem('admin_logged_in');
+            location.reload();
+        }
+
+        // ===== CARGAR SUPABASE =====
+        async function loadSupabase() {
+            try {
+                const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+                supabase = mod.createClient(SUPABASE_URL, SUPABASE_KEY);
+                console.log('✓ Supabase cargado correctamente');
+            } catch (error) {
+                console.error('Error cargando Supabase:', error);
+                showMessage('⚠️ Error cargando sistema', 'err');
+            }
+        }
+
+        // ===== SUBIR CONTENIDO =====
+        async function uploadContent() {
+            const fileInput = document.getElementById('fileInput');
+            const typeSelect = document.getElementById('typeSelect');            const captionInput = document.getElementById('captionInput');
+            const levelSelect = document.getElementById('levelSelect');
+            const tagsInput = document.getElementById('tagsInput');
+            const messageDiv = document.getElementById('message');
+            
+            const file = fileInput.files[0];
+            const type = typeSelect.value;
+            const caption = captionInput.value;
+            const level = parseInt(levelSelect.value);
+            const tags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
+            
+            // Validar archivo
+            if (!file) {
+                showMessage('❌ Selecciona un archivo', 'err');
+                return;
+            }
+            
+            // Validar que Supabase esté cargado
+            if (!supabase) {
+                showMessage('⏳ Cargando sistema... espera un momento', 'ok');
+                await loadSupabase();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            
+            showMessage('⏳ Subiendo archivo...', 'ok');
+            
+            try {
+                // Generar nombre único
+                const timestamp = Date.now();
+                const fileName = `${timestamp}_${file.name.replace(/\s/g, '_').replace(/[^a-zA-Z0-9._-]/g, '')}`;
+                
+                console.log('Subiendo archivo:', fileName);
+                
+                // Subir a Storage
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('controversial-content')
+                    .upload(fileName, file);
+                
+                if (uploadError) {
+                    console.error('Error en upload:', uploadError);
+                    throw uploadError;
+                }
+                
+                console.log('✓ Archivo subido:', uploadData);
+                
+                // Obtener URL pública
+                const { data: urlData } = supabase.storage
+                    .from('controversial-content')
+                    .getPublicUrl(fileName);
+                                const publicUrl = urlData.publicUrl;
+                console.log('URL pública:', publicUrl);
+                
+                // Guardar en base de datos
+                const { data: dbData, error: dbError } = await supabase
+                    .from('controversial_content')
+                    .insert({
+                        type: type,
+                        url: publicUrl,
+                        caption: caption,
+                        controversy_level: level,
+                        tags: tags.length > 0 ? tags : null,
+                        is_active: true
+                    })
+                    .select();
+                
+                if (dbError) {
+                    console.error('Error en DB:', dbError);
+                    throw dbError;
+                }
+                
+                console.log('✓ Guardado en DB:', dbData);
+                
+                // Éxito
+                showMessage('✅ ¡Contenido subido exitosamente!', 'ok');
+                
+                // Limpiar formulario
+                fileInput.value = '';
+                captionInput.value = '';
+                tagsInput.value = '';
+                
+            } catch (error) {
+                console.error('Error completo:', error);
+                showMessage('❌ Error: ' + error.message, 'err');
+            }
+        }
+
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `msg ${type} show`;
+            
+            setTimeout(() => {
+                msg.classList.remove('show');
+            }, 5000);
+        }
+
+        // ===== INICIALIZACIÓN =====
+        window.onload = function() {
+            // Verificar si ya está logueado            if (sessionStorage.getItem('admin_logged_in') === 'true') {
+                showUploadSection();
+            }
+            
+            // Permitir login con Enter
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+            
+            console.log('🔐 Admin Upload cargado');
+            console.log('CLAVE_REAL =', CLAVE_REAL);
+        };
     </script>
 </body>
 </html>
