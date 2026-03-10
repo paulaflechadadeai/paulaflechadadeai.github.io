@@ -47,8 +47,7 @@
             0%, 100% { transform: translate(0); }
             10% { transform: translate(-2px, 1px); }
             20% { transform: translate(1px, -1px); }
-            30% { transform: translate(-1px, 2px); }
-        }
+            30% { transform: translate(-1px, 2px); }        }
 
         .terminal {
             background: var(--bg-darker);
@@ -97,8 +96,7 @@
             display: inline-block;
             margin-left: 1.5rem;
             margin-top: 2px;
-            transition: all 0.2s;
-        }
+            transition: all 0.2s;        }
 
         .enlace-interno:hover {
             background: var(--neon-pink);
@@ -147,8 +145,7 @@
         }
 
         .footer {
-            margin-top: 60px;
-            padding-top: 20px;
+            margin-top: 60px;            padding-top: 20px;
             border-top: 1px dashed #444;
             color: #888;
             font-size: 0.9em;
@@ -197,8 +194,7 @@
             border-color: var(--neon-pink);
         }
 
-        .btn-replay {
-            color: var(--neon-blue);
+        .btn-replay {            color: var(--neon-blue);
             border-color: var(--neon-blue);
         }
 
@@ -225,6 +221,59 @@
             text-shadow: 0 0 10px var(--neon-pink);
         }
 
+        /* ===== ZONA CONTROVERSIAL ===== */
+        #controversial-carousel {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            border-top: 2px dashed var(--neon-pink);
+        }
+
+        .controversial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .controversial-card {
+            background: #0f0f1e;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #333;
+            transition: transform 0.3s;
+        }
+
+        .controversial-card:hover {            transform: translateY(-3px);
+            border-color: var(--neon-pink);
+        }
+
+        .controversial-card img,
+        .controversial-card video {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .controversial-card .caption {
+            padding: 1rem;
+            color: #fff;
+            font-size: 0.9rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .controversial-card .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #666;
+            padding: 0 1rem 1rem;
+        }
+
+        .controversial-card .fire {
+            color: var(--neon-pink);
+        }
+
         /* Responsive */
         @media (max-width: 600px) {
             body { padding: 15px; }
@@ -243,8 +292,7 @@
     <!-- ===== TERMINAL CON TODAS LAS OPCIONES ===== -->
     <div class="terminal">
         <!-- whoami (dinámico desde localStorage) -->
-        <div class="terminal-line">
-            <span class="prompt">$</span> <span class="cmd">whoami</span>
+        <div class="terminal-line">            <span class="prompt">$</span> <span class="cmd">whoami</span>
             <div class="output" id="whoami-output">Cargando...</div>
             <a href="/whoami.html" class="enlace-interno">✏️ Editar perfil</a>
         </div>
@@ -293,8 +341,7 @@
             <div class="desc">Bitácora completa con todo: filtros, stats, exportar</div>
         </div>
         <div class="menu-item">
-            <a href="/ia-fallos.html">🤖 /ia-fallos</a>
-            <div class="desc">Gráficos y registro de fails de IAs</div>
+            <a href="/ia-fallos.html">🤖 /ia-fallos</a>            <div class="desc">Gráficos y registro de fails de IAs</div>
         </div>
         <div class="menu-item">
             <a href="/posteos.html">📝 /posteos</a>
@@ -343,8 +390,7 @@
     <!-- ===== MANIFIESTO ===== -->
     <div class="manifesto">
         <h2>📜 Manifiesto del espacio sin sponsors:</h2>
-        <p>1. Este sitio no tiene affiliate links, ads encubiertos ni patrocinios.</p>
-        <p>2. El código es abierto como el FTP del 93.</p>
+        <p>1. Este sitio no tiene affiliate links, ads encubiertos ni patrocinios.</p>        <p>2. El código es abierto como el FTP del 93.</p>
         <p>3. Las palabras peligrosas tienen casa aquí.</p>
         <p>4. Soñar no necesita patrocinadores.</p>
         <p>5. La fama se construye con autenticidad, no con engagement.</p>
@@ -357,6 +403,9 @@
         <p>GitHub: @paulaflechadadeai · Sin trackers, sin cookies</p>
         <p><em>"Internet era gratis en el 93. Soñar no tiene sponsor."</em></p>
     </div>
+
+    <!-- ===== ZONA CONTROVERSIAL (GALERÍA) ===== -->
+    <section id="controversial-carousel"></section>
 
     <script>
         // ========================================
@@ -390,8 +439,7 @@
         // ----- Contador de visitas (localStorage) -----
         const NOMBRE_CONTADOR = 'visitas_paulaflechadadeai';
         let visitasGuardadas = localStorage.getItem(NOMBRE_CONTADOR);
-        let contadorNumero = document.getElementById('contadorVisitas');
-        let mensajeVisitas = document.getElementById('mensajeVisitas');
+        let contadorNumero = document.getElementById('contadorVisitas');        let mensajeVisitas = document.getElementById('mensajeVisitas');
 
         if (visitasGuardadas === null) {
             localStorage.setItem(NOMBRE_CONTADOR, '1');
@@ -440,8 +488,7 @@
         });
 
         // ========================================
-        // ===== MOSTRAR WHOAMI DESDE LOCALSTORAGE =====
-        // ========================================
+        // ===== MOSTRAR WHOAMI DESDE LOCALSTORAGE =====        // ========================================
         function mostrarWhoami() {
             const output = document.getElementById('whoami-output');
             if (!output) return;
@@ -472,65 +519,58 @@
         // Llamar a la función al cargar la página
         mostrarWhoami();
     </script>
-<!-- Sección Controversial -->
-<section id="controversial-carousel"></section>
 
-<!-- Scripts de Supabase -->
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-  
-  // Tu configuración de Supabase
-  const supabaseUrl = 'https://TU-PROYECTO.supabase.co';
-  const supabaseKey = 'TU-ANON-KEY';
-  const supabase = createClient(supabaseUrl, supabaseKey);
+    <!-- ===== SCRIPT DE SUPABASE - GALERÍA CONTROVERSIAL ===== -->
+    <script type="module">
+      import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+      
+      const supabaseUrl = 'https://zcgmpwyntuedqezl.supabase.co';
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjZ21wd3ludHVlZHFlemJnZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NzM2MjcsImV4cCI6MjA4ODU0OTYyN30.YsK-ByxL-gYv7woOlFmMGMlpusrHH-8gSmrxNpDKRqI';
+      const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // Cargar galería controversial
-  async function loadControversialGallery() {
-    const { data, error } = await supabase
-      .from('controversial_content')
-      .select('*')
-      .eq('is_active', true)
-      .order('created_at', { ascending: false });
+      async function loadControversialGallery() {
+        const container = document.getElementById('controversial-carousel');
+        
+        try {
+          const { data, error } = await supabase
+            .from('controversial_content')
+            .select('*')
+            .eq('is_active', true)
+            .order('created_at', { ascending: false });
+          if (error) throw error;
 
-    if (error) {
-      console.error('Error:', error);
-      document.getElementById('controversial-carousel').innerHTML = 
-        '<p style="color: #ff006e; text-align: center;">🔥 Zona Controversial (Próximamente)</p>';
-      return;
-    }
+          if (!data || data.length === 0) {
+            container.innerHTML = '<p style="color: #666; text-align: center; padding: 2rem;">📂 Sin contenido controversial aún</p>';
+            return;
+          }
 
-    if (data.length === 0) {
-      document.getElementById('controversial-carousel').innerHTML = 
-        '<p style="color: #aaa; text-align: center;">📂 Sin contenido controversial aún</p>';
-      return;
-    }
-
-    // Renderizar carousel simple
-    const container = document.getElementById('controversial-carousel');
-    container.innerHTML = `
-      <div style="max-width: 800px; margin: 2rem auto; padding: 2rem; border: 2px solid #ff006e; border-radius: 15px;">
-        <h2 style="color: #ff006e; text-align: center; margin-bottom: 2rem;">🔥 Zona Controversial</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
-          ${data.slice(0, 6).map(item => `
-            <div style="background: #1a1a2e; border-radius: 10px; overflow: hidden; border: 1px solid #333;">
-              ${item.type === 'image' 
-                ? `<img src="${item.url}" style="width: 100%; height: 200px; object-fit: cover;">`
-                : `<video src="${item.url}" style="width: 100%; height: 200px; object-fit: cover;" controls></video>`
-              }
-              <div style="padding: 1rem;">
-                <p style="color: #fff; margin: 0 0 0.5rem 0;">${item.caption || 'Sin descripción'}</p>
-                <span style="color: #ff006e; font-size: 0.8rem;">${'🔥'.repeat(item.controversy_level || 1)}</span>
+          container.innerHTML = `
+            <div style="max-width: 800px; margin: 2rem auto; padding: 2rem; border: 2px solid var(--neon-pink); border-radius: 15px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+              <h2 style="color: var(--neon-pink); text-align: center; margin-bottom: 2rem; font-family: monospace;">🔥 Zona Controversial</h2>
+              <div class="controversial-grid">
+                ${data.slice(0, 6).map(item => `
+                  <div class="controversial-card">
+                    ${item.type === 'image' 
+                      ? `<img src="${item.url}" loading="lazy" alt="${item.caption || 'Contenido'}">`
+                      : `<video src="${item.url}" controls></video>`
+                    }
+                    <p class="caption">${item.caption || 'Sin descripción'}</p>
+                    <div class="meta">
+                      <span class="fire">${'🔥'.repeat(item.controversy_level || 1)}</span>
+                      <span>👁 ${item.views_count || 0}</span>
+                    </div>
+                  </div>
+                `).join('')}
               </div>
             </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  }
+          `;
+        } catch (err) {
+          console.error('Error loading gallery:', err);
+          container.innerHTML = '<p style="color: var(--neon-pink); text-align: center; padding: 2rem;">⚠️ Error cargando contenido</p>';
+        }
+      }
 
-  // Cargar al iniciar
-  document.addEventListener('DOMContentLoaded', loadControversialGallery);
-</script>
+      document.addEventListener('DOMContentLoaded', loadControversialGallery);
+    </script>
 </body>
 </html>
-
