@@ -1,0 +1,167 @@
+import { supabase } from './supabase-client.js';
+import { STORAGE_BUCKETS } from './config.js';
+
+let currentIndex = 0;
+let controversialData = [];
+let autoplayInterval;
+
+export async function loadControversialGallery() {
+  const { data, error } = await supabase
+    .from('controversial_content')
+    .select('*')
+    .eq('is_active', true)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error loading gallery:', error);
+    return;
+  }
+
+  controversialData = data;
+  renderCarousel();
+  setupCarouselControls();
+  startAutoplay();
+}
+
+function renderCarousel() {
+  const container = document.getElementById('controversial-carousel');
+  if (!container || controversialData.length === 0) return;
+
+  container.innerHTML = `
+    <div class="carousel-header">
+      <h2>🔥 Zona Controversial</h2>
+      <span class="controversy-indicator">Nivel: ${getMaxControversyLevel()}</span>
+    </div>
+    <div class="carousel-container">
+      <div class="carousel-track" id="carousel-track">
+        ${controversialData.map((item, index) => `
+          <div class="carousel-slide ${index === 0 ? 'active' : ''}" data-index="${index}">
+            ${item.type === 'video' 
+              ? `<video src="${item.url}" poster="${item.thumbnail_url || ''}" controls></video>`
+              : `<img src="${item.url}" alt="${item.caption || 'Controversial content'}">`
+            }
+            <div class="carousel-caption">
+              <p>${item.caption || ''}</p>
+              <div class="carousel-meta">
+                <span class="tags">${item.tags?.map(tag => `#${tag}`).join(' ') || ''}</span>
+                <span class="controversy-level">🔥 ${'🔥'.repeat(item.controversy_level)}</span>
+                <span class="views">👁 ${item.views_count || 0}</span>
+                <button class="like-btn" data-id="${item.id}">
+                  ❤️ ${item.likes_count || 0}                </button>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <button class="carousel-btn prev" id="carousel-prev">❮</button>
+      <button class="carousel-btn next" id="carousel-next">❯</button>
+      <div class="carousel-dots" id="carousel-dots">
+        ${controversialData.map((_, index) => `
+          <span class="dot ${index === 0 ? 'active' : ''}" data-index="${index}"></span>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function setupCarouselControls() {
+  const prevBtn = document.getElementById('carousel-prev');
+  const nextBtn = document.getElementById('carousel-next');
+  const dots = document.querySelectorAll('.carousel-dots .dot');
+  const likeBtns = document.querySelectorAll('.like-btn');
+
+  prevBtn?.addEventListener('click', () => goToSlide(currentIndex - 1));
+  nextBtn?.addEventListener('click', () => goToSlide(currentIndex + 1));
+  
+  dots.forEach(dot => {
+    dot.addEventListener('click', (e) => {
+      const index = parseInt(e.target.dataset.index);
+      goToSlide(index);
+    });
+  });
+
+  likeBtns.forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const id = parseInt(e.target.dataset.id);
+      await handleLike(id, e.target);
+    });
+  });
+
+  // Touch support para móvil
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const track = document.getElementById('carousel-track');
+  
+  track?.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+  
+  track?.addEventListener('touchend', (e) => {    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  });
+
+  function handleSwipe() {
+    if (touchEndX < touchStartX - 50) goToSlide(currentIndex + 1);
+    if (touchEndX > touchStartX + 50) goToSlide(currentIndex - 1);
+  }
+}
+
+function goToSlide(index) {
+  if (index < 0) index = controversialData.length - 1;
+  if (index >= controversialData.length) index = 0;
+
+  const slides = document.querySelectorAll('.carousel-slide');
+  const dots = document.querySelectorAll('.carousel-dots .dot');
+
+  slides[currentIndex]?.classList.remove('active');
+  dots[currentIndex]?.classList.remove('active');
+  
+  slides[index]?.classList.add('active');
+  dots[index]?.classList.add('active');
+
+  currentIndex = index;
+  resetAutoplay();
+}
+
+async function handleLike(id, btnElement) {
+  const {  { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    alert('Inicia sesión para dar like 🔐');
+    return;
+  }
+
+  const { error } = await supabase
+    .from('controversial_content')
+    .update({ likes_count: controversialData.find(i => i.id === id).likes_count + 1 })
+    .eq('id', id);
+
+  if (!error) {
+    const item = controversialData.find(i => i.id === id);
+    item.likes_count++;
+    btnElement.textContent = `❤️ ${item.likes_count}`;
+  }
+}
+
+function getMaxControversyLevel() {
+  return Math.max(...controversialData.map(item => item.controversy_level));
+}
+function startAutoplay() {
+  autoplayInterval = setInterval(() => {
+    goToSlide(currentIndex + 1);
+  }, 5000); // Cambia cada 5 segundos
+}
+
+function resetAutoplay() {
+  clearInterval(autoplayInterval);
+  startAutoplay();
+}
+
+// Pausar autoplay al hacer hover
+document.getElementById('controversial-carousel')?.addEventListener('mouseenter', () => {
+  clearInterval(autoplayInterval);
+});
+
+document.getElementById('controversial-carousel')?.addEventListener('mouseleave', () => {
+  startAutoplay();
+});
