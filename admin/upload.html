@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Subir Contenido - Admin</title>
+  <script type="module">
+    import { supabase } from '../js/supabase-client.js';
+    
+    async function uploadContent() {
+      const file = document.getElementById('file-input').files[0];
+      const type = file.type.startsWith('video') ? 'video' : 'image';
+      const caption = document.getElementById('caption').value;
+      const controversyLevel = parseInt(document.getElementById('controversy-level').value);
+      const tags = document.getElementById('tags').value.split(',').map(t => t.trim());
+
+      // Subir archivo a Storage
+      const fileName = `${Date.now()}_${file.name}`;
+      const {  uploadData, error: uploadError } = await supabase.storage
+        .from('controversial-content')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        alert('Error subiendo archivo: ' + uploadError.message);
+        return;
+      }
+
+      // Obtener URL pública
+      const {  { publicUrl } } = supabase.storage
+        .from('controversial-content')
+        .getPublicUrl(fileName);
+
+      // Guardar en base de datos
+      const { error: dbError } = await supabase
+        .from('controversial_content')
+        .insert({
+          type,
+          url: publicUrl,
+          caption,
+          controversy_level: controversyLevel,
+          tags,
+          is_active: true
+        });
+
+      if (dbError) {
+        alert('Error guardando: ' + dbError.message);
+      } else {
+        alert('✅ Contenido subido exitosamente');
+      }
+    }
+
+    document.getElementById('upload-btn').addEventListener('click', uploadContent);
+  </script>
+</head>
+<body>
+  <h1>🔥 Subir Contenido Controversial</h1>
+  <input type="file" id="file-input" accept="image/*,video/*">
+  <input type="text" id="caption" placeholder="Descripción/caption">
+  <select id="controversy-level">
+    <option value="1">Nivel 1 🔥</option>
+    <option value="2">Nivel 2 🔥🔥</option>
+    <option value="3">Nivel 3 🔥🔥</option>
+    <option value="4">Nivel 4 🔥🔥🔥🔥</option>
+    <option value="5">Nivel 5 🔥🔥🔥🔥</option>
+  </select>
+  <input type="text" id="tags" placeholder="tags (separados por coma)">
+  <button id="upload-btn">Subir</button>
+</body>
+</html>
