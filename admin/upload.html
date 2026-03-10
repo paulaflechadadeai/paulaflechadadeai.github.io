@@ -1,67 +1,424 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Subir Contenido - Admin</title>
-  <script type="module">
-    import { supabase } from '../js/supabase-client.js';
-    
-    async function uploadContent() {
-      const file = document.getElementById('file-input').files[0];
-      const type = file.type.startsWith('video') ? 'video' : 'image';
-      const caption = document.getElementById('caption').value;
-      const controversyLevel = parseInt(document.getElementById('controversy-level').value);
-      const tags = document.getElementById('tags').value.split(',').map(t => t.trim());
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Admin - PaulaFlechaDeAI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 {
+            color: #ff00ff;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+            text-shadow: 2px 0 #00aaff, -1px 0 #00ff00;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
 
-      // Subir archivo a Storage
-      const fileName = `${Date.now()}_${file.name}`;
-      const {  uploadData, error: uploadError } = await supabase.storage
-        .from('controversial-content')
-        .upload(fileName, file);
+        /* ===== PANTALLA DE LOGIN ===== */
+        .login-screen {
+            text-align: center;
+            padding: 40px 20px;
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            background: rgba(255, 0, 255, 0.05);
+            margin-top: 50px;
+        }
+        .lock-icon { font-size: 4em; margin-bottom: 20px; }
+        .pin-input {
+            width: 200px;
+            padding: 15px;
+            font-size: 1.5em;
+            text-align: center;
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            border-radius: 5px;            margin: 20px 0;
+            letter-spacing: 5px;
+        }
+        .pin-input:focus {
+            outline: none;
+            border-color: #ff00ff;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+        }
 
-      if (uploadError) {
-        alert('Error subiendo archivo: ' + uploadError.message);
-        return;
-      }
+        .form-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00aaff;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="file"], input[type="password"],
+        select, textarea {
+            width: 100%;
+            padding: 12px;
+            background: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        input[type="file"] { padding: 10px; cursor: pointer; }
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #ff00ff;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        }
+        textarea { min-height: 80px; resize: vertical; }
 
-      // Obtener URL pública
-      const {  { publicUrl } } = supabase.storage
-        .from('controversial-content')
-        .getPublicUrl(fileName);
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        .btn:hover {            background: #00ff00;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-      // Guardar en base de datos
-      const { error: dbError } = await supabase
-        .from('controversial_content')
-        .insert({
-          type,
-          url: publicUrl,
-          caption,
-          controversy_level: controversyLevel,
-          tags,
-          is_active: true
-        });
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        .message.success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            display: block;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            display: block;
+        }
 
-      if (dbError) {
-        alert('Error guardando: ' + dbError.message);
-      } else {
-        alert('✅ Contenido subido exitosamente');
-      }
-    }
+        .preview {
+            margin-top: 15px;
+            border: 1px dashed #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .preview img, .preview video {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 5px;
+        }
 
-    document.getElementById('upload-btn').addEventListener('click', uploadContent);
-  </script>
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #00aaff;
+            text-decoration: none;
+            border: 1px solid #00aaff;
+            padding: 10px;
+            border-radius: 5px;
+        }        .back-link:hover { background: rgba(0, 170, 255, 0.1); }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #ff00ff;
+            margin-top: 10px;
+        }
+        .loading.show { display: block; }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ff00ff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        .hidden { display: none !important; }
+        .error-shake { animation: shake 0.5s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
 </head>
 <body>
-  <h1>🔥 Subir Contenido Controversial</h1>
-  <input type="file" id="file-input" accept="image/*,video/*">
-  <input type="text" id="caption" placeholder="Descripción/caption">
-  <select id="controversy-level">
-    <option value="1">Nivel 1 🔥</option>
-    <option value="2">Nivel 2 🔥🔥</option>
-    <option value="3">Nivel 3 🔥🔥</option>
-    <option value="4">Nivel 4 🔥🔥🔥🔥</option>
-    <option value="5">Nivel 5 🔥🔥🔥🔥</option>
-  </select>
-  <input type="text" id="tags" placeholder="tags (separados por coma)">
-  <button id="upload-btn">Subir</button>
+    <div class="container">
+        <!-- ===== PANTALLA DE LOGIN ===== -->
+        <div id="loginScreen" class="login-screen">
+            <div class="lock-icon">🔐</div>
+            <h1>Zona Restringida</h1>
+            <p style="color: #666; margin: 15px 0;">Ingresa el código de acceso</p>
+            
+            <input type="password" 
+                   id="pinCode" 
+                   class="pin-input" 
+                   placeholder="****" 
+                   maxlength="15"
+                   autocomplete="off">
+            
+            <br>
+            
+            <button onclick="verificarAcceso()" class="btn">🔓 ACCEDER</button>            
+            <div class="message error" id="loginError"></div>
+            
+            <p style="color: #444; margin-top: 20px; font-size: 0.8em;">
+                💡 Pista: Tu código secreto
+            </p>
+        </div>
+
+        <!-- ===== FORMULARIO DE SUBIDA (oculto hasta login) ===== -->
+        <div id="uploadSection" class="hidden">
+            <h1>🔥 Subir Contenido</h1>
+            <p class="subtitle">Zona Controversial - Admin</p>
+
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="file">📁 Seleccionar archivo:</label>
+                    <input type="file" id="file" accept="image/*,video/*" required>
+                    <div class="preview" id="preview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="type">Tipo de contenido:</label>
+                    <select id="type" required>
+                        <option value="image">📷 Imagen</option>
+                        <option value="video">🎥 Video</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="caption">📝 Descripción:</label>
+                    <textarea id="caption" placeholder="Escribe una descripción..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="controversy_level">🔥 Nivel de controversia (1-5):</label>
+                    <select id="controversy_level" required>
+                        <option value="1">🔥 Nivel 1 - Suave</option>
+                        <option value="2">🔥🔥 Nivel 2 - Medio</option>
+                        <option value="3" selected>🔥🔥 Nivel 3 - Picante</option>
+                        <option value="4">🔥🔥🔥 Nivel 4 - Muy fuerte</option>
+                        <option value="5">🔥🔥🔥 Nivel 5 - Extremo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tags">🏷️ Tags (separados por coma):</label>
+                    <input type="text" id="tags" placeholder="ej: ia, fail, meme">
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">📤 SUBIR CONTENIDO</button>                
+                <div class="loading" id="loading">
+                    <span class="spinner"></span>
+                    Subiendo archivo...
+                </div>
+            </form>
+
+            <div class="message" id="message"></div>
+
+            <button onclick="cerrarSesion()" class="btn" style="margin-top: 20px; border-color: #ff0000; color: #ff0000;">
+                🚪 CERRAR SESIÓN
+            </button>
+        </div>
+
+        <a href="/" class="back-link">← Volver al inicio</a>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        
+        const supabaseUrl = 'https://zcgmpwyntuedqezl.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjZ21wd3ludHVlZHFlemJnZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NzM2MjcsImV4cCI6MjA4ODU0OTYyN30.YsK-ByxL-gYv7woOlFmMGMlpusrHH-8gSmrxNpDKRqI';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        // ===== 🔐 CLAVE OFUSCADA =====
+        // Para cambiar la clave: usa la consola para generar nuevos números:
+        // "nuevaClave".split('').map(c => c.charCodeAt(0))
+        const CLAVE_REAL = String.fromCharCode(
+            112, 97, 116, 105, 116, 111, 49, 50, 51
+        ); // = "patito123"
+
+        // ===== FUNCIONES DE LOGIN =====
+        window.verificarAcceso = function() {
+            const pinInput = document.getElementById('pinCode');
+            const loginError = document.getElementById('loginError');
+            const claveIngresada = pinInput.value.trim();
+
+            if (claveIngresada === CLAVE_REAL) {
+                // ✅ Clave correcta
+                sessionStorage.setItem('admin_ok', '1');
+                mostrarPanelSubida();
+            } else if (claveIngresada !== null && claveIngresada !== '') {
+                // ❌ Clave incorrecta
+                loginError.textContent = '❌ Código incorrecto';
+                pinInput.classList.add('error-shake');
+                pinInput.value = '';
+                setTimeout(() => {
+                    pinInput.classList.remove('error-shake');
+                    pinInput.focus();
+                }, 500);            }
+        };
+
+        window.cerrarSesion = function() {
+            sessionStorage.removeItem('admin_ok');
+            location.reload();
+        };
+
+        function mostrarPanelSubida() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('uploadSection').classList.remove('hidden');
+        }
+
+        // Permitir login con Enter
+        document.getElementById('pinCode')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verificarAcceso();
+            }
+        });
+
+        // ===== VERIFICAR AL CARGAR =====
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('admin_ok') === '1') {
+                mostrarPanelSubida();
+            }
+        });
+
+        // ===== FUNCIONES DE SUBIDA =====
+        const fileInput = document.getElementById('file');
+        const typeSelect = document.getElementById('type');
+        const preview = document.getElementById('preview');
+
+        // Preview del archivo
+        fileInput?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (file.type.startsWith('video/')) {
+                typeSelect.value = 'video';
+            } else if (file.type.startsWith('image/')) {
+                typeSelect.value = 'image';
+            }
+
+            const url = URL.createObjectURL(file);
+            if (file.type.startsWith('image/')) {
+                preview.innerHTML = `<img src="${url}" alt="Preview">`;
+            } else if (file.type.startsWith('video/')) {
+                preview.innerHTML = `<video src="${url}" controls></video>`;
+            }
+            preview.style.display = 'block';        });
+
+        // Submit del formulario
+        document.getElementById('uploadForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const file = fileInput.files[0];
+            const type = typeSelect.value;
+            const caption = document.getElementById('caption').value;
+            const controversyLevel = parseInt(document.getElementById('controversy_level').value);
+            const tagsInput = document.getElementById('tags').value;
+            const tags = tagsInput.split(',').map(t => t.trim()).filter(t => t);
+
+            if (!file) {
+                mostrarMensaje('❌ Selecciona un archivo', 'error');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const submitBtn = document.getElementById('submitBtn');
+            const message = document.getElementById('message');
+
+            loading.classList.add('show');
+            submitBtn.disabled = true;
+            message.className = 'message';
+
+            try {
+                // Nombre único para el archivo
+                const timestamp = Date.now();
+                const fileName = `${timestamp}_${file.name.replace(/\s/g, '_')}`;
+
+                // Subir archivo a Storage
+                const { error: uploadError } = await supabase.storage
+                    .from('controversial-content')
+                    .upload(fileName, file);
+
+                if (uploadError) throw uploadError;
+
+                // Obtener URL pública
+                const {  { publicUrl } } = supabase.storage
+                    .from('controversial-content')
+                    .getPublicUrl(fileName);
+
+                // Guardar en base de datos
+                const { error: dbError } = await supabase
+                    .from('controversial_content')
+                    .insert({
+                        type: type,
+                        url: publicUrl,
+                        caption: caption,                        controversy_level: controversyLevel,
+                        tags: tags.length > 0 ? tags : null,
+                        is_active: true
+                    });
+
+                if (dbError) throw dbError;
+
+                mostrarMensaje('✅ ¡Contenido subido exitosamente!', 'success');
+                
+                // Limpiar formulario
+                document.getElementById('uploadForm').reset();
+                preview.style.display = 'none';
+                preview.innerHTML = '';
+
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensaje('❌ Error: ' + error.message, 'error');
+            } finally {
+                loading.classList.remove('show');
+                submitBtn.disabled = false;
+            }
+        });
+
+        function mostrarMensaje(texto, tipo) {
+            const message = document.getElementById('message');
+            message.textContent = texto;
+            message.className = `message ${tipo}`;
+            setTimeout(() => { message.className = 'message'; }, 5000);
+        }
+    </script>
 </body>
 </html>
