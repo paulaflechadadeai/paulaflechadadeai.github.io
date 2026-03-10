@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin</title>
+<style>
+body { background: #000; color: #0f0; font-family: monospace; padding: 20px; text-align: center; }
+.box { border: 3px solid #f0f; padding: 30px; border-radius: 15px; max-width: 500px; margin: 50px auto; }
+input { width: 100%; padding: 15px; margin: 15px 0; background: #000; border: 2px solid #0f0; color: #0f0; font-size: 18px; }
+button { width: 100%; padding: 15px; background: #0f0; color: #000; border: none; font-size: 20px; font-weight: bold; cursor: pointer; margin: 10px 0; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+<div id="login" class="box">
+<h1>🔐 Zona Restringida</h1>
+<input type="password" id="p" placeholder="Código">
+<button onclick="entrar()">ACCEDER</button>
+</div>
+
+<div id="ok" class="box hidden">
+<h1>✅ ACCESO CONCEDIDO</h1>
+<p>¡Bienvenida!</p>
+<button onclick="salir()">SALIR</button>
+</div>
+
+<script>
+function entrar() {
+var pass = document.getElementById('p').value;
+if (pass === 'patito123') {
+document.getElementById('login').style.display = 'none';
+document.getElementById('ok').style.display = 'block';
+} else {
+alert('❌ Incorrecto');
+}
+}
+
+function salir() {
+location.reload();
+}
+</script>
+</body>
+</html>
