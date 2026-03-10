@@ -1,355 +1,176 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔐 Admin - PaulaFlechaDeAI</title>
+    <title>Admin Upload</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Courier New', monospace;
             background: #0a0a0a;
-            color: #00ff00;
+            color: #0f0;
+            font-family: monospace;
             padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .container {
-            max-width: 600px;
-            width: 100%;
             text-align: center;
         }
-        
-        /* ===== LOGIN SCREEN ===== */
-        .login-box {
-            border: 3px solid #ff00ff;
-            border-radius: 15px;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, #1a001a 0%, #0a0a0a 100%);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+        .box {
+            border: 2px solid #f0f;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 50px auto;
         }
-        .lock-icon { font-size: 5em; margin-bottom: 20px; }
-        h1 {
-            color: #ff00ff;
-            font-size: 2em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px #00aaff;
-        }
-        .subtitle { color: #888; margin-bottom: 30px; }
-        
-        .password-input {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.5em;
-            text-align: center;
-            background: #000;
-            border: 2px solid #00ff00;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;            border-radius: 8px;
-            margin-bottom: 20px;
-            letter-spacing: 5px;
-        }
-        .password-input:focus {
-            outline: none;
-            border-color: #ff00ff;
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.3em;
-            font-weight: bold;
-            background: #00ff00;
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 15px;
-        }
-        .btn:hover {
-            background: #00cc00;
-            transform: scale(1.05);
-        }
-        .btn:active {
-            transform: scale(0.95);
-        }
-        
-        .back-btn {
-            background: transparent;
-            border: 2px solid #00aaff;
-            color: #00aaff;
-        }
-        .back-btn:hover {
-            background: rgba(0, 170, 255, 0.1);
-        }
-        
-        .error-msg {
-            color: #ff0000;
-            margin-top: 15px;
-            padding: 10px;
-            border: 1px solid #ff0000;
-            border-radius: 5px;
-            display: none;
-        }
-        .error-msg.show { display: block; }
-                /* ===== UPLOAD SECTION ===== */
-        .upload-box {
-            display: none;
-            text-align: left;
-        }
-        .upload-box.show { display: block; }
-        
-        .form-group { margin-bottom: 20px; }
-        label {
-            display: block;
-            color: #00aaff;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="file"],
-        select,
-        textarea {
+        input, button, select, textarea {
             width: 100%;
             padding: 12px;
+            margin: 10px 0;
             background: #000;
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-            border-radius: 5px;
+            border: 1px solid #0f0;
+            color: #0f0;
+            font-family: monospace;
         }
-        textarea { min-height: 80px; resize: vertical; }
-        
-        .preview {
-            margin-top: 10px;
-            border: 1px dashed #00ff00;
-            padding: 10px;
-            display: none;
+        button {
+            background: #0f0;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
         }
-        .preview img, .preview video {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 5px;
-        }
-        
-        .message {
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            text-align: center;
-            display: none;
-        }
-        .message.success {
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid #00ff00;            color: #00ff00;
-            display: block;
-        }
-        .message.error {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid #ff0000;
-            color: #ff0000;
-            display: block;
-        }
+        .hidden { display: none; }
+        .error { color: #f00; border-color: #f00; }
+        .success { color: #0f0; border-color: #0f0; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- ===== LOGIN ===== -->
-        <div id="loginBox" class="login-box">
-            <div class="lock-icon">🔐</div>
-            <h1>Zona Restringida</h1>
-            <p class="subtitle">Ingresa el código de acceso</p>
-            
-            <input type="password" 
-                   id="passwordInput" 
-                   class="password-input" 
-                   placeholder="••••••••" 
-                   autocomplete="off">
-            
-            <button onclick="checkPassword()" class="btn">🔓 ACCEDER</button>
-            <button onclick="window.location.href='/'" class="btn back-btn">← Volver al inicio</button>
-            
-            <div id="errorMsg" class="error-msg">❌ Código incorrecto</div>
-        </div>
-
-        <!-- ===== UPLOAD FORM ===== -->
-        <div id="uploadBox" class="upload-box">
-            <h1 style="color: #ff00ff; text-align: center; margin-bottom: 20px;">🔥 Subir Contenido</h1>
-            
-            <form id="uploadForm">
-                <div class="form-group">
-                    <label>📁 Archivo:</label>
-                    <input type="file" id="fileInput" accept="image/*,video/*" required>
-                    <div id="preview" class="preview"></div>
-                </div>
-
-                <div class="form-group">
-                    <label>Tipo:</label>
-                    <select id="typeSelect">
-                        <option value="image">📷 Imagen</option>
-                        <option value="video">🎥 Video</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Descripción:</label>
-                    <textarea id="captionInput" placeholder="Escribe algo..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Nivel controversia:</label>
-                    <select id="levelSelect">
-                        <option value="1">🔥 Nivel 1</option>
-                        <option value="2">🔥🔥 Nivel 2</option>
-                        <option value="3" selected>🔥🔥 Nivel 3</option>
-                        <option value="4">🔥🔥🔥 Nivel 4</option>
-                        <option value="5">🔥🔥🔥🔥 Nivel 5</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Tags (opcional):</label>
-                    <input type="text" id="tagsInput" placeholder="ia, fail, meme">
-                </div>
-
-                <button type="submit" class="btn">📤 SUBIR</button>
-                <button type="button" onclick="logout()" class="btn back-btn">🚪 Salir</button>
-            </form>
-            
-            <div id="message" class="message"></div>
-        </div>
+    <!-- LOGIN -->
+    <div id="loginBox" class="box">
+        <h1>🔐 Zona Restringida</h1>
+        <input type="password" id="pass" placeholder="Código de acceso">
+        <button onclick="check()">ACCEDER</button>
+        <div id="err" class="hidden error" style="margin-top:10px;padding:10px;border:1px solid;"></div>
+    </div>
+    <!-- UPLOAD FORM -->
+    <div id="uploadBox" class="box hidden">
+        <h1>🔥 Subir Contenido</h1>
+        
+        <input type="file" id="file" accept="image/*,video/*">
+        <select id="type">
+            <option value="image">Imagen</option>
+            <option value="video">Video</option>
+        </select>
+        <textarea id="cap" placeholder="Descripción"></textarea>
+        <select id="level">
+            <option value="1">🔥 Nivel 1</option>
+            <option value="2">🔥🔥 Nivel 2</option>
+            <option value="3">🔥🔥 Nivel 3</option>
+            <option value="4">🔥🔥🔥 Nivel 4</option>
+            <option value="5">🔥🔥🔥 Nivel 5</option>
+        </select>
+        <input type="text" id="tags" placeholder="Tags (coma separados)">
+        
+        <button onclick="upload()">📤 SUBIR</button>
+        <button onclick="logout()" style="background:#f00;color:#fff;">🚪 SALIR</button>
+        <div id="msg" class="hidden" style="margin-top:10px;padding:10px;border:1px solid;"></div>
     </div>
 
     <script>
-        // ===== CLAVE SECRETA (ofuscada) =====
-        const CLAVE_REAL = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51);
-
-        // ===== CHECK PASSWORD =====
-        function checkPassword() {
-            const input = document.getElementById('passwordInput');
-            const errorMsg = document.getElementById('errorMsg');
-            const loginBox = document.getElementById('loginBox');
-            const uploadBox = document.getElementById('uploadBox');
+        // CLAVE
+        const CLAVE = String.fromCharCode(112,97,116,105,116,111,49,50,51);
+        
+        // CHECK LOGIN
+        function check() {
+            const p = document.getElementById('pass').value;
+            const err = document.getElementById('err');
             
-            if (input.value === CLAVE_REAL) {
-                // Correcto
-                sessionStorage.setItem('admin_ok', '1');
-                loginBox.style.display = 'none';
-                uploadBox.classList.add('show');
-                errorMsg.classList.remove('show');
+            if (p === CLAVE) {
+                sessionStorage.setItem('ok', '1');
+                showUpload();
             } else {
-                // Incorrecto
-                errorMsg.classList.add('show');
-                input.value = '';                input.focus();
+                err.textContent = '❌ Incorrecto';
+                err.classList.remove('hidden');
             }
         }
-
-        // ===== LOGOUT =====
-        function logout() {
-            sessionStorage.removeItem('admin_ok');
+        
+        // SHOW UPLOAD
+        function showUpload() {
+            document.getElementById('loginBox').classList.add('hidden');
+            document.getElementById('uploadBox').classList.remove('hidden');
+        }
+        
+        // LOGOUT
+        function logout() {            sessionStorage.removeItem('ok');
             location.reload();
         }
-
-        // ===== CHECK ON LOAD =====
+        
+        // CHECK ON LOAD
         window.onload = function() {
-            if (sessionStorage.getItem('admin_ok') === '1') {
-                document.getElementById('loginBox').style.display = 'none';
-                document.getElementById('uploadBox').classList.add('show');
+            if (sessionStorage.getItem('ok') === '1') {
+                showUpload();
             }
-            
-            // Enter key
-            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') checkPassword();
-            });
-            
-            // File preview
-            document.getElementById('fileInput').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const preview = document.getElementById('preview');
-                const url = URL.createObjectURL(file);
-                
-                if (file.type.startsWith('image/')) {
-                    preview.innerHTML = `<img src="${url}">`;
-                } else if (file.type.startsWith('video/')) {
-                    preview.innerHTML = `<video src="${url}" controls></video>`;
-                }
-                preview.style.display = 'block';
-            });
-            
-            // Form submit
-            document.getElementById('uploadForm').addEventListener('submit', uploadContent);
         };
-
-        // ===== UPLOAD FUNCTION =====
-        async function uploadContent(e) {
-            e.preventDefault();
-            
-            const file = document.getElementById('fileInput').files[0];
-            const type = document.getElementById('typeSelect').value;
-            const caption = document.getElementById('captionInput').value;
-            const level = parseInt(document.getElementById('levelSelect').value);            const tagsStr = document.getElementById('tagsInput').value;
-            const tags = tagsStr.split(',').map(t => t.trim()).filter(t => t);
+        
+        // UPLOAD
+        async function upload() {
+            const file = document.getElementById('file').files[0];
+            const type = document.getElementById('type').value;
+            const cap = document.getElementById('cap').value;
+            const level = parseInt(document.getElementById('level').value);
+            const tags = document.getElementById('tags').value.split(',').map(t=>t.trim()).filter(t=>t);
+            const msg = document.getElementById('msg');
             
             if (!file) {
-                showMessage('❌ Selecciona un archivo', 'error');
+                msg.textContent = '❌ Selecciona archivo';
+                msg.className = 'error';
+                msg.classList.remove('hidden');
                 return;
             }
             
-            showMessage('⏳ Subiendo...', 'success');
+            msg.textContent = '⏳ Subiendo...';
+            msg.className = 'success';
+            msg.classList.remove('hidden');
             
             try {
                 // Import Supabase
-                const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-                const supabase = createClient(
+                const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+                const supabase = mod.createClient(
                     'https://zcgmpwyntuedqezl.supabase.co',
                     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjZ21wd3ludHVlZHFlemJnZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NzM2MjcsImV4cCI6MjA4ODU0OTYyN30.YsK-ByxL-gYv7woOlFmMGMlpusrHH-8gSmrxNpDKRqI'
                 );
                 
                 // Upload file
-                const fileName = `${Date.now()}_${file.name.replace(/\s/g, '_')}`;
-                const { error: uploadError } = await supabase.storage
+                const name = Date.now() + '_' + file.name.replace(/\s/g, '_');
+                const { error: upErr } = await supabase.storage
                     .from('controversial-content')
-                    .upload(fileName, file);
+                    .upload(name, file);
                 
-                if (uploadError) throw uploadError;
+                if (upErr) throw upErr;
                 
-                // Get public URL
+                // Get URL
                 const {  { publicUrl } } = supabase.storage
-                    .from('controversial-content')
-                    .getPublicUrl(fileName);
+                    .from('controversial-content')                    .getPublicUrl(name);
                 
-                // Save to database
-                const { error: dbError } = await supabase
+                // Save to DB
+                const { error: dbErr } = await supabase
                     .from('controversial_content')
                     .insert({
                         type: type,
                         url: publicUrl,
-                        caption: caption,
+                        caption: cap,
                         controversy_level: level,
                         tags: tags.length > 0 ? tags : null,
                         is_active: true
                     });
                 
-                if (dbError) throw dbError;
+                if (dbErr) throw dbErr;
                 
-                showMessage('✅ ¡Subido exitosamente!', 'success');
-                document.getElementById('uploadForm').reset();
-                document.getElementById('preview').style.display = 'none';
+                msg.textContent = '✅ ¡Subido!';
+                document.getElementById('file').value = '';
+                document.getElementById('cap').value = '';
+                document.getElementById('tags').value = '';
                 
-            } catch (error) {                console.error('Error:', error);
-                showMessage('❌ Error: ' + error.message, 'error');
+            } catch (e) {
+                console.error(e);
+                msg.textContent = '❌ Error: ' + e.message;
+                msg.className = 'error';
             }
-        }
-
-        function showMessage(text, type) {
-            const msg = document.getElementById('message');
-            msg.textContent = text;
-            msg.className = `message ${type}`;
         }
     </script>
 </body>
