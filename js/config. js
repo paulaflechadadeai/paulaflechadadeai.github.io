@@ -1,0 +1,10 @@
+export const SUPABASE_CONFIG = {
+  url: 'https://tu-proyecto.supabase.co',
+  anonKey: 'tu-anon-key-aqui'
+};
+
+export const STORAGE_BUCKETS = {
+  screenshots: 'ai-screenshots',
+  controversial: 'controversial-content',
+  audio: 'audio-files'
+};
