@@ -472,12 +472,65 @@
         // Llamar a la función al cargar la página
         mostrarWhoami();
     </script>
-    <!-- Sección Controversial -->
-<section id="controversial-carousel">
-  <!-- El carousel se renderiza aquí automáticamente -->
-</section>
+<!-- Sección Controversial -->
+<section id="controversial-carousel"></section>
 
-<script type="module" src="./js/main.js"></script>
+<!-- Scripts de Supabase -->
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  
+  // Tu configuración de Supabase
+  const supabaseUrl = 'https://TU-PROYECTO.supabase.co';
+  const supabaseKey = 'TU-ANON-KEY';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  // Cargar galería controversial
+  async function loadControversialGallery() {
+    const { data, error } = await supabase
+      .from('controversial_content')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error:', error);
+      document.getElementById('controversial-carousel').innerHTML = 
+        '<p style="color: #ff006e; text-align: center;">🔥 Zona Controversial (Próximamente)</p>';
+      return;
+    }
+
+    if (data.length === 0) {
+      document.getElementById('controversial-carousel').innerHTML = 
+        '<p style="color: #aaa; text-align: center;">📂 Sin contenido controversial aún</p>';
+      return;
+    }
+
+    // Renderizar carousel simple
+    const container = document.getElementById('controversial-carousel');
+    container.innerHTML = `
+      <div style="max-width: 800px; margin: 2rem auto; padding: 2rem; border: 2px solid #ff006e; border-radius: 15px;">
+        <h2 style="color: #ff006e; text-align: center; margin-bottom: 2rem;">🔥 Zona Controversial</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+          ${data.slice(0, 6).map(item => `
+            <div style="background: #1a1a2e; border-radius: 10px; overflow: hidden; border: 1px solid #333;">
+              ${item.type === 'image' 
+                ? `<img src="${item.url}" style="width: 100%; height: 200px; object-fit: cover;">`
+                : `<video src="${item.url}" style="width: 100%; height: 200px; object-fit: cover;" controls></video>`
+              }
+              <div style="padding: 1rem;">
+                <p style="color: #fff; margin: 0 0 0.5rem 0;">${item.caption || 'Sin descripción'}</p>
+                <span style="color: #ff006e; font-size: 0.8rem;">${'🔥'.repeat(item.controversy_level || 1)}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // Cargar al iniciar
+  document.addEventListener('DOMContentLoaded', loadControversialGallery);
+</script>
 </body>
 </html>
 
