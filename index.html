@@ -519,58 +519,78 @@
         // Llamar a la función al cargar la página
         mostrarWhoami();
     </script>
-
-    <!-- ===== SCRIPT DE SUPABASE - GALERÍA CONTROVERSIAL ===== -->
-    <script type="module">
-      import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-      
-      const supabaseUrl = 'https://zcgmpwyntuedqezl.supabase.co';
-      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjZ21wd3ludHVlZHFlemJnZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NzM2MjcsImV4cCI6MjA4ODU0OTYyN30.YsK-ByxL-gYv7woOlFmMGMlpusrHH-8gSmrxNpDKRqI';
-      const supabase = createClient(supabaseUrl, supabaseKey);
-
-      async function loadControversialGallery() {
-        const container = document.getElementById('controversial-carousel');
-        
-        try {
-          const { data, error } = await supabase
-            .from('controversial_content')
-            .select('*')
-            .eq('is_active', true)
-            .order('created_at', { ascending: false });
-          if (error) throw error;
-
-          if (!data || data.length === 0) {
-            container.innerHTML = '<p style="color: #666; text-align: center; padding: 2rem;">📂 Sin contenido controversial aún</p>';
-            return;
-          }
-
-          container.innerHTML = `
-            <div style="max-width: 800px; margin: 2rem auto; padding: 2rem; border: 2px solid var(--neon-pink); border-radius: 15px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
-              <h2 style="color: var(--neon-pink); text-align: center; margin-bottom: 2rem; font-family: monospace;">🔥 Zona Controversial</h2>
-              <div class="controversial-grid">
-                ${data.slice(0, 6).map(item => `
-                  <div class="controversial-card">
-                    ${item.type === 'image' 
-                      ? `<img src="${item.url}" loading="lazy" alt="${item.caption || 'Contenido'}">`
-                      : `<video src="${item.url}" controls></video>`
-                    }
-                    <p class="caption">${item.caption || 'Sin descripción'}</p>
-                    <div class="meta">
-                      <span class="fire">${'🔥'.repeat(item.controversy_level || 1)}</span>
-                      <span>👁 ${item.views_count || 0}</span>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          `;
-        } catch (err) {
-          console.error('Error loading gallery:', err);
-          container.innerHTML = '<p style="color: var(--neon-pink); text-align: center; padding: 2rem;">⚠️ Error cargando contenido</p>';
-        }
+<script>
+// Función simple para cargar contenido controversial
+async function cargarControversial() {
+  const container = document.getElementById('controversial-carousel');
+  if (!container) return;
+  
+  container.innerHTML = '<p style="color:#0f0;text-align:center;">⏳ Cargando...</p>';
+  
+  try {
+    // URL directa de la API de Supabase
+    const url = 'https://zcgmpwyntuedqezl.supabase.co/rest/v1/controversial_content?is_active=eq.true&order=created_at.desc&limit=6';
+    
+    const response = await fetch(url, {
+      headers: {
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjZ21wd3ludHVlZHFlemJnZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NzM2MjcsImV4cCI6MjA4ODU0OTYyN30.YsK-ByxL-gYv7woOlFmMGMlpusrHH-8gSmrxNpDKRqI',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjZ21wd3ludHVlZHFlemJnZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NzM2MjcsImV4cCI6MjA4ODU0OTYyN30.YsK-ByxL-gYv7woOlFmMGMlpusrHH-8gSmrxNpDKRqI'
       }
+    });
+    
+    console.log('Status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status);
+    }
+    
+    const data = await response.json();
+    console.log('Datos:', data);
+    
+    if (!data || data.length === 0) {
+      container.innerHTML = '<p style="color:#666;text-align:center;padding:2rem;">📂 Sin contenido aún</p>';
+      return;
+    }
+    
+    // Construir HTML
+    let html = '<div style="max-width:800px;margin:2rem auto;padding:2rem;border:2px solid #ff00ff;border-radius:15px;">';
+    html += '<h2 style="color:#ff00ff;text-align:center;margin-bottom:2rem;">🔥 Zona Controversial</h2>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;">';
+    
+    data.forEach(item => {
+      html += '<div style="background:#0f0f1e;border-radius:10px;overflow:hidden;border:1px solid #333;">';
+      
+      if (item.type === 'image') {
+        html += '<img src="' + item.url + '" style="width:100%;height:200px;object-fit:cover;" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23333%22 width=%22200%22 height=%22200%22/%3E%3Ctext fill=%22%23fff%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EError%3C/text%3E%3C/svg%3E\'">';
+      } else {
+        html += '<video src="' + item.url + '" style="width:100%;height:200px;object-fit:cover;" controls></video>';
+      }
+      
+      html += '<div style="padding:1rem;">';
+      html += '<p style="color:#fff;margin:0 0 0.5rem 0;">' + (item.caption || '') + '</p>';
+      html += '<div style="display:flex;justify-content:space-between;font-size:0.8rem;">';
+      html += '<span style="color:#ff00ff;">' + '🔥'.repeat(item.controversy_level || 1) + '</span>';
+      html += '<span style="color:#666;">👁 ' + (item.views_count || 0) + '</span>';
+      html += '</div></div></div>';
+    });
+    
+    html += '</div></div>';
+    container.innerHTML = html;
+    console.log('✅ Cargado exitosamente');
+    
+  } catch (error) {
+    console.error('❌ Error:', error);
+    container.innerHTML = '<p style="color:#f00;text-align:center;padding:2rem;">⚠️ Error: ' + error.message + '</p>';
+  }
+}
 
-      document.addEventListener('DOMContentLoaded', loadControversialGallery);
-    </script>
+// Cargar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', cargarControversial);
+} else {
+  cargarControversial();
+}
+</script>
+        
 </body>
 </html>
