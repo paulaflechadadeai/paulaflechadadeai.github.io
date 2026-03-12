@@ -1,14 +1,139 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Test</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Paula Flecha de AI</title>
+<style>
+:root{--neon-green:#00ff00;--neon-pink:#ff00ff;--neon-blue:#00aaff;--bg-dark:#0a0a0a}
+body{font-family:'Courier New',monospace;background:var(--bg-dark);color:var(--neon-green);margin:0;padding:20px;min-height:100vh}
+.container{max-width:600px;margin:0 auto}
+.header{text-align:center;border-bottom:2px dashed var(--neon-pink);padding-bottom:20px;margin-bottom:30px}
+.title{color:var(--neon-pink);font-size:2em;text-shadow:0 0 10px var(--neon-pink);animation:glitch 2s infinite}
+@keyframes glitch{0%,100%{transform:translate(0)}10%{transform:translate(-2px,1px)}20%{transform:translate(1px,-1px)}}
+.login-box,.dashboard{border:3px solid var(--neon-pink);border-radius:15px;padding:30px;background:#000;box-shadow:0 0 20px rgba(255,0,255,0.3)}
+.hidden{display:none}
+input{width:100%;padding:15px;margin:10px 0;background:#000;border:2px solid var(--neon-green);color:var(--neon-green);font-family:monospace;font-size:16px;border-radius:5px;box-sizing:border-box}
+input:focus{outline:none;border-color:var(--neon-pink)}
+.btn{width:100%;padding:15px;margin:10px 0;border:none;border-radius:5px;font-family:monospace;font-size:16px;font-weight:bold;cursor:pointer;transition:all 0.3s}
+.btn-primary{background:var(--neon-green);color:#000}
+.btn-primary:hover{background:#0f0;transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,255,0,0.4)}
+.menu-grid{display:grid;gap:15px;margin:20px 0}
+.menu-item{border:2px solid;border-radius:10px;padding:20px;text-align:center;text-decoration:none;transition:all 0.3s;display:block}
+.menu-item:hover{transform:translateY(-3px);box-shadow:0 5px 20px rgba(0,0,0,0.5)}
+.menu-item.upload{border-color:var(--neon-blue);color:var(--neon-blue)}
+.menu-item.manage{border-color:var(--neon-pink);color:var(--neon-pink)}
+.menu-item.site{border-color:var(--neon-green);color:var(--neon-green)}
+.menu-icon{font-size:2em;display:block;margin-bottom:10px}
+.menu-title{font-size:1.2em;font-weight:bold;display:block;margin-bottom:5px}
+.menu-desc{font-size:0.9em;opacity:0.7}
+.storage-info{background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:15px;margin:20px 0}
+.storage-bar{background:#333;height:20px;border-radius:10px;overflow:hidden;margin:10px 0}
+.storage-fill{height:100%;background:linear-gradient(90deg,#0f0,#ff0,#f00);transition:width 0.3s}
+.storage-text{text-align:center;font-size:14px;margin:5px 0}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:15px 0}
+.stat-box{background:#1a1a1a;border:1px solid #333;border-radius:5px;padding:10px;text-align:center}
+.stat-number{font-size:1.5em;color:var(--neon-pink);font-weight:bold}
+.stat-label{font-size:0.8em;color:#888}
+.footer{text-align:center;margin-top:30px;padding-top:20px;border-top:1px dashed #444;color:#666;font-size:0.9em}
+.alert{padding:10px;border-radius:5px;margin:10px 0;text-align:center}
+.alert-warn{background:rgba(255,255,0,0.1);border:1px solid #ff0;color:#ff0}
+.alert-error{background:rgba(255,0,0,0.1);border:1px solid #f00;color:#f00}
+.btn-logout{background:#f00;color:#fff}
+</style>
 </head>
-<body style="background:#000;color:#0f0;font-family:monospace;padding:20px;">
-    <h1>🔐 Admin Test</h1>
-    <p>Si ves esto, el HTML funciona</p>
-    <button onclick="alert('JS funciona!')">Probar JS</button>
-    <br><br>
-    <a href="/" style="color:#0af;">← Volver</a>
+<body>
+<div class="container">
+<div class="header">
+<h1 class="title">🔐 Admin Panel</h1>
+<p>Paula Flecha de AI · Cloudinary + Turso</p>
+</div>
+<!-- LOGIN -->
+<div id="loginBox" class="login-box">
+<h2 style="color:var(--neon-pink);text-align:center">🔑 Acceso Restringido</h2>
+<p style="text-align:center;color:#666">Solo personal autorizado</p>
+<input type="password" id="password" placeholder="Ingresa el código">
+<button onclick="entrar()" class="btn btn-primary">ACCEDER</button>
+<p style="text-align:center;color:#666;font-size:12px;margin-top:15px">💡 Pista: patito123</p>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="dashboard hidden">
+<h2 style="color:var(--neon-green);text-align:center">✅ Bienvenida, Admin</h2>
+
+<!-- Storage Info -->
+<div class="storage-info">
+<div class="storage-text" id="storageText">Calculando...</div>
+<div class="storage-bar"><div id="storageBar" class="storage-fill" style="width:0%"></div></div>
+<div class="stats-grid">
+<div class="stat-box"><div class="stat-number" id="totalItems">0</div><div class="stat-label">Items Totales</div></div>
+<div class="stat-box"><div class="stat-number" id="activeItems">0</div><div class="stat-label">Activos</div></div>
+<div class="stat-box"><div class="stat-number" id="videoCount">0</div><div class="stat-label">Videos</div></div>
+<div class="stat-box"><div class="stat-number" id="photoCount">0</div><div class="stat-label">Fotos</div></div>
+</div>
+</div>
+
+<div id="alertBox"></div>
+
+<!-- Menú Principal -->
+<div class="menu-grid">
+<a href="upload-cloudinary.html" class="menu-item upload">
+<span class="menu-icon">📤</span>
+<span class="menu-title">SUBIR CONTENIDO</span>
+<span class="menu-desc">Cloudinary + Turso</span>
+</a>
+
+<a href="gestionar-cloudinary.html" class="menu-item manage">
+<span class="menu-icon">📋</span>
+<span class="menu-title">GESTIONAR</span>
+<span class="menu-desc">Editar, ocultar, eliminar</span>
+</a>
+
+<a href="../index.html" class="menu-item site">
+<span class="menu-icon">🏠</span>
+<span class="menu-title">VER SITIO WEB</span>
+<span class="menu-desc">Tu página principal</span>
+</a>
+</div>
+
+<button onclick="salir()" class="btn btn-logout">🚪 CERRAR SESIÓN</button></div>
+
+<div class="footer">
+<p>📍 Admin Panel v2.0 - Cloudinary + Turso</p>
+<p>100% Cloud · Sin censura · Tú controlas</p>
+<p>"Internet era gratis en el 93. Soñar no tiene sponsor."</p>
+</div>
+</div>
+
+<script>
+const TURSO_URL='libsql://controversial-db-paulaflechadadeai.aws-us-east-1.turso.io';
+const TURSO_TOKEN='eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzMzNDIzMTksImlkIjoiMDE5Y2UzNmMtOWYwMS03YWM3LWFkNTMtNmNhMmIxNDk0MjJhIiwicmlkIjoiYmUzOTQ4YWUtMzJjNS00YjdjLWFmMjYtNjQ2ZTM5NzMyZWU3In0.2mm72hfz1VQhE0j3rjdzeqXHHzMH2PJv3CUwuKiNS4_3PBTf4PRaDgcMxKLIlAtyXJLZ-U-xWEc10nsR6kvsBg';
+
+function entrar(){if(document.getElementById('password').value==='patito123'){sessionStorage.setItem('admin_logged','1');mostrarDashboard();}else{alert('❌ Código incorrecto');document.getElementById('password').value='';}}
+function salir(){sessionStorage.removeItem('admin_logged');location.reload();}
+function mostrarDashboard(){document.getElementById('loginBox').style.display='none';document.getElementById('dashboard').classList.remove('hidden');actualizarStats();}
+if(sessionStorage.getItem('admin_logged')==='1'){mostrarDashboard();}
+document.addEventListener('keypress',function(e){if(e.key==='Enter'&&document.getElementById('loginBox').style.display!=='none'){entrar();}});
+
+async function actualizarStats(){
+try{
+const res=await fetch(TURSO_URL+'?sql=SELECT COUNT(*) as total,SUM(CASE WHEN is_active=1 THEN 1 ELSE 0 END) as activos,SUM(CASE WHEN type="video" THEN 1 ELSE 0 END) as videos,SUM(CASE WHEN type="image" THEN 1 ELSE 0 END) as fotos FROM controversial_content',{headers:{'Authorization':'Bearer '+TURSO_TOKEN}});
+const data=await res.json();
+const row=data.rows[0];
+document.getElementById('totalItems').textContent=row.total||0;
+document.getElementById('activeItems').textContent=row.activos||0;
+document.getElementById('videoCount').textContent=row.videos||0;
+document.getElementById('photoCount').textContent=row.fotos||0;
+
+var percent=Math.min((row.total/100*100),100).toFixed(1);
+document.getElementById('storageText').innerHTML='<strong>📊 Items: '+row.total+' / ∞</strong>';
+document.getElementById('storageBar').style.width=percent+'%';
+
+var alertBox=document.getElementById('alertBox');
+if(row.total>90){alertBox.innerHTML='<div class="alert alert-error">⚠️ Muchos items (>90)<br>Considera limpiar contenido antiguo</div>';}
+else if(row.total>75){alertBox.innerHTML='<div class="alert alert-warn">⚠️ Contenido acumulándose (>75)<br>Revisa el panel de gestión</div>';}
+else{alertBox.innerHTML='';}
+}catch(e){console.error('Error:',e);document.getElementById('storageText').innerHTML='<strong style="color:#f00">⚠️ Error al cargar stats</strong>';}}
+</script>
 </body>
 </html>
