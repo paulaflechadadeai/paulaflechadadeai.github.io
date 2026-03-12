@@ -1,358 +1,103 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload - Admin</title>
-    <style>
-        body {
-            background: #000;
-            color: #0f0;
-            font-family: 'Courier New', monospace;
-            padding: 20px;
-            margin: 0;
-        }
-
-        .box {
-            border: 3px solid #ff00ff;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 600px;
-            margin: 50px auto;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
-        }
-
-        h1 {
-            color: #ff00ff;
-            margin-bottom: 30px;
-            text-shadow: 0 0 10px #ff00ff;
-        }
-
-        input[type="password"],
-        input[type="file"],
-        input[type="text"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            background: #000;
-            border: 2px solid #00ff00;
-            color: #00ff00;
-            font-size: 14px;
-            font-family: 'Courier New', monospace;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        input[type="password"]:focus,
-        input[type="file"]:focus,        input[type="text"]:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #ff00ff;
-            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            background: #00ff00;
-            color: #000;
-            border: none;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            transition: all 0.3s;
-        }
-
-        button:hover {
-            background: #0f0;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .btn-logout {
-            background: #ff0000;
-            color: #fff;
-        }
-
-        .btn-logout:hover {
-            background: #f00;
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .log {
-            margin-top: 20px;
-            padding: 15px;            border: 2px solid #333;
-            border-radius: 5px;
-            text-align: left;
-            font-size: 12px;
-            background: #0a0a0a;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .log-line {
-            margin: 5px 0;
-            padding: 5px;
-            border-left: 3px solid #333;
-            padding-left: 10px;
-        }
-
-        .log-info {
-            color: #00aaff;
-            border-left-color: #00aaff;
-        }
-
-        .log-success {
-            color: #00ff00;
-            border-left-color: #00ff00;
-        }
-
-        .log-error {
-            color: #ff0000;
-            border-left-color: #ff0000;
-        }
-
-        .glitch {
-            animation: glitch 1s linear infinite;
-        }
-
-        @keyframes glitch {
-            2%, 64% { transform: translate(2px, 0) skew(0deg); }
-            4%, 60% { transform: translate(-2px, 0) skew(0deg); }
-            62% { transform: translate(0, 0) skew(5deg); }
-        }
-
-        @media (max-width: 600px) {
-            .box {
-                margin: 20px auto;
-                padding: 20px;
-            }
-            
-            button {
-                font-size: 14px;
-            }        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Local - Sin APIs</title>
+<style>
+body{background:#000;color:#0f0;font-family:monospace;padding:20px}
+.box{border:3px solid #f0f;padding:20px;border-radius:15px;max-width:500px;margin:30px auto}
+input,select,textarea{width:100%;padding:12px;margin:8px 0;background:#000;border:2px solid #0f0;color:#0f0}
+button{width:100%;padding:15px;background:#0f0;color:#000;border:none;font-weight:bold;cursor:pointer;margin:10px 0}
+.hidden{display:none}
+.log{margin-top:10px;padding:10px;border:2px solid #333;font-size:12px;max-height:200px;overflow-y:auto}
+.ok{color:#0f0}.err{color:#f00}.info{color:#0af}
+</style>
 </head>
 <body>
 
-    <!-- LOGIN -->
-    <div id="login" class="box">
-        <h1 class="glitch">🔐 Zona Restringida</h1>
-        <p style="color: #666; margin-bottom: 20px;">Acceso solo para administradores</p>
-        <input type="password" id="password" placeholder="Ingresa el código secreto">
-        <button onclick="entrar()">ACCEDER</button>
-        <p style="color: #666; font-size: 12px; margin-top: 20px;">💡 Pista: patito123</p>
-    </div>
+<div id="login" class="box">
+<h1>🔐 Zona Restringida</h1>
+<input type="password" id="p" placeholder="Código">
+<button onclick="entrar()">ACCEDER</button>
+</div>
 
-    <!-- UPLOAD PANEL -->
-    <div id="uploadPanel" class="box hidden">
-        <h1 class="glitch">🔥 Subir Contenido</h1>
-        <p style="color: #00aaff; margin-bottom: 20px;">Zona Controversial - Back4App</p>
-        
-        <input type="file" id="fileInput" accept="image/*,video/*">
-        <p style="color: #666; font-size: 12px; margin: 5px 0;">📷 Imagen o 🎥 Video</p>
-        
-        <select id="typeSelect">
-            <option value="image">📷 Imagen</option>
-            <option value="video">🎥 Video</option>
-        </select>
-        
-        <textarea id="captionInput" placeholder="Descripción del contenido..." rows="3"></textarea>
-        
-        <select id="levelSelect">
-            <option value="1">🔥 Nivel 1 - Suave</option>
-            <option value="2">🔥🔥 Nivel 2 - Moderado</option>
-            <option value="3" selected>🔥🔥 Nivel 3 - Controversial</option>
-            <option value="4">🔥🔥🔥 Nivel 4 - Muy controversial</option>
-            <option value="5">🔥🔥🔥 Nivel 5 - Extremo</option>
-        </select>
-        
-        <input type="text" id="tagsInput" placeholder="Tags (separados por coma: meme, viral, etc)">
-        
-        <button onclick="subirContenido()">📤 SUBIR CONTENIDO</button>
-        <button onclick="salir()" class="btn-logout">🚪 SALIR</button>
-        
-        <div id="logContainer" class="log hidden">
-            <div style="color: #ff00ff; margin-bottom: 10px; font-weight: bold;">📋 Log de operaciones:</div>
-            <div id="logContent"></div>
-        </div>
-    </div>
+<div id="panel" class="box hidden">
+<h1>📁 Upload Local</h1>
+<p style="color:#666;font-size:12px">Todo se guarda en TU navegador</p>
 
-    <!-- Parse SDK -->
-    <script src="https://npmcdn.com/parse@2.19.0/dist/parse.min.js"></script>    
-    <script>
-    // ========================================
-    // CONFIGURACIÓN DE BACK4APP
-    // ========================================
-    Parse.initialize("na15HGmYfZQBwHXv56AyjSWpEafZjSh4ufdiNKSW", "EiyEYPlRytJ15YPxW7PWPLTTH5Q369g1FiXKWRR7");
-    Parse.serverURL = 'https://parseapi.back4app.com';
+<input type="file" id="file" accept="image/*">
+<select id="type"><option value="image">📷 Imagen</option></select>
+<textarea id="cap" placeholder="Descripción" rows="2"></textarea>
+<select id="level">
+<option value="1">🔥 Nivel 1</option>
+<option value="2">🔥🔥 Nivel 2</option>
+<option value="3" selected>🔥🔥 Nivel 3</option>
+<option value="4">🔥🔥🔥 Nivel 4</option>
+<option value="5">🔥🔥🔥 Nivel 5</option>
+</select>
+<input type="text" id="tags" placeholder="Tags (coma separados)">
 
-    // ========================================
-    // FUNCIONES DE LOGIN
-    // ========================================
-    function entrar() {
-        var pass = document.getElementById('password').value;
-        if (pass === 'patito123') {
-            sessionStorage.setItem('admin_logged', '1');
-            mostrarPanel();
-        } else {
-            alert('❌ Código incorrecto\n\nInténtalo de nuevo.');
-            document.getElementById('password').value = '';
-        }
-    }
+<button onclick="subir()">💾 GUARDAR LOCAL</button>
+<button onclick="exportar()">📤 EXPORTAR BACKUP</button>
+<button onclick="salir()" style="background:#f00;color:#fff">🚪 SALIR</button>
 
-    function salir() {
-        sessionStorage.removeItem('admin_logged');
-        location.reload();
-    }
+<div id="log" class="log hidden"></div>
+</div>
 
-    function mostrarPanel() {
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('uploadPanel').classList.remove('hidden');
-    }
+<script>
+function entrar(){if(document.getElementById('p').value==='patito123'){sessionStorage.setItem('ok','1');document.getElementById('login').style.display='none';document.getElementById('panel').classList.remove('hidden');}else{alert('❌ Incorrecto');}}
+function salir(){sessionStorage.removeItem('ok');location.reload();}if(sessionStorage.getItem('ok')==='1'){document.getElementById('login').style.display='none';document.getElementById('panel').classList.remove('hidden');}
 
-    // Verificar si ya está logueado
-    if (sessionStorage.getItem('admin_logged') === '1') {
-        mostrarPanel();
-    }
+function log(m,t){var l=document.getElementById('log');l.classList.remove('hidden');l.innerHTML+='<div class="'+t+'">> '+m+'</div>';l.scrollTop=l.scrollHeight;}
 
-    // Permitir login con Enter
-    document.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && !document.getElementById('login').classList.contains('hidden')) {
-            entrar();
-        }
-    });
+// Comprimir imagen a base64
+function compressImage(file, maxWidth=800){return new Promise((resolve,reject)=>{
+var img=new Image(),canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+img.onload=()=>{
+var ratio=Math.min(maxWidth/img.width,1);
+canvas.width=img.width*ratio;canvas.height=img.height*ratio;
+ctx.drawImage(img,0,0,canvas.width,canvas.height);
+resolve(canvas.toDataURL('image/jpeg',0.7));
+};
+img.onerror=reject;
+img.src=URL.createObjectURL(file);
+});}
 
-    // ========================================
-    // FUNCIONES DE LOG
-    // ========================================
-    function log(mensaje, tipo) {
-        var logContainer = document.getElementById('logContainer');
-        var logContent = document.getElementById('logContent');        
-        logContainer.classList.remove('hidden');
-        
-        var logClass = 'log-info';
-        if (tipo === 'success') logClass = 'log-success';
-        if (tipo === 'error') logClass = 'log-error';
-        
-        var hora = new Date().toLocaleTimeString();
-        var logLine = document.createElement('div');
-        logLine.className = 'log-line ' + logClass;
-        logLine.innerHTML = '[' + hora + '] ' + mensaje;
-        
-        logContent.appendChild(logLine);
-        logContainer.scrollTop = logContainer.scrollHeight;
-    }
+async function subir(){
+var file=document.getElementById('file').files[0];
+if(!file){log('❌ Selecciona una imagen','err');return;}
+log('⏳ Procesando...','info');
+try{
+var base64=await compressImage(file);
+var item={
+id:Date.now(),
+type:'image',
+url:base64,
+caption:document.getElementById('cap').value,
+controversy_level:parseInt(document.getElementById('level').value),
+tags:document.getElementById('tags').value.split(',').map(t=>t.trim()).filter(t=>t),
+is_active:true,
+views_count:0,
+createdAt:new Date().toISOString()
+};
+// Guardar en localStorage
+var key='controversial_local';
+var items=JSON.parse(localStorage.getItem(key)||'[]');
+items.unshift(item);
+localStorage.setItem(key,JSON.stringify(items));
+log('✅ ¡Guardado en tu navegador!','ok');
+log('💡 Aparece en tu web inmediatamente','info');
+document.getElementById('file').value='';document.getElementById('cap').value='';document.getElementById('tags').value='';
+}catch(e){log('❌ Error: '+e.message,'err');}}
 
-    function clearLog() {
-        document.getElementById('logContent').innerHTML = '';
-    }
-
-    // ========================================
-    // FUNCIÓN PRINCIPAL DE SUBIDA
-    // ========================================
-    async function subirContenido() {
-        clearLog();
-        
-        var fileInput = document.getElementById('fileInput');
-        var typeSelect = document.getElementById('typeSelect');
-        var captionInput = document.getElementById('captionInput');
-        var levelSelect = document.getElementById('levelSelect');
-        var tagsInput = document.getElementById('tagsInput');
-        
-        // Validar archivo
-        var file = fileInput.files[0];
-        if (!file) {
-            log('❌ Error: Selecciona un archivo', 'error');
-            return;
-        }
-        
-        log('📁 Archivo seleccionado: ' + file.name, 'info');
-        log('📊 Tamaño: ' + (file.size / 1024).toFixed(2) + ' KB', 'info');
-        
-        try {
-            // Paso 1: Subir archivo a Back4App
-            log('⏳ Subiendo archivo a Back4App...', 'info');
-            
-            var parseFile = new Parse.File(file.name, file);
-            await parseFile.save({
-                progress: function(progress) {
-                    log('📤 Progreso: ' + Math.round(progress * 100) + '%', 'info');                }
-            });
-            
-            var fileUrl = parseFile.url();
-            log('✅ Archivo subido exitosamente', 'success');
-            log('🔗 URL: ' + fileUrl, 'success');
-            
-            // Paso 2: Guardar en la base de datos
-            log('⏳ Guardando en la base de datos...', 'info');
-            
-            var ControversialContent = Parse.Object.extend("ControversialContent");
-            var item = new ControversialContent();
-            
-            // Configurar campos
-            item.set("type", typeSelect.value);
-            item.set("url", fileUrl);
-            item.set("caption", captionInput.value.trim());
-            item.set("controversy_level", parseInt(levelSelect.value));
-            
-            // Procesar tags
-            var tagsText = tagsInput.value.trim();
-            var tagsArray = tagsText ? tagsText.split(',').map(function(t) {
-                return t.trim();
-            }).filter(function(t) {
-                return t.length > 0;
-            }) : [];
-            item.set("tags", tagsArray);
-            
-            // Campos adicionales
-            item.set("is_active", true);
-            item.set("views_count", 0);
-            
-            // Guardar
-            await item.save();
-            
-            log('✅ Contenido guardado en la base de datos', 'success');
-            log('🎉 ¡SUBIDA COMPLETADA!', 'success');
-            log('💡 Recarga tu web para ver el contenido', 'success');
-            
-            // Limpiar formulario
-            fileInput.value = '';
-            captionInput.value = '';
-            tagsInput.value = '';
-            typeSelect.value = 'image';
-            levelSelect.value = '3';
-            
-            // Alerta visual
-            alert('✅ ¡Contenido subido exitosamente!\n\nRecarga tu web para verlo.');
-            
-        } catch (error) {            log('❌ Error: ' + error.message, 'error');
-            log('💡 Verifica tu conexión e inténtalo de nuevo', 'error');
-            console.error('Error detallado:', error);
-        }
-    }
-
-    // ========================================
-    // EFECTOS VISUALES
-    // ========================================
-    console.log('%c🔥 Admin Panel - Back4App', 'color: #ff00ff; font-size: 20px; font-weight: bold;');
-    console.log('%c> Conectado a: parseapi.back4app.com', 'color: #00ff00;');
-    </script>
-
+function exportar(){
+var key='controversial_local';
+var items=JSON.parse(localStorage.getItem(key)||'[]');
+if(items.length===0){log('⚠️ No hay datos para exportar','info');return;}
+var blob=new Blob([JSON.stringify(items,null,2)],{type:'application/json'});
+var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='backup-controversial-'+Date.now()+'.json';a.click();
+log('📦 Backup descargado - Guárdalo en Drive/USB','ok');}
+</script>
 </body>
 </html>
