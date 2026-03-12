@@ -445,52 +445,61 @@
         }
         mostrarWhoami();
 
-        // ===== ZONA CONTROVERSIAL - LOCAL-FIRST =====
-        function cargarControversial() {
-            const container = document.getElementById('controversial-carousel');
-            if (!container) return;
-            
-            const key = 'controversial_local';
-            const items = JSON.parse(localStorage.getItem(key) || '[]');
-            
-            if (items.length === 0) {
-                container.innerHTML = '<p style="color:#666;text-align:center;padding:2rem;">📂 Sin contenido aún<br><small style="color:#444">Sube contenido desde /admin/upload-local.html</small></p>';
-                return;
-            }
-            
-            const activos = items.filter(i => i.is_active !== false).slice(0, 6);
-            
-            let html = '<div style="max-width:800px;margin:2rem auto;padding:2rem;border:2px solid #ff00ff;border-radius:15px;">';
-            html += '<h2 style="color:#ff00ff;text-align:center;margin-bottom:2rem;">🔥 Zona Controversial</h2>';
-            html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;">';
-            
-            activos.forEach(item => {
-                html += '<div style="background:#0f0f1e;border-radius:10px;overflow:hidden;border:1px solid #333;">';
-                
-                if (item.type === 'image') {
-                    html += '<img src="' + item.url + '" style="width:100%;height:200px;object-fit:cover;" loading="lazy">';
-                } else {
-                    html += '<video src="' + item.url + '" style="width:100%;height:200px;object-fit:cover;" controls></video>';
+        // ===== ZONA CONTROVERSIAL - TURSO + CLOUDINARY =====
+        async function cargarControversial(){
+            const container=document.getElementById('controversial-carousel');
+            if(!container)return;
+
+            container.innerHTML='<p style="color:#0f0;text-align:center;">⏳ Cargando...</p>';
+
+            try{
+                const TURSO_URL='libsql://controversial-db-paulaflechadadeai.aws-us-east-1.turso.io';
+                const TURSO_TOKEN='eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzMzNDIzMTksImlkIjoiMDE5Y2UzNmMtOWYwMS03YWM3LWFkNTMtNmNhMmIxNDk0MjJhIiwicmlkIjoiYmUzOTQ4YWUtMzJjNS00YjdjLWFmMjYtNjQ2ZTM5NzMyZWU3In0.2mm72hfz1VQhE0j3rjdzeqXHHzMH2PJv3CUwuKiNS4_3PBTf4PRaDgcMxKLIlAtyXJLZ-U-xWEc10nsR6kvsBg';
+
+                const res=await fetch(TURSO_URL+'?sql=SELECT * FROM controversial_content WHERE is_active=1 ORDER BY created_at DESC LIMIT 6',{
+                    headers:{'Authorization':'Bearer '+TURSO_TOKEN}
+                });
+
+                const data=await res.json();
+                const items=data.rows||[];
+
+                if(items.length===0){
+                    container.innerHTML='<p style="color:#666;text-align:center;padding:2rem;">📂 Sin contenido aún<br><small>Sube desde /admin/upload-cloudinary.html</small></p>';
+                    return;
                 }
-                
-                html += '<div style="padding:1rem;">';
-                html += '<p style="color:#fff;margin:0 0 0.5rem 0;">' + (item.caption || '') + '</p>';
-                html += '<div style="display:flex;justify-content:space-between;font-size:0.8rem;">';
-                html += '<span style="color:#ff00ff;">' + '🔥'.repeat(item.controversy_level || 1) + '</span>';
-                html += '<span style="color:#666;">👁 ' + (item.views_count || 0) + '</span>';
-                html += '</div></div></div>';
-            });
-            
-            html += '</div></div>';
-            container.innerHTML = html;
-            console.log('✅ Zona Controversial cargada (' + activos.length + ' items)');
+
+                mostrarItems(items,container);
+                console.log('✅ Cargado desde Turso:',items.length,'items');
+
+            }catch(e){
+                console.error('❌ Error:',e);
+                container.innerHTML='<p style="color:#f00;text-align:center;padding:2rem;">⚠️ Error al cargar</p>';
+            }
         }
 
-        // Cargar cuando el DOM esté listo
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', cargarControversial);        } else {
-            cargarControversial();
+        function mostrarItems(items,container){
+            let html='<div style="max-width:800px;margin:2rem auto;padding:2rem;border:2px solid #ff00ff;border-radius:15px;">';
+            html+='<h2 style="color:#ff00ff;text-align:center;margin-bottom:2rem;">🔥 Zona Controversial</h2>';
+            html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;">';
+
+            items.forEach(item=>{
+                html+='<div style="background:#0f0f1e;border-radius:10px;overflow:hidden;border:1px solid #333;">';
+                if(item.type==='image'){
+                    html+='<img src="'+item.url+'" style="width:100%;height:200px;object-fit:cover;" loading="lazy" onerror="this.parentElement.innerHTML=\'<p style=\\"padding:2rem;text-align:center;color:#666;\\">❌ Error</p>\'">';
+                }else{
+                    html+='<video src="'+item.url+'" style="width:100%;height:200px;object-fit:cover;" controls></video>';
+                }                html+='<div style="padding:1rem;"><p style="color:#fff;margin:0 0 0.5rem 0;">'+(item.caption||'')+'</p>';
+                html+='<div style="display:flex;justify-content:space-between;font-size:0.8rem;">';
+                html+='<span style="color:#ff00ff;">'+'🔥'.repeat(item.controversy_level||1)+'</span>';
+                html+='<span style="color:#666;">👁 '+(item.views_count||0)+'</span></div></div></div>';
+            });
+
+            html+='</div></div>';
+            container.innerHTML=html;
         }
+
+        // Ejecutar
+        if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',cargarControversial);}else{cargarControversial();}
     </script>
 </body>
 </html>
