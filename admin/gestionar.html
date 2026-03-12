@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestionar Contenido - Videos y Fotos</title>
+<style>
+body{background:#000;color:#0f0;font-family:monospace;padding:20px}
+.box{border:2px solid #f0f;padding:15px;margin:10px 0;border-radius:10px}
+h1,h2{color:#f0f;margin-top:0}
+.item{border:1px solid #333;padding:10px;margin:10px 0;border-radius:5px;background:#0a0a0a}
+.item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.item-info{font-size:12px;color:#666}
+.media-container{margin:10px 0}
+img,video{max-width:100%;height:150px;object-fit:cover;border-radius:5px;border:1px solid #444}
+.btn{padding:8px 15px;margin:5px;border:none;cursor:pointer;border-radius:5px;font-weight:bold;font-family:monospace}
+.btn-del{background:#f00;color:#fff}
+.btn-keep{background:#0f0;color:#000}
+.btn-hide{background:#f80;color:#000}
+.btn-show{background:#0af;color:#000}
+.btn-clear{background:#f00;color:#fff;width:100%;padding:15px;margin:10px 0;font-size:16px}
+.btn-export{background:#00f;color:#fff;width:100%;padding:15px;margin:10px 0}
+.info{color:#0af;font-size:12px}
+.warn{color:#ff0;font-size:12px}
+.err{color:#f00;font-size:12px}
+.ok{color:#0f0;font-size:12px}
+.storage-bar{background:#1a1a1a;height:30px;border-radius:5px;overflow:hidden;margin:10px 0;border:1px solid #444}
+.storage-fill{height:100%;background:linear-gradient(90deg,#0f0,#ff0,#f00);transition:width 0.3s}
+.storage-text{text-align:center;margin:5px 0;font-size:14px}
+.video-badge{background:#f00;color:#fff;padding:2px 8px;border-radius:3px;font-size:10px;margin-left:5px}
+.image-badge{background:#0af;color:#fff;padding:2px 8px;border-radius:3px;font-size:10px;margin-left:5px}
+.no-items{text-align:center;padding:40px;color:#666;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h1>📋 Gestionar Contenido</h1>
+<div id="storageInfo" class="storage-text"></div>
+<div class="storage-bar">
+<div id="storageBar" class="storage-fill" style="width:0%"></div>
+</div>
+<div style="display:flex;gap:10px;margin-top:10px">
+<button onclick="location.href='upload-local.html'" class="btn" style="flex:1;background:#0f0;color:#000">📤 SUBIR NUEVO</button>
+<button onclick="location.href='../index.html'" class="btn" style="flex:1;background:#00f;color:#fff">🏠 VER WEB</button>
+</div>
+</div>
+
+<div id="lista"></div>
+<div class="box">
+<h2>⚠️ Zona de Peligro</h2>
+<button onclick="exportarBackup()" class="btn btn-export">📥 DESCARGAR BACKUP COMPLETO</button>
+<button onclick="borrarTodo()" class="btn btn-clear">🗑️ BORRAR TODO (IRREVERSIBLE)</button>
+</div>
+
+<script>
+const KEY = 'controversial_local';
+
+// Calcular espacio usado
+function getStorageInfo(){
+var total = 0;
+for(var key in localStorage){
+if(localStorage.hasOwnProperty(key)){
+total += localStorage[key].length * 2;
+}
+}
+var used = (total / 1024 / 1024).toFixed(2);
+var limit = 5;
+var percent = Math.min(((total / 1024 / 1024) / limit * 100), 100).toFixed(1);
+return {used: used, limit: limit, percent: percent, total: total};
+}
+
+function mostrarInfo(){
+var info = getStorageInfo();
+var color = info.percent > 80 ? '#f00' : info.percent > 50 ? '#ff0' : '#0f0';
+document.getElementById('storageInfo').innerHTML = 
+'<span style="color:'+color+'"><strong>💾 Espacio: ' + info.used + ' MB / ' + info.limit + ' MB (' + info.percent + '%)</strong></span>';
+document.getElementById('storageBar').style.width = info.percent + '%';
+}
+
+function formatBytes(bytes){
+if(bytes < 1024) return bytes + ' B';
+else if(bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+else return (bytes/1024/1024).toFixed(2) + ' MB';
+}
+
+function cargarItems(){
+var items = JSON.parse(localStorage.getItem(KEY) || '[]');
+var html = '<div class="box"><h2>📁 Contenido (' + items.length + ' items)</h2>';
+
+if(items.length === 0){
+html += '<div class="no-items">📂 Sin contenido aún<br><small>Sube tu primera imagen o video</small></div>';
+} else {
+// Ordenar por fecha (más reciente primero)
+items.sort((a,b) => b.id - a.id);
+
+items.forEach((item, index) => {
+var originalIndex = items.indexOf(item);
+var badge = item.type === 'video' ? '<span class="video-badge">🎥 VIDEO</span>' : '<span class="image-badge">📷 FOTO</span>';var fileSize = formatBytes(item.url ? item.url.length * 2 : 0);
+
+html += '<div class="item" style="border-left:4px solid '+(item.is_active ? '#0f0' : '#f00')+'">';
+html += '<div class="item-header">';
+html += '<div><strong>#'+(index+1)+'</strong> '+badge+'</div>';
+html += '<div class="item-info">📦 '+fileSize+'</div>';
+html += '</div>';
+
+html += '<div class="item-info">🕐 '+new Date(item.createdAt).toLocaleString('es-CL')+'</div>';
+
+// Mostrar media
+html += '<div class="media-container">';
+if(item.type === 'image'){
+html += '<img src="' + item.url + '" alt="Imagen" loading="lazy" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22150%22%3E%3Crect fill=%22%23333%22 width=%22400%22 height=%22150%22/%3E%3Ctext fill=%22%23f00%22 x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22%3EError al cargar%3C/text%3E%3C/svg%3E\'">';
+} else if(item.type === 'video'){
+html += '<video src="' + item.url + '" controls preload="metadata"></video>';
+}
+html += '</div>';
+
+// Descripción y metadata
+if(item.caption){
+html += '<div style="margin:10px 0"><strong>📝 ' + item.caption + '</strong></div>';
+}
+
+html += '<div class="item-info">';
+html += '🔥 Nivel ' + item.controversy_level + ' ('+'🔥'.repeat(item.controversy_level)+')<br>';
+if(item.tags && item.tags.length > 0){
+html += '🏷️ Tags: ' + item.tags.join(', ');
+}
+html += '</div>';
+
+// Botones de acción
+html += '<div style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap">';
+if(item.is_active){
+html += '<button onclick="toggleStatus('+originalIndex+')" class="btn btn-hide">👁️ OCULTAR</button>';
+} else {
+html += '<button onclick="toggleStatus('+originalIndex+')" class="btn btn-show">✅ MOSTRAR</button>';
+}
+html += '<button onclick="eliminar('+originalIndex+')" class="btn btn-del">🗑️ ELIMINAR</button>';
+html += '</div>';
+
+html += '</div>';
+});
+}
+
+html += '</div>';
+document.getElementById('lista').innerHTML = html;
+}
+
+function eliminar(index){var items = JSON.parse(localStorage.getItem(KEY) || '[]');
+var item = items[index];
+var confirmMsg = '¿Eliminar este '+item.type+'?\n\n';
+if(item.caption) confirmMsg += '"'+item.caption+'"\n\n';
+confirmMsg += 'Esta acción no se puede deshacer.';
+
+if(confirm(confirmMsg)){
+items.splice(index, 1);
+localStorage.setItem(KEY, JSON.stringify(items));
+recargar();
+}
+}
+
+function toggleStatus(index){
+var items = JSON.parse(localStorage.getItem(KEY) || '[]');
+items[index].is_active = !items[index].is_active;
+localStorage.setItem(KEY, JSON.stringify(items));
+recargar();
+}
+
+function borrarTodo(){
+if(confirm('⚠️ ¿ESTÁS 100% SEGURA DE BORRAR TODO?\n\nSe eliminarán TODAS las imágenes y videos.\n\nNO SE PUEDE DESHACER.')){
+if(confirm('⚠️ ÚLTIMA OPORTUNIDAD\n\n¿Realmente quieres borrar TODO el contenido?')){
+if(confirm('☠️ CONFIRMACIÓN FINAL\n\nEscribe ACEPTAR para borrar todo')){
+localStorage.removeItem(KEY);
+alert('✅ Todo eliminado permanentemente');
+location.reload();
+}
+}
+}
+}
+
+function exportarBackup(){
+var items = JSON.parse(localStorage.getItem(KEY) || '[]');
+if(items.length === 0){
+alert('⚠️ No hay contenido para exportar');
+return;
+}
+
+var backup = {
+version: '1.0',
+exportedAt: new Date().toISOString(),
+totalItems: items.length,
+data: items
+};
+
+var blob = new Blob([JSON.stringify(backup, null, 2)], {type: 'application/json'});
+var url = URL.createObjectURL(blob);
+var a = document.createElement('a');
+a.href = url;a.download = 'backup-controversial-' + new Date().toISOString().slice(0,10) + '.json';
+a.click();
+
+alert('📦 Backup descargado:\n\n📁 '+a.download+'\n\n💡 GUÁRDALO EN UN LUGAR SEGURO\n(Google Drive, email, USB, etc.)\n\nContiene '+items.length+' items');
+}
+
+function recargar(){
+mostrarInfo();
+cargarItems();
+}
+
+// Iniciar
+mostrarInfo();
+cargarItems();
+
+// Auto-refresh cada 30 segundos
+setInterval(recargar, 30000);
+</script>
+</body>
+</html>
