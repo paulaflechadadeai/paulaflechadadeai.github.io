@@ -345,6 +345,7 @@
     <section id="controversial-carousel"></section>
 
     <script>
+        // ===== FECHA CHILE =====
         const ahora = new Date();
         const opciones = { 
             timeZone: 'America/Santiago',
@@ -358,6 +359,7 @@
         document.getElementById('fecha-chile').textContent = 
             ahora.toLocaleDateString('es-CL', opciones);
 
+        // ===== VOLUMEN =====
         const controlVolumen = document.getElementById('controlVolumen');
         const musica = document.getElementById('musicaFondo');
         const volumenDisplay = document.getElementById('volumenDisplay');
@@ -367,6 +369,7 @@
             volumenDisplay.textContent = Math.round(this.value * 100) + '%';
         });
 
+        // ===== CONTADOR =====
         const NOMBRE_CONTADOR = 'visitas_paulaflechadadeai';
         let visitasGuardadas = localStorage.getItem(NOMBRE_CONTADOR);
         let contadorNumero = document.getElementById('contadorVisitas');
@@ -387,12 +390,11 @@
             else if (visitas === 5) mensajeVisitas.innerHTML = '> 5 visitas · Eres de la familia';
             else if (visitas === 10) mensajeVisitas.innerHTML = '> 10 visitas · ¡Fan número 1! 🏆';
             else if (visitas === 20) mensajeVisitas.innerHTML = '> 20 visitas · Ya eres parte del mobiliario';
-            else mensajeVisitas.innerHTML = '> Nos has visitado ' + visitas + ' veces';
-        }
+            else mensajeVisitas.innerHTML = '> Nos has visitado ' + visitas + ' veces';        }
 
-        console.log('%c 🔮 Bienvenid@ al espacio sin sponsors', 'color: #00ff00; font-size: 16px; font-weight: bold;');        console.log('%c > Usuario:', 'color: #ff00ff;', window.location.hostname.split('.')[0]);
-        console.log('%c > Fecha:', 'color: #00aaff;', new Date().toLocaleString('es-CL'));
-
+        // ===== GLITCH EFFECT =====
+        console.log('%c 🔮 Bienvenid@ al espacio sin sponsors', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+        
         setInterval(() => {
             const title = document.querySelector('.glitch-title');
             if (Math.random() > 0.7) {
@@ -406,6 +408,7 @@
             }
         }, 500);
 
+        // ===== AUTOPLAY =====
         window.addEventListener('load', function() {
             let playPromise = musica.play();
             if (playPromise !== undefined) {
@@ -415,6 +418,7 @@
             }
         });
 
+        // ===== WHOAMI =====
         function mostrarWhoami() {
             const output = document.getElementById('whoami-output');
             if (!output) return;
@@ -435,84 +439,58 @@
                     }
                 }
             } catch (e) {
-                console.warn("Error al leer whoami, usando valores por defecto.");
-            }
+                console.warn("Error al leer whoami.");            }
 
             output.innerHTML = `> ${campo1}<br>> ${campo2}<br>> ${campo3}`;
         }
         mostrarWhoami();
-    </script>
 
-    <!-- Parse SDK -->
-    <script src="https://npmcdn.com/parse@2.19.0/dist/parse.min.js"></script>
-
-    <script>
-    // Inicializar Parse con Back4App
-    Parse.initialize("na15HGmYfZQBwHXv56AyjSWpEafZjSh4ufdiNKSW", "EiyEYPlRytJ15YPxW7PWPLTTH5Q369g1FiXKWRR7");
-    Parse.serverURL = 'https://parseapi.back4app.com';
-
-    async function cargarControversial() {
-      const container = document.getElementById('controversial-carousel');
-      if (!container) return;
-      
-      container.innerHTML = '<p style="color:#0f0;text-align:center;">⏳ Cargando...</p>';
-      
-      try {
-        const ControversialContent = Parse.Object.extend("ControversialContent");
-        const query = new Parse.Query(ControversialContent);
-        query.equalTo("is_active", true);
-        query.descending("createdAt");
-        query.limit(6);
-        
-        const results = await query.find();
-        console.log('📦 Datos:', results);
-        
-        if (results.length === 0) {
-          container.innerHTML = '<p style="color:#666;text-align:center;padding:2rem;">📂 Sin contenido aún</p>';
-          return;
+        // ===== ZONA CONTROVERSIAL - LOCAL-FIRST =====
+        function cargarControversial() {
+            const container = document.getElementById('controversial-carousel');
+            if (!container) return;
+            
+            const key = 'controversial_local';
+            const items = JSON.parse(localStorage.getItem(key) || '[]');
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p style="color:#666;text-align:center;padding:2rem;">📂 Sin contenido aún<br><small style="color:#444">Sube contenido desde /admin/upload-local.html</small></p>';
+                return;
+            }
+            
+            const activos = items.filter(i => i.is_active !== false).slice(0, 6);
+            
+            let html = '<div style="max-width:800px;margin:2rem auto;padding:2rem;border:2px solid #ff00ff;border-radius:15px;">';
+            html += '<h2 style="color:#ff00ff;text-align:center;margin-bottom:2rem;">🔥 Zona Controversial</h2>';
+            html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;">';
+            
+            activos.forEach(item => {
+                html += '<div style="background:#0f0f1e;border-radius:10px;overflow:hidden;border:1px solid #333;">';
+                
+                if (item.type === 'image') {
+                    html += '<img src="' + item.url + '" style="width:100%;height:200px;object-fit:cover;" loading="lazy">';
+                } else {
+                    html += '<video src="' + item.url + '" style="width:100%;height:200px;object-fit:cover;" controls></video>';
+                }
+                
+                html += '<div style="padding:1rem;">';
+                html += '<p style="color:#fff;margin:0 0 0.5rem 0;">' + (item.caption || '') + '</p>';
+                html += '<div style="display:flex;justify-content:space-between;font-size:0.8rem;">';
+                html += '<span style="color:#ff00ff;">' + '🔥'.repeat(item.controversy_level || 1) + '</span>';
+                html += '<span style="color:#666;">👁 ' + (item.views_count || 0) + '</span>';
+                html += '</div></div></div>';
+            });
+            
+            html += '</div></div>';
+            container.innerHTML = html;
+            console.log('✅ Zona Controversial cargada (' + activos.length + ' items)');
         }
-        
-        let html = '<div style="max-width:800px;margin:2rem auto;padding:2rem;border:2px solid #ff00ff;border-radius:15px;">';
-        html += '<h2 style="color:#ff00ff;text-align:center;margin-bottom:2rem;">🔥 Zona Controversial</h2>';
-        html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;">';
-        
-        results.forEach(item => {
-          const type = item.get('type');
-          const url = item.get('url');
-          const caption = item.get('caption') || '';
-          const level = item.get('controversy_level') || 1;
-          const views = item.get('views_count') || 0;
-          
-          html += '<div style="background:#0f0f1e;border-radius:10px;overflow:hidden;border:1px solid #333;">';
-          
-          if (type === 'image') {
-            html += '<img src="' + url + '" style="width:100%;height:200px;object-fit:cover;" onerror="this.parentElement.innerHTML=\'<p style=\"padding:2rem;text-align:center;color:#666;\">❌ Imagen no disponible</p>\'">';
-          } else {
-            html += '<video src="' + url + '" style="width:100%;height:200px;object-fit:cover;" controls></video>';          }
-          
-          html += '<div style="padding:1rem;">';
-          html += '<p style="color:#fff;margin:0 0 0.5rem 0;">' + caption + '</p>';
-          html += '<div style="display:flex;justify-content:space-between;font-size:0.8rem;">';
-          html += '<span style="color:#ff00ff;">' + '🔥'.repeat(level) + '</span>';
-          html += '<span style="color:#666;">👁 ' + views + '</span>';
-          html += '</div></div></div>';
-        });
-        
-        html += '</div></div>';
-        container.innerHTML = html;
-        console.log('✅ Cargado exitosamente');
-        
-      } catch (error) {
-        console.error('❌ Error:', error);
-        container.innerHTML = '<p style="color:#f00;text-align:center;padding:2rem;">⚠️ Error: ' + error.message + '</p>';
-      }
-    }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', cargarControversial);
-    } else {
-      cargarControversial();
-    }
+        // Cargar cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', cargarControversial);        } else {
+            cargarControversial();
+        }
     </script>
 </body>
 </html>
