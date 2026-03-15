@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📸 scan-ias · paulaflechadadeai</title>
     <style>
-        /* ===== ESTILOS BASE (mismos que observatorio) ===== */
+        /* ===== ESTILOS BASE ===== */
         :root {
             --neon-green: #00ff00;
             --neon-pink: #ff00ff;
@@ -15,9 +15,7 @@
             --bg-darker: #000;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Courier New', monospace;
@@ -52,10 +50,7 @@
             30% { transform: translate(-2px, 3px); }
         }
 
-        .subheader {
-            color: var(--neon-blue);
-            margin: 10px 0 0 0;
-        }
+        .subheader { color: var(--neon-blue); margin: 10px 0 0 0; }
 
         .terminal {
             background: var(--bg-darker);
@@ -65,14 +60,10 @@
             border-radius: 8px;
         }
 
-        .terminal-line {
-            margin: 12px 0;
-        }
-
+        .terminal-line { margin: 12px 0; }
         .prompt { color: var(--neon-pink); }
         .cmd { color: var(--neon-blue); }
 
-        /* Botones */
         button {
             background: black;
             border: 2px solid;
@@ -90,8 +81,8 @@
         .btn-secondary { color: var(--neon-blue); border-color: var(--neon-blue); }
         .btn-danger { color: #ff5555; border-color: #ff5555; }
         .btn-success { color: var(--neon-green); border-color: var(--neon-green); }
+        .btn-warning { color: var(--neon-yellow); border-color: var(--neon-yellow); }
 
-        /* Formularios */
         input, textarea {
             background: black;
             color: var(--neon-green);
@@ -106,13 +97,8 @@
             outline: none;
             border-color: var(--neon-pink);
         }
-        label {
-            color: var(--neon-blue);
-            display: block;
-            margin-bottom: 5px;
-        }
+        label { color: var(--neon-blue); display: block; margin-bottom: 5px; }
 
-        /* Entrada (cada captura) */
         .entrada {
             border-left: 6px solid var(--neon-pink);
             margin-bottom: 40px;
@@ -127,14 +113,8 @@
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
-        .entrada-titulo {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: var(--neon-pink);
-        }
-        .entrada-fecha {
-            color: var(--neon-blue);
-        }
+        .entrada-titulo { font-size: 1.5em; font-weight: bold; color: var(--neon-pink); }
+        .entrada-fecha { color: var(--neon-blue); }
         .entrada-imagen {
             margin: 20px 0;
             text-align: center;
@@ -166,15 +146,15 @@
             gap: 10px;
             justify-content: flex-end;
             margin-top: 15px;
+            flex-wrap: wrap;
         }
-        /* Comentarios Giscus */
+
         .comentarios {
             margin-top: 30px;
             border-top: 2px dashed var(--neon-blue);
             padding-top: 20px;
         }
 
-        /* Vista previa imagen */
         .preview-container {
             margin: 15px 0;
             padding: 15px;
@@ -188,13 +168,10 @@
             border: 2px solid var(--neon-pink);
         }
 
-        /* Modal para ampliar */
         .modal {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: rgba(0,0,0,0.95);
             display: flex;
             justify-content: center;
@@ -202,22 +179,11 @@
             z-index: 1000;
             cursor: pointer;
         }
-        .modal img {
-            max-width: 90%;
-            max-height: 90%;
-            border: 3px solid var(--neon-pink);
-        }
+        .modal img { max-width: 90%; max-height: 90%; border: 3px solid var(--neon-pink); }
 
-        .volver {
-            margin: 20px 0;
-        }
-        .volver a {
-            color: var(--neon-blue);
-            text-decoration: none;
-        }
-        .volver a:hover {
-            color: var(--neon-pink);
-        }
+        .volver { margin: 20px 0; }
+        .volver a { color: var(--neon-blue); text-decoration: none; }
+        .volver a:hover { color: var(--neon-pink); }
 
         .footer {
             margin-top: 60px;
@@ -225,6 +191,52 @@
             padding-top: 20px;
             text-align: center;
             color: #888;
+        }
+
+        /* Indicador de estado */
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        .status-local { background: #333; color: #888; }
+        .status-github { background: #238636; color: white; }
+        .status-error { background: #ff4444; color: white; }
+
+        /* Tabs para modos */
+        .modo-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+        .modo-tab {
+            background: transparent;
+            border: 1px solid #333;
+            color: #666;
+        }
+        .modo-tab.active {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--neon-blue);
+        }
+        .loading::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
         }
     </style>
 </head>
@@ -240,12 +252,66 @@
         <a href="/observatorio.html">← OBSERVATORIO</a>
     </div>
 
-    <!-- ===== EDITOR (oculto) ===== -->
-    <div id="panelEditor" style="display: none;" class="terminal">
+    <!-- ===== SELECTOR DE MODO ===== -->
+    <div class="terminal" id="modoSelector" style="display: none;">
         <div class="terminal-line">
-            <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+            <span class="prompt">$</span> <span class="cmd">seleccionar_modo --publicacion</span>
         </div>
-        <form id="formEditor" onsubmit="event.preventDefault(); guardarEntrada();">
+        <div class="modo-tabs">
+            <button class="modo-tab active" onclick="cambiarModo('github')" id="tab-github">
+                🌐 PLAN A: GitHub (Público)
+            </button>
+            <button class="modo-tab" onclick="cambiarModo('local')" id="tab-local">
+                💾 PLAN B: Local (Backup)
+            </button>
+        </div>
+        <p style="color: var(--neon-yellow); font-size: 0.9em;">
+            ℹ️ Plan A = Visible para todos · Plan B = Solo tú (emergencia)
+        </p>
+    </div>
+
+    <!-- ===== EDITOR PLAN A: GITHUB ===== -->
+    <div id="panelEditorGitHub" style="display: none;" class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">modo_github --activado</span>
+            <span class="status-indicator status-github">PÚBLICO</span>
+        </div>
+        <form onsubmit="event.preventDefault(); guardarEnGitHub();">
+            <label>📌 TÍTULO:</label>
+            <input type="text" id="ghTitulo" placeholder="Ej: Meta intentó shadowbanearme" required>
+
+            <label>📝 DESCRIPCIÓN:</label>
+            <textarea id="ghDescripcion" rows="3" placeholder="¿Qué pasó?" required></textarea>
+
+            <label>🖼️ CAPTURA:</label>
+            <input type="file" id="ghImagen" accept="image/*,video/*" onchange="previsualizarGitHub(this)" required>
+            <small style="color: var(--neon-blue);">Imagen o Video · Se subirá a GitHub Issues</small>
+
+            <div id="ghVistaPrevia" class="preview-container" style="display: none;">
+                <div id="ghPreviewContent"></div>
+                <p><button type="button" onclick="quitarImagenGitHub()" class="btn-danger" style="padding:5px 10px;">✖ QUITAR</button></p>
+            </div>
+
+            <div style="background: rgba(255,255,0,0.1); border: 1px solid var(--neon-yellow); padding: 10px; margin: 15px 0; border-radius: 4px;">
+                <p style="color: var(--neon-yellow); margin: 0; font-size: 0.9em;">
+                    ⚠️ Esto creará un Issue en GitHub. La imagen se subirá allí y será visible para todos.
+                </p>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                <button type="submit" class="btn-success">🚀 PUBLICAR EN GITHUB</button>
+                <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ===== EDITOR PLAN B: LOCAL ===== -->
+    <div id="panelEditorLocal" style="display: none;" class="terminal">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">modo_local --activado</span>
+            <span class="status-indicator status-local">PRIVADO</span>
+        </div>
+        <form id="formEditor" onsubmit="event.preventDefault(); guardarLocal();">
             <label>📌 TÍTULO:</label>
             <input type="text" id="editTitulo" placeholder="Ej: Meta intentó shadowbanearme" required>
 
@@ -254,7 +320,7 @@
 
             <label>🖼️ CAPTURA (imagen):</label>
             <input type="file" id="imagenEntrada" accept="image/*" onchange="previsualizarImagen(this)" required>
-            <small style="color: var(--neon-blue);">Máx 500KB · Se comprimirá automáticamente</small>
+            <small style="color: var(--neon-blue);">Máx 500KB · Solo tú la verás</small>
 
             <div id="vistaPrevia" class="preview-container" style="display: none;">
                 <img id="imgPreview">
@@ -263,99 +329,138 @@
 
             <input type="hidden" id="editId" value="">
 
+            <div style="background: rgba(100,100,100,0.2); border: 1px solid #666; padding: 10px; margin: 15px 0; border-radius: 4px;">
+                <p style="color: #888; margin: 0; font-size: 0.9em;">
+                    ℹ️ Modo emergencia. Solo visible en este dispositivo. Úsalo si GitHub falla.
+                </p>
+            </div>
+
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button type="submit" class="btn-primary">💾 GUARDAR</button>
+                <button type="submit" class="btn-primary">💾 GUARDAR LOCAL</button>
                 <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
             </div>
         </form>
     </div>
 
     <!-- Botones de control -->
-    <div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0;">
-        <button onclick="mostrarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
+    <div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0; flex-wrap: wrap;">
+        <button onclick="mostrarSelector()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
+        <button onclick="recargarPosts()" class="btn-success" style="display: none;" id="btnRecargar">🔄 RECARGAR POSTS</button>
     </div>
 
     <!-- Lista de capturas -->
     <div class="terminal">
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">scan_ias --lista</span>
+            <span id="conteoPosts" style="color: var(--neon-blue); margin-left: 10px;"></span>
         </div>
-        <div id="contenedorEntradas" style="margin: 20px 0;">
-            <!-- Se carga dinámicamente -->
-        </div>
+        <div id="contenedorEntradas" class="loading">Cargando posts desde GitHub</div>
     </div>
 
     <div class="footer">
-        <p>📸 Capturas de IAs derrotadas · Cada imagen con su propio hilo de comentarios vía Giscus</p>
+        <p>📸 Capturas de IAs derrotadas · Sincronizado con GitHub Issues</p>
+        <p style="font-size: 0.8em; color: #555;">Plan A: GitHub API | Plan B: LocalStorage</p>
     </div>
 
     <script>
         // ============================================
         // CONFIGURACIÓN
         // ============================================
-        const CLAVE_EDITOR = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51); // patito123
+        const CLAVE_EDITOR = 'patito123';
         const STORAGE_KEY = 'scanias';
-
-        let entradas = [];
+        const GITHUB_USER = 'paulaflechadadeai';
+        const GITHUB_REPO = 'paulaflechadadeai.github.io';
+        
+        let entradasLocales = [];
+        let entradasGitHub = [];
         let editorActivo = false;
+        let modoActual = 'github'; // 'github' o 'local'
         let imagenActual = null;
+        let imagenGitHub = null;
 
         // ============================================
-        // FUNCIONES DE DATOS
+        // INICIALIZACIÓN
         // ============================================
-        function cargarEntradas() {
-            const guardadas = localStorage.getItem(STORAGE_KEY);
-            if (guardadas) {
-                entradas = JSON.parse(guardadas);
-            } else {
-                // Entrada de ejemplo
-                entradas = [{
-                    id: Date.now() - 86400000,
-                    titulo: "Primera captura",
-                    contenido: "Meta intentó bloquear mi publicación. La IA falló.",
-                    imagen: null,
-                    fecha: formatearFecha(new Date(Date.now() - 86400000)),
-                    timestamp: Date.now() - 86400000
-                }];
-                guardarEntradas();
-            }
-            ordenarEntradas();
-            mostrarEntradas(entradas);
-        }
-
-        function guardarEntradas() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(entradas));
-        }
-
-        function ordenarEntradas() {
-            entradas.sort((a, b) => b.timestamp - a.timestamp);
-        }
-
-        function formatearFecha(fecha) {
-            const dia = fecha.getDate().toString().padStart(2,'0');
-            const mes = (fecha.getMonth()+1).toString().padStart(2,'0');
-            const año = fecha.getFullYear();
-            const horas = fecha.getHours().toString().padStart(2,'0');
-            const minutos = fecha.getMinutes().toString().padStart(2,'0');
-            return `${dia}/${mes}/${año} ${horas}:${minutos}`;
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarPostsGitHub();
+            cargarEntradasLocales();
+        });
 
         // ============================================
-        // MOSTRAR ENTRADAS
+        // PLAN A: GITHUB ISSUES COMO BACKEND
         // ============================================
-        function mostrarEntradas(lista) {
+        async function cargarPostsGitHub() {
             const contenedor = document.getElementById('contenedorEntradas');
-            if (lista.length === 0) {
-                contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay capturas aún</p>';
+            
+            try {
+                // Intentar cargar desde el JSON generado por GitHub Actions
+                const response = await fetch('posts-data.json');
+                if (response.ok) {
+                    entradasGitHub = await response.json();
+                    mostrarEntradasCombinadas();
+                    return;
+                }
+            } catch (e) {
+                console.log('No se encontró posts-data.json, intentando API directa...');
+            }
+
+            // Fallback: Cargar directamente desde GitHub API
+            try {
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?labels=post&state=open`);
+                if (!response.ok) throw new Error('Error en API');
+                
+                const issues = await response.json();
+                entradasGitHub = issues.map(issue => {
+                    // Extraer imagen del cuerpo del issue
+                    const imgMatch = issue.body.match(/!\[.*?\]\((.*?)\)/);
+                    const videoMatch = issue.body.match(/https:\/\/github\.com\/user-attachments\/assets\/[a-zA-Z0-9-]+/);
+                    
+                    return {
+                        id: issue.number,
+                        titulo: issue.title,
+                        descripcion: issue.body.split('---')[0].trim(),
+                        imagen: imgMatch ? imgMatch[1] : null,
+                        video: videoMatch ? videoMatch[0] : null,
+                        fecha: new Date(issue.created_at).toLocaleString('es-ES'),
+                        autor: issue.user.login,
+                        url: issue.html_url,
+                        esGitHub: true
+                    };
+                });
+
+                mostrarEntradasCombinadas();
+            } catch (error) {
+                console.error('Error cargando de GitHub:', error);
+                contenedor.innerHTML = '<p style="color: #ff4444;">⚠️ Error conectando con GitHub. Mostrando posts locales solo.</p>';
+                mostrarEntradasCombinadas();
+            }
+        }
+
+        function mostrarEntradasCombinadas() {
+            const contenedor = document.getElementById('contenedorEntradas');
+            const todas = [...entradasGitHub, ...entradasLocales].sort((a, b) => {
+                // Ordenar por fecha descendente
+                const fechaA = new Date(a.fecha);
+                const fechaB = new Date(b.fecha);
+                return fechaB - fechaA;
+            });
+
+            document.getElementById('conteoPosts').textContent = `(${todas.length} posts)`;
+
+            if (todas.length === 0) {
+                contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay capturas aún. ¡Sé el primero!</p>';
                 return;
             }
 
             let html = '';
-            lista.forEach(e => {
+            todas.forEach(e => {
+                const esLocal = !e.esGitHub;
+                const badge = esLocal ? '<span style="color: #888; font-size: 0.7em;">[LOCAL]</span>' : '<span style="color: #238636; font-size: 0.7em;">[PUBLIC]</span>';
+                
                 html += `
-                    <div class="entrada" id="entrada-${e.id}">
+                    <div class="entrada" id="entrada-${e.id}" style="${esLocal ? 'opacity: 0.8; border-left-color: #666;' : ''}">
                         <div class="entrada-header">
-                            <span class="entrada-titulo">📌 ${e.titulo}</span>
+                            <span class="entrada-titulo">📌 ${e.titulo} ${badge}</span>
                             <span class="entrada-fecha">${e.fecha}</span>
                         </div>
                 `;
@@ -363,62 +468,77 @@
                 if (e.imagen) {
                     html += `
                         <div class="entrada-imagen">
-                            <img src="${e.imagen.datos}" 
-                                 onclick="verImagenGrande('${e.imagen.datos}')"
-                                 title="Click para ampliar">
+                            <img src="${e.imagen}" 
+                                 onclick="verImagenGrande('${e.imagen}')"
+                                 title="Click para ampliar"
+                                 onerror="this.style.display='none'">
+                        </div>
+                    `;
+                }
+
+                if (e.video) {
+                    html += `
+                        <div class="entrada-imagen">
+                            <video controls style="max-width: 100%; border: 3px solid var(--neon-pink); border-radius: 5px;">
+                                <source src="${e.video}" type="video/mp4">
+                            </video>
                         </div>
                     `;
                 }
 
                 html += `
-                        <div class="entrada-descripcion">${e.contenido}</div>
+                        <div class="entrada-descripcion">${e.descripcion || e.contenido}</div>
                 `;
 
                 if (editorActivo) {
-                    html += `
-                        <div class="entrada-acciones">
-                            <button onclick="editarEntrada('${e.id}')" class="btn-secondary">✏️ EDITAR</button>
-                            <button onclick="eliminarEntrada('${e.id}')" class="btn-danger">🗑️ ELIMINAR</button>
-                        </div>
-                    `;
+                    html += `<div class="entrada-acciones">`;
+                    if (esLocal) {
+                        html += `
+                            <button onclick="editarLocal('${e.id}')" class="btn-secondary">✏️ EDITAR</button>
+                            <button onclick="eliminarLocal('${e.id}')" class="btn-danger">🗑️ ELIMINAR</button>
+                        `;
+                    } else {
+                        html += `
+                            <a href="${e.url}" target="_blank" style="color: var(--neon-blue); text-decoration: none; margin-right: 10px;">🔗 Ver en GitHub</a>
+                            <button onclick="eliminarIssue(${e.id})" class="btn-danger">🗑️ ELIMINAR</button>
+                        `;
+                    }
+                    html += `</div>`;
                 }
 
-                // Añadir Giscus para esta entrada
-                html += `<div class="comentarios" id="giscus-${e.id}"></div>`;
+                // Giscus solo para posts de GitHub (tienen número de issue)
+                if (e.esGitHub) {
+                    html += `<div class="comentarios" id="giscus-${e.id}"></div>`;
+                }
+
                 html += `</div>`;
             });
 
             contenedor.innerHTML = html;
 
-            // Cargar Giscus para cada entrada
-            lista.forEach(e => {
-                if (e.id) cargarGiscus(e.id);
-            });
+            // Cargar Giscus para posts de GitHub
+            if (!editorActivo) {
+                entradasGitHub.forEach(e => cargarGiscus(e.id));
+            }
         }
 
-        // ============================================
-        // GISCUS POR ENTRADA
-        // ============================================
-        function cargarGiscus(entradaId) {
-            const contenedor = document.getElementById(`giscus-${entradaId}`);
+        function cargarGiscus(issueNumber) {
+            const contenedor = document.getElementById(`giscus-${issueNumber}`);
             if (!contenedor) return;
-
-            // Limpiar por si acaso
-            contenedor.innerHTML = '';
 
             const script = document.createElement('script');
             script.src = 'https://giscus.app/client.js';
-            script.setAttribute('data-repo', 'paulaflechadadeai/paulaflechadadeai.github.io');
-            script.setAttribute('data-repo-id', 'R_kgDORN19Og'); // TUS DATOS
+            script.setAttribute('data-repo', `${GITHUB_USER}/${GITHUB_REPO}`);
+            script.setAttribute('data-repo-id', 'R_kgDORN19Og');
             script.setAttribute('data-category', 'Announcements');
             script.setAttribute('data-category-id', 'DIC_kwDORN19Os4C2Nsz');
             script.setAttribute('data-mapping', 'specific');
-            script.setAttribute('data-term', `scanias-${entradaId}`); // Único por entrada
+            script.setAttribute('data-term', `scanias-issue-${issueNumber}`);
             script.setAttribute('data-strict', '0');
             script.setAttribute('data-reactions-enabled', '1');
             script.setAttribute('data-emit-metadata', '0');
             script.setAttribute('data-input-position', 'bottom');
-            script.setAttribute('data-theme', 'preferred_color_scheme');
+            script.setAttribute('data-theme', 'dark');
             script.setAttribute('data-lang', 'es');
             script.setAttribute('crossorigin', 'anonymous');
             script.async = true;
@@ -426,13 +546,186 @@
         }
 
         // ============================================
-        // FUNCIONES DE IMAGEN (compresión)
+        // GUARDAR EN GITHUB (PLAN A)
         // ============================================
+        async function guardarEnGitHub() {
+            const titulo = document.getElementById('ghTitulo').value.trim();
+            const descripcion = document.getElementById('ghDescripcion').value.trim();
+            
+            if (!titulo || !descripcion) {
+                alert("⚠️ Título y descripción son obligatorios");
+                return;
+            }
+            if (!imagenGitHub) {
+                alert("⚠️ Debes seleccionar una imagen o video");
+                return;
+            }
+
+            // Preparar el cuerpo del issue
+            let cuerpo = `${descripcion}\n\n---\n*Publicado desde scan-ias*`;
+            
+            // Si es imagen base64, necesitamos subirla primero
+            if (imagenGitHub.tipo === 'imagen') {
+                // Para imágenes base64, abrimos GitHub para que el usuario la pegue
+                const confirmacion = confirm(
+                    "📤 Se abrirá GitHub para que completes la publicación.\n\n" +
+                    "1. Se creará el Issue con título y descripción\n" +
+                    "2. Arrastra o pega la imagen en el cuerpo del Issue\n" +
+                    "3. Publica el Issue\n\n" +
+                    "¿Continuar?"
+                );
+                
+                if (confirmacion) {
+                    const issueTitle = encodeURIComponent(titulo);
+                    const issueBody = encodeURIComponent(cuerpo + "\n\n🖼️ *Adjunta tu imagen aquí arrastrándola*");
+                    const labels = encodeURIComponent('post');
+                    
+                    window.open(
+                        `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${issueTitle}&body=${issueBody}&labels=${labels}`,
+                        '_blank'
+                    );
+                    
+                    // Resetear formulario
+                    document.getElementById('ghTitulo').value = '';
+                    document.getElementById('ghDescripcion').value = '';
+                    quitarImagenGitHub();
+                    cancelarEdicion();
+                    
+                    // Sugerir recargar en 30 segundos
+                    setTimeout(() => {
+                        if (confirm("¿Recargar para ver el nuevo post?")) {
+                            location.reload();
+                        }
+                    }, 30000);
+                }
+            } else {
+                // Video - similar proceso
+                alert("📹 Para videos, se abrirá GitHub. Sube el video como archivo adjunto en el Issue.");
+                const issueTitle = encodeURIComponent(titulo);
+                const issueBody = encodeURIComponent(cuerpo + "\n\n📹 *Adjunta tu video aquí*");
+                const labels = encodeURIComponent('post');
+                
+                window.open(
+                    `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${issueTitle}&body=${issueBody}&labels=${labels}`,
+                    '_blank'
+                );
+            }
+        }
+
+        function previsualizarGitHub(input) {
+            if (input.files && input.files[0]) {
+                const archivo = input.files[0];
+                const esVideo = archivo.type.startsWith('video/');
+                
+                if (archivo.size > 100 * 1024 * 1024) { // 100MB límite de GitHub
+                    alert("⚠️ Archivo muy grande. Límite: 100MB");
+                    input.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (esVideo) {
+                        imagenGitHub = {
+                            tipo: 'video',
+                            datos: e.target.result,
+                            nombre: archivo.name
+                        };
+                        document.getElementById('ghPreviewContent').innerHTML = `
+                            <video controls style="max-width: 200px; border: 2px solid var(--neon-pink);">
+                                <source src="${e.target.result}" type="${archivo.type}">
+                            </video>
+                            <p style="color: var(--neon-yellow);">Video listo para subir</p>
+                        `;
+                    } else {
+                        // Comprimir imagen
+                        comprimirImagen(e.target.result, 0.8, 1200).then(comprimida => {
+                            imagenGitHub = {
+                                tipo: 'imagen',
+                                datos: comprimida,
+                                nombre: archivo.name
+                            };
+                            document.getElementById('ghPreviewContent').innerHTML = `
+                                <img src="${comprimida}" style="max-width: 200px; border: 2px solid var(--neon-pink);">
+                                <p style="color: var(--neon-green);">Imagen lista</p>
+                            `;
+                        });
+                    }
+                    document.getElementById('ghVistaPrevia').style.display = 'block';
+                };
+                reader.readAsDataURL(archivo);
+            }
+        }
+
+        function quitarImagenGitHub() {
+            imagenGitHub = null;
+            document.getElementById('ghVistaPrevia').style.display = 'none';
+            document.getElementById('ghImagen').value = '';
+        }
+
+        // ============================================
+        // PLAN B: LOCALSTORAGE (BACKUP)
+        // ============================================
+        function cargarEntradasLocales() {
+            const guardadas = localStorage.getItem(STORAGE_KEY);
+            if (guardadas) {
+                entradasLocales = JSON.parse(guardadas);
+            }
+        }
+
+        function guardarEntradasLocales() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(entradasLocales));
+        }
+
+        function guardarLocal() {
+            const id = document.getElementById('editId').value;
+            const titulo = document.getElementById('editTitulo').value.trim();
+            const contenido = document.getElementById('editContenido').value.trim();
+
+            if (!titulo || !contenido) {
+                alert("⚠️ El título y la descripción son obligatorios");
+                return;
+            }
+            if (!imagenActual && !id) {
+                alert("⚠️ Debes seleccionar una imagen");
+                return;
+            }
+
+            const ahora = new Date();
+
+            if (id) {
+                // Editar existente
+                const idx = entradasLocales.findIndex(e => e.id == id);
+                if (idx !== -1) {
+                    entradasLocales[idx].titulo = titulo;
+                    entradasLocales[idx].contenido = contenido;
+                    if (imagenActual) entradasLocales[idx].imagen = imagenActual.datos;
+                    entradasLocales[idx].fecha = formatearFecha(ahora);
+                }
+            } else {
+                // Nueva entrada
+                entradasLocales.push({
+                    id: Date.now(),
+                    titulo: titulo,
+                    contenido: contenido,
+                    imagen: imagenActual ? imagenActual.datos : null,
+                    fecha: formatearFecha(ahora),
+                    timestamp: Date.now(),
+                    esGitHub: false
+                });
+            }
+
+            guardarEntradasLocales();
+            mostrarEntradasCombinadas();
+            cancelarEdicion();
+            alert(id ? "✅ Actualizado localmente" : "✅ Guardado localmente (solo tú lo ves)");
+        }
+
         function previsualizarImagen(input) {
             if (input.files && input.files[0]) {
                 const archivo = input.files[0];
                 if (archivo.size > 500 * 1024) {
-                    alert("⚠️ La imagen es muy grande. Máximo 500KB.");
+                    alert("⚠️ Máximo 500KB para modo local");
                     input.value = '';
                     return;
                 }
@@ -479,6 +772,85 @@
             document.getElementById('imagenEntrada').value = '';
         }
 
+        function editarLocal(id) {
+            const entrada = entradasLocales.find(e => e.id == id);
+            if (!entrada) return;
+
+            cambiarModo('local');
+            document.getElementById('editId').value = entrada.id;
+            document.getElementById('editTitulo').value = entrada.titulo;
+            document.getElementById('editContenido').value = entrada.contenido;
+            
+            if (entrada.imagen) {
+                document.getElementById('imgPreview').src = entrada.imagen;
+                document.getElementById('vistaPrevia').style.display = 'block';
+                imagenActual = { datos: entrada.imagen };
+            }
+        }
+
+        function eliminarLocal(id) {
+            if (!confirm("¿Eliminar esta captura local?")) return;
+            entradasLocales = entradasLocales.filter(e => e.id != id);
+            guardarEntradasLocales();
+            mostrarEntradasCombinadas();
+        }
+
+        // ============================================
+        // CONTROL DE EDITOR
+        // ============================================
+        function mostrarSelector() {
+            const clave = prompt("🔑 Clave de editor:");
+            if (clave === CLAVE_EDITOR) {
+                editorActivo = true;
+                document.getElementById('modoSelector').style.display = 'block';
+                document.getElementById('btnMostrarEditor').style.display = 'none';
+                document.getElementById('btnRecargar').style.display = 'inline-block';
+                cambiarModo('github');
+                mostrarEntradasCombinadas();
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta");
+            }
+        }
+
+        function cambiarModo(modo) {
+            modoActual = modo;
+            
+            // Actualizar tabs
+            document.getElementById('tab-github').classList.toggle('active', modo === 'github');
+            document.getElementById('tab-local').classList.toggle('active', modo === 'local');
+            
+            // Mostrar panel correspondiente
+            document.getElementById('panelEditorGitHub').style.display = modo === 'github' ? 'block' : 'none';
+            document.getElementById('panelEditorLocal').style.display = modo === 'local' ? 'block' : 'none';
+            
+            // Resetear formularios
+            if (modo === 'github') {
+                document.getElementById('ghTitulo').value = '';
+                document.getElementById('ghDescripcion').value = '';
+                quitarImagenGitHub();
+            } else {
+                document.getElementById('editId').value = '';
+                document.getElementById('editTitulo').value = '';
+                document.getElementById('editContenido').value = '';
+                quitarImagen();
+            }
+        }
+
+        function cancelarEdicion() {
+            document.getElementById('modoSelector').style.display = 'none';
+            document.getElementById('panelEditorGitHub').style.display = 'none';
+            document.getElementById('panelEditorLocal').style.display = 'none';
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            document.getElementById('btnRecargar').style.display = 'none';
+            editorActivo = false;
+            mostrarEntradasCombinadas();
+        }
+
+        function recargarPosts() {
+            cargarPostsGitHub();
+            alert("🔄 Recargando posts...");
+        }
+
         function verImagenGrande(datos) {
             const modal = document.createElement('div');
             modal.className = 'modal';
@@ -487,124 +859,21 @@
             document.body.appendChild(modal);
         }
 
-        // ============================================
-        // EDITOR: GUARDAR, EDITAR, ELIMINAR
-        // ============================================
-        function mostrarEditor() {
-            const clave = prompt("🔑 Clave de editor:");
-            if (clave === CLAVE_EDITOR) {
-                editorActivo = true;
-                document.getElementById('panelEditor').style.display = 'block';
-                document.getElementById('btnMostrarEditor').style.display = 'none';
-                // Limpiar campos
-                document.getElementById('editId').value = '';
-                document.getElementById('editTitulo').value = '';
-                document.getElementById('editContenido').value = '';
-                quitarImagen();
-                // Refrescar vista para mostrar botones de edición
-                mostrarEntradas(entradas);
-            } else if (clave !== null) {
-                alert("❌ Clave incorrecta");
-            }
+        async function eliminarIssue(issueNumber) {
+            if (!confirm("¿Eliminar este post de GitHub? Esto cerrará el Issue.")) return;
+            
+            alert("⚠️ Para eliminar, debes ir a GitHub y cerrar el Issue #" + issueNumber);
+            window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/${issueNumber}`, '_blank');
         }
 
-        function ocultarEditor() {
-            editorActivo = false;
-            document.getElementById('panelEditor').style.display = 'none';
-            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
-            mostrarEntradas(entradas);
+        function formatearFecha(fecha) {
+            const dia = fecha.getDate().toString().padStart(2,'0');
+            const mes = (fecha.getMonth()+1).toString().padStart(2,'0');
+            const año = fecha.getFullYear();
+            const horas = fecha.getHours().toString().padStart(2,'0');
+            const minutos = fecha.getMinutes().toString().padStart(2,'0');
+            return `${dia}/${mes}/${año} ${horas}:${minutos}`;
         }
-
-        function cancelarEdicion() {
-            document.getElementById('editId').value = '';
-            document.getElementById('editTitulo').value = '';
-            document.getElementById('editContenido').value = '';
-            quitarImagen();
-            ocultarEditor();
-        }
-
-        function guardarEntrada() {
-            const id = document.getElementById('editId').value;
-            const titulo = document.getElementById('editTitulo').value.trim();
-            const contenido = document.getElementById('editContenido').value.trim();
-
-            if (!titulo || !contenido) {
-                alert("⚠️ El título y la descripción son obligatorios");
-                return;
-            }
-            if (!imagenActual && !id) {
-                alert("⚠️ Debes seleccionar una imagen");
-                return;
-            }
-
-            const ahora = new Date();
-
-            if (id) {
-                // Editar
-                for (let i = 0; i < entradas.length; i++) {
-                    if (entradas[i].id == id) {
-                        entradas[i].titulo = titulo;
-                        entradas[i].contenido = contenido;
-                        if (imagenActual) entradas[i].imagen = imagenActual;
-                        break;
-                    }
-                }
-                alert("✅ Captura actualizada");
-            } else {
-                // Nueva
-                const nueva = {
-                    id: Date.now(),
-                    titulo: titulo,
-                    contenido: contenido,
-                    imagen: imagenActual,
-                    fecha: formatearFecha(ahora),
-                    timestamp: ahora.getTime()
-                };
-                entradas.unshift(nueva);
-                alert("✅ Captura guardada");
-            }
-
-            ordenarEntradas();
-            guardarEntradas();
-            mostrarEntradas(entradas);
-            cancelarEdicion();
-        }
-
-        function editarEntrada(id) {
-            if (!editorActivo) return;
-            const entrada = entradas.find(e => e.id == id);
-            if (!entrada) return;
-
-            document.getElementById('editId').value = entrada.id;
-            document.getElementById('editTitulo').value = entrada.titulo;
-            document.getElementById('editContenido').value = entrada.contenido;
-
-            if (entrada.imagen) {
-                imagenActual = entrada.imagen;
-                document.getElementById('imgPreview').src = entrada.imagen.datos;
-                document.getElementById('vistaPrevia').style.display = 'block';
-            } else {
-                quitarImagen();
-            }
-
-            document.getElementById('panelEditor').style.display = 'block';
-            document.getElementById('btnMostrarEditor').style.display = 'none';
-        }
-
-        function eliminarEntrada(id) {
-            if (!editorActivo) return;
-            if (confirm("¿Eliminar esta captura?")) {
-                entradas = entradas.filter(e => e.id != id);
-                guardarEntradas();
-                mostrarEntradas(entradas);
-            }
-        }
-
-        // ============================================
-        // INICIO
-        // ============================================
-        cargarEntradas();
-        console.log('📸 scan-ias listo');
     </script>
 </body>
 </html>
