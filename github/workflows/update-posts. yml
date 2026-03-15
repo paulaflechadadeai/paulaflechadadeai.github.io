@@ -1,0 +1,56 @@
+name: Actualizar Posts
+
+on:
+  issues:
+    types: [opened, edited, deleted, closed, reopened]
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Generar posts-data.json
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              labels: 'post',
+              per_page: 100
+            });
+            
+            const posts = issues.data
+              .filter(issue => issue.state === 'open')
+              .map(issue => {
+                const imgMatch = issue.body.match(/!\[.*?\]\((.*?)\)/);
+                const videoMatch = issue.body.match(/https:\/\/github\.com\/user-attachments\/assets\/[a-zA-Z0-9-]+/);
+                
+                return {
+                  id: issue.number,
+                  titulo: issue.title,
+                  descripcion: issue.body.split('---')[0].trim(),
+                  imagen: imgMatch ? imgMatch[1] : null,
+                  video: videoMatch ? videoMatch[0] : null,
+                  fecha: issue.created_at,
+                  autor: issue.user.login,
+                  esGitHub: true
+                };
+              });
+            
+            const fs = require('fs');
+            fs.writeFileSync('posts-data.json', JSON.stringify(posts, null, 2));
+            console.log(`Generado posts-data.json con ${posts.length} posts`);
+      
+      - name: Commit y Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add posts-data.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "🔄 Actualizar posts desde Issues [bot]"
+          git push
