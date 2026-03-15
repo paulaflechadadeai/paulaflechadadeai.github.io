@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Contenido Controversial</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .upload-box {
+            border: 2px dashed #ff00ff;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .btn {
+            background: #00ff00;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📁 Subir Contenido Controversial</h1>
+    <p>Sube tus archivos directamente a la carpeta <code>admin/assets/</code> en el repositorio de GitHub.</p>
+
+    <div class="upload-box">
+        <h2>Instrucciones:</h2>
+        <ol style="text-align: left;">
+            <li>Ve al repositorio en GitHub.</li>
+            <li>Abre la carpeta <code>admin/assets/</code>.</li>
+            <li>Sube tus imágenes o videos (arrástralos o usa "Upload files").</li>
+            <li>Actualiza la lista <code>archivosControversiales</code> en el <code>index.html</code> principal.</li>
+        </ol>
+        <button class="btn" onclick="window.location.href='/'">Volver al inicio</button>
+    </div>
+</body>
+</html>
