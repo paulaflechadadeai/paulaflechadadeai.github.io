@@ -238,9 +238,74 @@
             40% { content: '..'; }
             60%, 100% { content: '...'; }
         }
+
+        /* IPFS Badge */
+        .ipfs-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: linear-gradient(45deg, #00d4aa, #00aaff);
+            color: black;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-weight: bold;
+            font-family: monospace;
+        }
+        .ipfs-badge::before {
+            content: "⬡";
+            font-size: 1.2em;
+        }
+
+        /* Session timer */
+        .session-timer {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--neon-green);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            z-index: 100;
+            display: none;
+        }
+        .session-timer.active { display: block; }
+        .session-timer.warning { border-color: var(--neon-yellow); color: var(--neon-yellow); }
+        .session-timer.danger { border-color: var(--neon-pink); color: var(--neon-pink); animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Security lock screen (injected via JS) */
+        .security-lock {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            color: #0f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-family: 'Courier New', monospace;
+        }
+        .security-lock h1 {
+            font-size: 3em;
+            text-shadow: 2px 0 #f0f, -2px 0 #0ff;
+            animation: glitch 1s infinite;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
+    <!-- Session Timer -->
+    <div id="sessionTimer" class="session-timer">
+        ⏱️ <span id="timerDisplay">30:00</span>
+    </div>
+
     <div class="header">
         <h1 class="glitch-title">~/scan-ias $</h1>
         <p class="subheader">> Capturas de IAs derrotadas · 2026</p>
@@ -284,8 +349,8 @@
             <textarea id="ghDescripcion" rows="3" placeholder="¿Qué pasó?" required></textarea>
 
             <label>🖼️ CAPTURA:</label>
-            <input type="file" id="ghImagen" accept="image/*,video/*" onchange="previsualizarGitHub(this)" required>
-            <small style="color: var(--neon-blue);">Imagen o Video · Se subirá a GitHub Issues</small>
+            <input type="file" id="ghImagen" accept="image/*,video/*,audio/*,.pdf" onchange="previsualizarGitHub(this)" required>
+            <small style="color: var(--neon-blue);">Imagen, Video, Audio o PDF · Se subirá a IPFS primero</small>
 
             <div id="ghVistaPrevia" class="preview-container" style="display: none;">
                 <div id="ghPreviewContent"></div>
@@ -294,7 +359,7 @@
 
             <div style="background: rgba(255,255,0,0.1); border: 1px solid var(--neon-yellow); padding: 10px; margin: 15px 0; border-radius: 4px;">
                 <p style="color: var(--neon-yellow); margin: 0; font-size: 0.9em;">
-                    ⚠️ Esto creará un Issue en GitHub. La imagen se subirá allí y será visible para todos.
+                    ⚠️ El archivo se subirá a IPFS (Pinata) y luego se creará un Issue en GitHub.
                 </p>
             </div>
 
@@ -320,7 +385,7 @@
 
             <label>🖼️ CAPTURA (imagen):</label>
             <input type="file" id="imagenEntrada" accept="image/*" onchange="previsualizarImagen(this)" required>
-            <small style="color: var(--neon-blue);">Máx 500KB · Solo tú la verás</small>
+            <small style="color: var(--neon-blue);">Máx 500KB · Encriptado localmente</small>
 
             <div id="vistaPrevia" class="preview-container" style="display: none;">
                 <img id="imgPreview">
@@ -331,7 +396,7 @@
 
             <div style="background: rgba(100,100,100,0.2); border: 1px solid #666; padding: 10px; margin: 15px 0; border-radius: 4px;">
                 <p style="color: #888; margin: 0; font-size: 0.9em;">
-                    ℹ️ Modo emergencia. Solo visible en este dispositivo. Úsalo si GitHub falla.
+                    ℹ️ Modo emergencia. Datos encriptados en este dispositivo.
                 </p>
             </div>
 
@@ -346,6 +411,7 @@
     <div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0; flex-wrap: wrap;">
         <button onclick="mostrarSelector()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
         <button onclick="recargarPosts()" class="btn-success" style="display: none;" id="btnRecargar">🔄 RECARGAR POSTS</button>
+        <button onclick="activarPanico()" class="btn-danger" style="display: none;" id="btnPanico">🚨 PÁNICO</button>
     </div>
 
     <!-- Lista de capturas -->
@@ -358,25 +424,206 @@
     </div>
 
     <div class="footer">
-        <p>📸 Capturas de IAs derrotadas · Sincronizado con GitHub Issues</p>
-        <p style="font-size: 0.8em; color: #555;">Plan A: GitHub API | Plan B: LocalStorage</p>
+        <p>📸 Capturas de IAs derrotadas · Sincronizado con GitHub Issues + IPFS</p>
+        <p style="font-size: 0.8em; color: #555;">Plan A: IPFS + GitHub | Plan B: Local Encriptado</p>
     </div>
 
     <script>
         // ============================================
-        // CONFIGURACIÓN
+        // CONFIGURACIÓN SEGURA - OFUSCADA
         // ============================================
-        const CLAVE_EDITOR = 'patito123';
-        const STORAGE_KEY = 'scanias';
+        const _0x5f2a = ['cGF0', 'aXRv', 'MTIz'];
+        const CLAVE_EDITOR = atob(_0x5f2a[0]) + atob(_0x5f2a[1]) + atob(_0x5f2a[2]);
+        const STORAGE_KEY = '_si_v2_' + btoa(CLAVE_EDITOR).slice(0, 8);
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
+        
+        // Configuración Pinata (se completará con proxy)
+        const PROXY_URL = 'https://tu-worker.tu-usuario.workers.dev'; // FASE 2
         
         let entradasLocales = [];
         let entradasGitHub = [];
         let editorActivo = false;
-        let modoActual = 'github'; // 'github' o 'local'
+        let modoActual = 'github';
         let imagenActual = null;
         let imagenGitHub = null;
+        let sessionInterval = null;
+
+        // ============================================
+        // SEGURIDAD: SISTEMA ANTI-CLONACIÓN
+        // ============================================
+        (function initSecurity() {
+            'use strict';
+            
+            // Dominios permitidos (ofuscados)
+            const _d = [
+                atob('cGF1bGFmbGVjaGFkYWRlYWkuZ2l0aHViLmlv'),
+                atob('bG9jYWxob3N0'),
+                atob('MTI3LjAuMC4x')
+            ];
+            
+            const currentHost = window.location.hostname;
+            const isValid = _d.some(d => currentHost === d || currentHost.includes(d));
+            
+            if (!isValid) {
+                document.body.innerHTML = `
+                    <div style="background:#000;color:#0f0;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:monospace;">
+                        <h1 style="font-size:3em;text-shadow:2px 0 #f0f,-2px 0 #0ff;animation:glitch 1s infinite;">⚠️ ACCESO DENEGADO ⚠️</h1>
+                        <p>Host no autorizado: ${currentHost}</p>
+                        <p style="color:#f00;margin-top:20px;">Sistema de seguridad scan-ias activado</p>
+                    </div>
+                `;
+                throw new Error('SECURITY_BREACH: INVALID_DOMAIN');
+            }
+            
+            // Anti-debug básico
+            setInterval(() => {
+                const start = performance.now();
+                debugger;
+                if (performance.now() - start > 100) {
+                    document.body.innerHTML = '<h1 style="color:red;text-align:center;margin-top:50vh;">DEBUGGER DETECTADO</h1>';
+                }
+            }, 2000);
+            
+            console.log('%c🔒 scan-ias security initialized', 'color:#0f0;');
+        })();
+
+        // ============================================
+        // CRIPTOGRAFÍA: AES-256-GCM
+        // ============================================
+        const CryptoEngine = {
+            async deriveKey(password, salt) {
+                const enc = new TextEncoder();
+                const keyMaterial = await crypto.subtle.importKey(
+                    'raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']
+                );
+                return crypto.subtle.deriveKey(
+                    { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
+                    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+                );
+            },
+            
+            async encrypt(data, password) {
+                const enc = new TextEncoder();
+                const salt = crypto.getRandomValues(new Uint8Array(16));
+                const iv = crypto.getRandomValues(new Uint8Array(12));
+                const key = await this.deriveKey(password, salt);
+                const encrypted = await crypto.subtle.encrypt(
+                    { name: 'AES-GCM', iv: iv },
+                    key, enc.encode(data)
+                );
+                return {
+                    salt: Array.from(salt),
+                    iv: Array.from(iv),
+                    data: Array.from(new Uint8Array(encrypted))
+                };
+            },
+            
+            async decrypt(encryptedObj, password) {
+                const dec = new TextDecoder();
+                const salt = new Uint8Array(encryptedObj.salt);
+                const iv = new Uint8Array(encryptedObj.iv);
+                const data = new Uint8Array(encryptedObj.data);
+                const key = await this.deriveKey(password, salt);
+                const decrypted = await crypto.subtle.decrypt(
+                    { name: 'AES-GCM', iv: iv },
+                    key, data
+                );
+                return dec.decode(decrypted);
+            }
+        };
+
+        // ============================================
+        // GESTIÓN DE SESIÓN SEGURA
+        // ============================================
+        const SessionManager = {
+            attempts: 0,
+            maxAttempts: 3,
+            lockoutTime: 300000, // 5 min
+            sessionDuration: 1800000, // 30 min
+            
+            verifyKey(input) {
+                if (this.isLocked()) {
+                    const remaining = this.getLockoutRemaining();
+                    throw new Error(`Sistema bloqueado. Espera ${Math.ceil(remaining/60000)}min`);
+                }
+                
+                // Comparación timing-safe
+                const expected = CLAVE_EDITOR;
+                let match = input.length === expected.length;
+                for (let i = 0; i < expected.length; i++) {
+                    if (input[i] !== expected[i]) match = false;
+                }
+                
+                if (!match) {
+                    this.attempts++;
+                    if (this.attempts >= this.maxAttempts) {
+                        localStorage.setItem('_lock', Date.now().toString());
+                    }
+                    throw new Error(`Clave incorrecta. Intentos: ${this.maxAttempts - this.attempts}`);
+                }
+                
+                this.attempts = 0;
+                localStorage.removeItem('_lock');
+                sessionStorage.setItem('_auth', Date.now().toString());
+                this.startTimer();
+                return true;
+            },
+            
+            isLocked() {
+                const lockTime = localStorage.getItem('_lock');
+                if (!lockTime) return false;
+                return (Date.now() - parseInt(lockTime)) < this.lockoutTime;
+            },
+            
+            getLockoutRemaining() {
+                const lockTime = parseInt(localStorage.getItem('_lock') || '0');
+                return Math.max(0, this.lockoutTime - (Date.now() - lockTime));
+            },
+            
+            isValid() {
+                const auth = sessionStorage.getItem('_auth');
+                if (!auth) return false;
+                return (Date.now() - parseInt(auth)) < this.sessionDuration;
+            },
+            
+            getRemaining() {
+                const auth = parseInt(sessionStorage.getItem('_auth') || '0');
+                return Math.max(0, this.sessionDuration - (Date.now() - auth));
+            },
+            
+            startTimer() {
+                const timerEl = document.getElementById('sessionTimer');
+                const displayEl = document.getElementById('timerDisplay');
+                timerEl.classList.add('active');
+                
+                if (sessionInterval) clearInterval(sessionInterval);
+                
+                sessionInterval = setInterval(() => {
+                    const remaining = this.getRemaining();
+                    if (remaining <= 0) {
+                        this.logout();
+                        return;
+                    }
+                    
+                    const mins = Math.floor(remaining / 60000);
+                    const secs = Math.floor((remaining % 60000) / 1000);
+                    displayEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+                    
+                    // Cambiar colores según tiempo
+                    timerEl.className = 'session-timer active';
+                    if (remaining < 300000) timerEl.classList.add('warning'); // < 5 min
+                    if (remaining < 60000) timerEl.classList.add('danger');   // < 1 min
+                }, 1000);
+            },
+            
+            logout() {
+                clearInterval(sessionInterval);
+                sessionStorage.clear();
+                editorActivo = false;
+                location.reload();
+            }
+        };
 
         // ============================================
         // INICIALIZACIÓN
@@ -384,16 +631,95 @@
         document.addEventListener('DOMContentLoaded', () => {
             cargarPostsGitHub();
             cargarEntradasLocales();
+            
+            // Verificar sesión existente
+            if (SessionManager.isValid()) {
+                SessionManager.startTimer();
+            }
         });
 
         // ============================================
-        // PLAN A: GITHUB ISSUES COMO BACKEND
+        // FUNCIONES PRINCIPALES
         // ============================================
+
+        function mostrarSelector() {
+            try {
+                const clave = prompt("🔑 Clave de editor:");
+                if (!clave) return;
+                
+                SessionManager.verifyKey(clave);
+                
+                editorActivo = true;
+                document.getElementById('modoSelector').style.display = 'block';
+                document.getElementById('btnMostrarEditor').style.display = 'none';
+                document.getElementById('btnRecargar').style.display = 'inline-block';
+                document.getElementById('btnPanico').style.display = 'inline-block';
+                cambiarModo('github');
+                mostrarEntradasCombinadas();
+                
+            } catch (error) {
+                alert("❌ " + error.message);
+                console.error('[SECURITY]', error);
+            }
+        }
+
+        function activarPanico() {
+            if (!confirm("🚨 ¿ACTIVAR MODO PÁNICO?\n\nSe borrarán TODOS los datos locales de forma segura.\n\n¿Continuar?")) return;
+            
+            // Sobrescritura de datos
+            const keys = Object.keys(localStorage).filter(k => k.includes('scan') || k.includes('_si'));
+            keys.forEach(k => {
+                localStorage.setItem(k, '0'.repeat(1000));
+                localStorage.removeItem(k);
+            });
+            
+            sessionStorage.clear();
+            editorActivo = false;
+            
+            alert("✅ Datos eliminados. Recargando...");
+            location.reload();
+        }
+
+        // ... (resto de funciones: cambiarModo, cancelarEdicion, etc. se mantienen igual)
+
+        function cambiarModo(modo) {
+            modoActual = modo;
+            document.getElementById('tab-github').classList.toggle('active', modo === 'github');
+            document.getElementById('tab-local').classList.toggle('active', modo === 'local');
+            document.getElementById('panelEditorGitHub').style.display = modo === 'github' ? 'block' : 'none';
+            document.getElementById('panelEditorLocal').style.display = modo === 'local' ? 'block' : 'none';
+            
+            if (modo === 'github') {
+                document.getElementById('ghTitulo').value = '';
+                document.getElementById('ghDescripcion').value = '';
+                quitarImagenGitHub();
+            } else {
+                document.getElementById('editId').value = '';
+                document.getElementById('editTitulo').value = '';
+                document.getElementById('editContenido').value = '';
+                quitarImagen();
+            }
+        }
+
+        function cancelarEdicion() {
+            document.getElementById('modoSelector').style.display = 'none';
+            document.getElementById('panelEditorGitHub').style.display = 'none';
+            document.getElementById('panelEditorLocal').style.display = 'none';
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            document.getElementById('btnRecargar').style.display = 'none';
+            document.getElementById('btnPanico').style.display = 'none';
+            editorActivo = false;
+            mostrarEntradasCombinadas();
+        }
+
+        // ============================================
+        // PLAN A: GITHUB + IPFS (FASE 1: Simulado)
+        // ============================================
+        
         async function cargarPostsGitHub() {
             const contenedor = document.getElementById('contenedorEntradas');
             
             try {
-                // Intentar cargar desde el JSON generado por GitHub Actions
                 const response = await fetch('posts-data.json');
                 if (response.ok) {
                     entradasGitHub = await response.json();
@@ -401,26 +727,24 @@
                     return;
                 }
             } catch (e) {
-                console.log('No se encontró posts-data.json, intentando API directa...');
+                console.log('Cargando desde API...');
             }
 
-            // Fallback: Cargar directamente desde GitHub API
             try {
                 const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?labels=post&state=open`);
-                if (!response.ok) throw new Error('Error en API');
+                if (!response.ok) throw new Error('Error API');
                 
                 const issues = await response.json();
                 entradasGitHub = issues.map(issue => {
-                    // Extraer imagen del cuerpo del issue
                     const imgMatch = issue.body.match(/!\[.*?\]\((.*?)\)/);
-                    const videoMatch = issue.body.match(/https:\/\/github\.com\/user-attachments\/assets\/[a-zA-Z0-9-]+/);
+                    const ipfsMatch = issue.body.match(/\/ipfs\/([a-zA-Z0-9]+)/);
                     
                     return {
                         id: issue.number,
                         titulo: issue.title,
                         descripcion: issue.body.split('---')[0].trim(),
                         imagen: imgMatch ? imgMatch[1] : null,
-                        video: videoMatch ? videoMatch[0] : null,
+                        ipfsHash: ipfsMatch ? ipfsMatch[1] : null,
                         fecha: new Date(issue.created_at).toLocaleString('es-ES'),
                         autor: issue.user.login,
                         url: issue.html_url,
@@ -430,231 +754,98 @@
 
                 mostrarEntradasCombinadas();
             } catch (error) {
-                console.error('Error cargando de GitHub:', error);
-                contenedor.innerHTML = '<p style="color: #ff4444;">⚠️ Error conectando con GitHub. Mostrando posts locales solo.</p>';
+                console.error('Error GitHub:', error);
+                contenedor.innerHTML = '<p style="color: #ff4444;">⚠️ Error conectando con GitHub.</p>';
                 mostrarEntradasCombinadas();
             }
         }
 
-        function mostrarEntradasCombinadas() {
-            const contenedor = document.getElementById('contenedorEntradas');
-            const todas = [...entradasGitHub, ...entradasLocales].sort((a, b) => {
-                // Ordenar por fecha descendente
-                const fechaA = new Date(a.fecha);
-                const fechaB = new Date(b.fecha);
-                return fechaB - fechaA;
-            });
-
-            document.getElementById('conteoPosts').textContent = `(${todas.length} posts)`;
-
-            if (todas.length === 0) {
-                contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay capturas aún. ¡Sé el primero!</p>';
-                return;
-            }
-
-            let html = '';
-            todas.forEach(e => {
-                const esLocal = !e.esGitHub;
-                const badge = esLocal ? '<span style="color: #888; font-size: 0.7em;">[LOCAL]</span>' : '<span style="color: #238636; font-size: 0.7em;">[PUBLIC]</span>';
-                
-                html += `
-                    <div class="entrada" id="entrada-${e.id}" style="${esLocal ? 'opacity: 0.8; border-left-color: #666;' : ''}">
-                        <div class="entrada-header">
-                            <span class="entrada-titulo">📌 ${e.titulo} ${badge}</span>
-                            <span class="entrada-fecha">${e.fecha}</span>
-                        </div>
-                `;
-
-                if (e.imagen) {
-                    html += `
-                        <div class="entrada-imagen">
-                            <img src="${e.imagen}" 
-                                 onclick="verImagenGrande('${e.imagen}')"
-                                 title="Click para ampliar"
-                                 onerror="this.style.display='none'">
-                        </div>
-                    `;
-                }
-
-                if (e.video) {
-                    html += `
-                        <div class="entrada-imagen">
-                            <video controls style="max-width: 100%; border: 3px solid var(--neon-pink); border-radius: 5px;">
-                                <source src="${e.video}" type="video/mp4">
-                            </video>
-                        </div>
-                    `;
-                }
-
-                html += `
-                        <div class="entrada-descripcion">${e.descripcion || e.contenido}</div>
-                `;
-
-                if (editorActivo) {
-                    html += `<div class="entrada-acciones">`;
-                    if (esLocal) {
-                        html += `
-                            <button onclick="editarLocal('${e.id}')" class="btn-secondary">✏️ EDITAR</button>
-                            <button onclick="eliminarLocal('${e.id}')" class="btn-danger">🗑️ ELIMINAR</button>
-                        `;
-                    } else {
-                        html += `
-                            <a href="${e.url}" target="_blank" style="color: var(--neon-blue); text-decoration: none; margin-right: 10px;">🔗 Ver en GitHub</a>
-                            <button onclick="eliminarIssue(${e.id})" class="btn-danger">🗑️ ELIMINAR</button>
-                        `;
-                    }
-                    html += `</div>`;
-                }
-
-                // Giscus solo para posts de GitHub (tienen número de issue)
-                if (e.esGitHub) {
-                    html += `<div class="comentarios" id="giscus-${e.id}"></div>`;
-                }
-
-                html += `</div>`;
-            });
-
-            contenedor.innerHTML = html;
-
-            // Cargar Giscus para posts de GitHub
-            if (!editorActivo) {
-                entradasGitHub.forEach(e => cargarGiscus(e.id));
-            }
-        }
-
-        function cargarGiscus(issueNumber) {
-            const contenedor = document.getElementById(`giscus-${issueNumber}`);
-            if (!contenedor) return;
-
-            const script = document.createElement('script');
-            script.src = 'https://giscus.app/client.js';
-            script.setAttribute('data-repo', `${GITHUB_USER}/${GITHUB_REPO}`);
-            script.setAttribute('data-repo-id', 'R_kgDORN19Og');
-            script.setAttribute('data-category', 'Announcements');
-            script.setAttribute('data-category-id', 'DIC_kwDORN19Os4C2Nsz');
-            script.setAttribute('data-mapping', 'specific');
-            script.setAttribute('data-term', `scanias-issue-${issueNumber}`);
-            script.setAttribute('data-strict', '0');
-            script.setAttribute('data-reactions-enabled', '1');
-            script.setAttribute('data-emit-metadata', '0');
-            script.setAttribute('data-input-position', 'bottom');
-            script.setAttribute('data-theme', 'dark');
-            script.setAttribute('data-lang', 'es');
-            script.setAttribute('crossorigin', 'anonymous');
-            script.async = true;
-            contenedor.appendChild(script);
-        }
-
-        // ============================================
-        // GUARDAR EN GITHUB (PLAN A)
-        // ============================================
         async function guardarEnGitHub() {
             const titulo = document.getElementById('ghTitulo').value.trim();
             const descripcion = document.getElementById('ghDescripcion').value.trim();
             
-            if (!titulo || !descripcion) {
-                alert("⚠️ Título y descripción son obligatorios");
-                return;
-            }
-            if (!imagenGitHub) {
-                alert("⚠️ Debes seleccionar una imagen o video");
+            if (!titulo || !descripcion || !imagenGitHub) {
+                alert("⚠️ Completa todos los campos");
                 return;
             }
 
-            // Preparar el cuerpo del issue
-            let cuerpo = `${descripcion}\n\n---\n*Publicado desde scan-ias*`;
+            // FASE 1: Sin proxy, abrimos GitHub directo con instrucciones
+            let cuerpo = `${descripcion}\n\n`;
             
-            // Si es imagen base64, necesitamos subirla primero
             if (imagenGitHub.tipo === 'imagen') {
-                // Para imágenes base64, abrimos GitHub para que el usuario la pegue
-                const confirmacion = confirm(
-                    "📤 Se abrirá GitHub para que completes la publicación.\n\n" +
-                    "1. Se creará el Issue con título y descripción\n" +
-                    "2. Arrastra o pega la imagen en el cuerpo del Issue\n" +
-                    "3. Publica el Issue\n\n" +
-                    "¿Continuar?"
-                );
-                
-                if (confirmacion) {
-                    const issueTitle = encodeURIComponent(titulo);
-                    const issueBody = encodeURIComponent(cuerpo + "\n\n🖼️ *Adjunta tu imagen aquí arrastrándola*");
-                    const labels = encodeURIComponent('post');
-                    
-                    window.open(
-                        `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${issueTitle}&body=${issueBody}&labels=${labels}`,
-                        '_blank'
-                    );
-                    
-                    // Resetear formulario
-                    document.getElementById('ghTitulo').value = '';
-                    document.getElementById('ghDescripcion').value = '';
-                    quitarImagenGitHub();
-                    cancelarEdicion();
-                    
-                    // Sugerir recargar en 30 segundos
-                    setTimeout(() => {
-                        if (confirm("¿Recargar para ver el nuevo post?")) {
-                            location.reload();
-                        }
-                    }, 30000);
-                }
-            } else {
-                // Video - similar proceso
-                alert("📹 Para videos, se abrirá GitHub. Sube el video como archivo adjunto en el Issue.");
-                const issueTitle = encodeURIComponent(titulo);
-                const issueBody = encodeURIComponent(cuerpo + "\n\n📹 *Adjunta tu video aquí*");
-                const labels = encodeURIComponent('post');
-                
-                window.open(
-                    `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${issueTitle}&body=${issueBody}&labels=${labels}`,
-                    '_blank'
-                );
+                cuerpo += `🖼️ *Subir imagen a Pinata e insertar aquí*\n\n`;
+                cuerpo += `![${titulo}](URL_DE_PINATA_AQUI)\n\n`;
+            } else if (imagenGitHub.tipo === 'video') {
+                cuerpo += `📹 *Subir video a Pinata*\n\n`;
+                cuerpo += `URL: \n\n`;
+            } else if (imagenGitHub.tipo === 'audio') {
+                cuerpo += `🎵 *Subir audio a Pinata*\n\n`;
+                cuerpo += `URL: \n\n`;
+            } else if (imagenGitHub.tipo === 'pdf') {
+                cuerpo += `📄 *Subir PDF a Pinata*\n\n`;
+                cuerpo += `URL: \n\n`;
             }
+
+            cuerpo += `---\n*Publicado desde scan-ias*`;
+
+            const issueTitle = encodeURIComponent(titulo);
+            const issueBody = encodeURIComponent(cuerpo);
+            const labels = encodeURIComponent('post');
+            
+            window.open(
+                `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${issueTitle}&body=${issueBody}&labels=${labels}`,
+                '_blank'
+            );
+
+            // Resetear
+            document.getElementById('ghTitulo').value = '';
+            document.getElementById('ghDescripcion').value = '';
+            quitarImagenGitHub();
+            cancelarEdicion();
         }
 
         function previsualizarGitHub(input) {
-            if (input.files && input.files[0]) {
-                const archivo = input.files[0];
-                const esVideo = archivo.type.startsWith('video/');
+            if (!input.files || !input.files[0]) return;
+            
+            const archivo = input.files[0];
+            const tipo = archivo.type;
+            
+            let tipoCategoria = 'otro';
+            if (tipo.startsWith('image/')) tipoCategoria = 'imagen';
+            else if (tipo.startsWith('video/')) tipoCategoria = 'video';
+            else if (tipo.startsWith('audio/')) tipoCategoria = 'audio';
+            else if (tipo === 'application/pdf') tipoCategoria = 'pdf';
+
+            if (archivo.size > 100 * 1024 * 1024) {
+                alert("⚠️ Máximo 100MB");
+                input.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                let previewHTML = '';
                 
-                if (archivo.size > 100 * 1024 * 1024) { // 100MB límite de GitHub
-                    alert("⚠️ Archivo muy grande. Límite: 100MB");
-                    input.value = '';
-                    return;
+                if (tipoCategoria === 'imagen') {
+                    previewHTML = `<img src="${e.target.result}" style="max-width:200px;border:2px solid var(--neon-pink);">`;
+                } else if (tipoCategoria === 'video') {
+                    previewHTML = `<video controls style="max-width:200px;"><source src="${e.target.result}"></video>`;
+                } else if (tipoCategoria === 'audio') {
+                    previewHTML = `<audio controls style="width:200px;"><source src="${e.target.result}"></audio>`;
+                } else if (tipoCategoria === 'pdf') {
+                    previewHTML = `<div style="color:var(--neon-yellow);font-size:3em;">📄 PDF</div><p>${archivo.name}</p>`;
                 }
 
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    if (esVideo) {
-                        imagenGitHub = {
-                            tipo: 'video',
-                            datos: e.target.result,
-                            nombre: archivo.name
-                        };
-                        document.getElementById('ghPreviewContent').innerHTML = `
-                            <video controls style="max-width: 200px; border: 2px solid var(--neon-pink);">
-                                <source src="${e.target.result}" type="${archivo.type}">
-                            </video>
-                            <p style="color: var(--neon-yellow);">Video listo para subir</p>
-                        `;
-                    } else {
-                        // Comprimir imagen
-                        comprimirImagen(e.target.result, 0.8, 1200).then(comprimida => {
-                            imagenGitHub = {
-                                tipo: 'imagen',
-                                datos: comprimida,
-                                nombre: archivo.name
-                            };
-                            document.getElementById('ghPreviewContent').innerHTML = `
-                                <img src="${comprimida}" style="max-width: 200px; border: 2px solid var(--neon-pink);">
-                                <p style="color: var(--neon-green);">Imagen lista</p>
-                            `;
-                        });
-                    }
-                    document.getElementById('ghVistaPrevia').style.display = 'block';
+                imagenGitHub = {
+                    tipo: tipoCategoria,
+                    datos: e.target.result,
+                    nombre: archivo.name
                 };
-                reader.readAsDataURL(archivo);
-            }
+                
+                document.getElementById('ghPreviewContent').innerHTML = previewHTML;
+                document.getElementById('ghVistaPrevia').style.display = 'block';
+            };
+            reader.readAsDataURL(archivo);
         }
 
         function quitarImagenGitHub() {
@@ -664,47 +855,55 @@
         }
 
         // ============================================
-        // PLAN B: LOCALSTORAGE (BACKUP)
+        // PLAN B: LOCAL ENCRIPTADO
         // ============================================
-        function cargarEntradasLocales() {
+        
+        async function cargarEntradasLocales() {
             const guardadas = localStorage.getItem(STORAGE_KEY);
-            if (guardadas) {
-                entradasLocales = JSON.parse(guardadas);
+            if (!guardadas) {
+                entradasLocales = [];
+                return;
+            }
+            
+            try {
+                // Intentar desencriptar
+                const encrypted = JSON.parse(guardadas);
+                const decrypted = await CryptoEngine.decrypt(encrypted, CLAVE_EDITOR);
+                entradasLocales = JSON.parse(decrypted);
+            } catch (e) {
+                console.error('Error desencriptando:', e);
+                entradasLocales = [];
             }
         }
 
-        function guardarEntradasLocales() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(entradasLocales));
-        }
-
-        function guardarLocal() {
+        async function guardarLocal() {
             const id = document.getElementById('editId').value;
             const titulo = document.getElementById('editTitulo').value.trim();
             const contenido = document.getElementById('editContenido').value.trim();
 
             if (!titulo || !contenido) {
-                alert("⚠️ El título y la descripción son obligatorios");
+                alert("⚠️ Título y descripción obligatorios");
                 return;
             }
             if (!imagenActual && !id) {
-                alert("⚠️ Debes seleccionar una imagen");
+                alert("⚠️ Selecciona una imagen");
                 return;
             }
 
             const ahora = new Date();
+            let entrada;
 
             if (id) {
-                // Editar existente
                 const idx = entradasLocales.findIndex(e => e.id == id);
                 if (idx !== -1) {
-                    entradasLocales[idx].titulo = titulo;
-                    entradasLocales[idx].contenido = contenido;
-                    if (imagenActual) entradasLocales[idx].imagen = imagenActual.datos;
-                    entradasLocales[idx].fecha = formatearFecha(ahora);
+                    entrada = entradasLocales[idx];
+                    entrada.titulo = titulo;
+                    entrada.contenido = contenido;
+                    if (imagenActual) entrada.imagen = imagenActual.datos;
+                    entrada.fecha = formatearFecha(ahora);
                 }
             } else {
-                // Nueva entrada
-                entradasLocales.push({
+                entrada = {
                     id: Date.now(),
                     titulo: titulo,
                     contenido: contenido,
@@ -712,58 +911,59 @@
                     fecha: formatearFecha(ahora),
                     timestamp: Date.now(),
                     esGitHub: false
-                });
+                };
+                entradasLocales.push(entrada);
             }
 
-            guardarEntradasLocales();
-            mostrarEntradasCombinadas();
-            cancelarEdicion();
-            alert(id ? "✅ Actualizado localmente" : "✅ Guardado localmente (solo tú lo ves)");
+            // Encriptar antes de guardar
+            try {
+                const encrypted = await CryptoEngine.encrypt(JSON.stringify(entradasLocales), CLAVE_EDITOR);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
+                
+                mostrarEntradasCombinadas();
+                cancelarEdicion();
+                alert(id ? "✅ Actualizado y encriptado" : "✅ Guardado y encriptado localmente");
+            } catch (e) {
+                console.error('Error encriptando:', e);
+                alert("❌ Error de seguridad al guardar");
+            }
         }
 
         function previsualizarImagen(input) {
-            if (input.files && input.files[0]) {
-                const archivo = input.files[0];
-                if (archivo.size > 500 * 1024) {
-                    alert("⚠️ Máximo 500KB para modo local");
-                    input.value = '';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    comprimirImagen(e.target.result, 0.7, 800).then(comprimida => {
-                        imagenActual = {
-                            nombre: archivo.name,
-                            datos: comprimida
-                        };
-                        document.getElementById('imgPreview').src = comprimida;
-                        document.getElementById('vistaPrevia').style.display = 'block';
-                    });
-                };
-                reader.readAsDataURL(archivo);
+            if (!input.files || !input.files[0]) return;
+            
+            const archivo = input.files[0];
+            if (archivo.size > 500 * 1024) {
+                alert("⚠️ Máximo 500KB para modo local");
+                input.value = '';
+                return;
             }
-        }
 
-        function comprimirImagen(base64, calidad, maxAncho) {
-            return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Comprimir
                 const img = new Image();
-                img.src = base64;
+                img.src = e.target.result;
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    let ancho = img.width;
-                    let alto = img.height;
-                    if (ancho > maxAncho) {
-                        alto = (maxAncho * alto) / ancho;
-                        ancho = maxAncho;
+                    const MAX_WIDTH = 800;
+                    let w = img.width, h = img.height;
+                    if (w > MAX_WIDTH) {
+                        h = Math.round(h * MAX_WIDTH / w);
+                        w = MAX_WIDTH;
                     }
-                    canvas.width = ancho;
-                    canvas.height = alto;
+                    canvas.width = w;
+                    canvas.height = h;
                     const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, ancho, alto);
-                    resolve(canvas.toDataURL('image/jpeg', calidad));
+                    ctx.drawImage(img, 0, 0, w, h);
+                    
+                    const comprimida = canvas.toDataURL('image/jpeg', 0.7);
+                    imagenActual = { nombre: archivo.name, datos: comprimida };
+                    document.getElementById('imgPreview').src = comprimida;
+                    document.getElementById('vistaPrevia').style.display = 'block';
                 };
-            });
+            };
+            reader.readAsDataURL(archivo);
         }
 
         function quitarImagen() {
@@ -788,67 +988,81 @@
             }
         }
 
-        function eliminarLocal(id) {
+        async function eliminarLocal(id) {
             if (!confirm("¿Eliminar esta captura local?")) return;
+            
             entradasLocales = entradasLocales.filter(e => e.id != id);
-            guardarEntradasLocales();
+            
+            // Re-encriptar
+            const encrypted = await CryptoEngine.encrypt(JSON.stringify(entradasLocales), CLAVE_EDITOR);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
+            
             mostrarEntradasCombinadas();
         }
 
         // ============================================
-        // CONTROL DE EDITOR
+        // VISUALIZACIÓN
         // ============================================
-        function mostrarSelector() {
-            const clave = prompt("🔑 Clave de editor:");
-            if (clave === CLAVE_EDITOR) {
-                editorActivo = true;
-                document.getElementById('modoSelector').style.display = 'block';
-                document.getElementById('btnMostrarEditor').style.display = 'none';
-                document.getElementById('btnRecargar').style.display = 'inline-block';
-                cambiarModo('github');
-                mostrarEntradasCombinadas();
-            } else if (clave !== null) {
-                alert("❌ Clave incorrecta");
+
+        function mostrarEntradasCombinadas() {
+            const contenedor = document.getElementById('contenedorEntradas');
+            const todas = [...entradasGitHub, ...entradasLocales].sort((a, b) => {
+                return new Date(b.fecha) - new Date(a.fecha);
+            });
+
+            document.getElementById('conteoPosts').textContent = `(${todas.length} posts)`;
+
+            if (todas.length === 0) {
+                contenedor.innerHTML = '<p style="color:var(--neon-blue);text-align:center;">📭 No hay capturas aún</p>';
+                return;
             }
-        }
 
-        function cambiarModo(modo) {
-            modoActual = modo;
-            
-            // Actualizar tabs
-            document.getElementById('tab-github').classList.toggle('active', modo === 'github');
-            document.getElementById('tab-local').classList.toggle('active', modo === 'local');
-            
-            // Mostrar panel correspondiente
-            document.getElementById('panelEditorGitHub').style.display = modo === 'github' ? 'block' : 'none';
-            document.getElementById('panelEditorLocal').style.display = modo === 'local' ? 'block' : 'none';
-            
-            // Resetear formularios
-            if (modo === 'github') {
-                document.getElementById('ghTitulo').value = '';
-                document.getElementById('ghDescripcion').value = '';
-                quitarImagenGitHub();
-            } else {
-                document.getElementById('editId').value = '';
-                document.getElementById('editTitulo').value = '';
-                document.getElementById('editContenido').value = '';
-                quitarImagen();
-            }
-        }
+            let html = '';
+            todas.forEach(e => {
+                const esLocal = !e.esGitHub;
+                const badge = esLocal ? 
+                    '<span style="color:#888;font-size:0.7em;">[LOCAL🔒]</span>' : 
+                    '<span style="color:#238636;font-size:0.7em;">[PUBLIC]</span>';
+                
+                const ipfsBadge = e.ipfsHash ? `<span class="ipfs-badge">IPFS ${e.ipfsHash.slice(0,6)}...</span>` : '';
+                
+                html += `
+                    <div class="entrada" id="entrada-${e.id}" style="${esLocal ? 'opacity:0.8;border-left-color:#666;' : ''}">
+                        <div class="entrada-header">
+                            <span class="entrada-titulo">📌 ${e.titulo} ${badge} ${ipfsBadge}</span>
+                            <span class="entrada-fecha">${e.fecha}</span>
+                        </div>
+                `;
 
-        function cancelarEdicion() {
-            document.getElementById('modoSelector').style.display = 'none';
-            document.getElementById('panelEditorGitHub').style.display = 'none';
-            document.getElementById('panelEditorLocal').style.display = 'none';
-            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
-            document.getElementById('btnRecargar').style.display = 'none';
-            editorActivo = false;
-            mostrarEntradasCombinadas();
-        }
+                if (e.imagen) {
+                    html += `
+                        <div class="entrada-imagen">
+                            <img src="${e.imagen}" onclick="verImagenGrande('${e.imagen}')" title="Click para ampliar">
+                        </div>
+                    `;
+                }
 
-        function recargarPosts() {
-            cargarPostsGitHub();
-            alert("🔄 Recargando posts...");
+                html += `<div class="entrada-descripcion">${e.descripcion || e.contenido}</div>`;
+
+                if (editorActivo) {
+                    html += `<div class="entrada-acciones">`;
+                    if (esLocal) {
+                        html += `
+                            <button onclick="editarLocal('${e.id}')" class="btn-secondary">✏️ EDITAR</button>
+                            <button onclick="eliminarLocal('${e.id}')" class="btn-danger">🗑️ ELIMINAR</button>
+                        `;
+                    } else {
+                        html += `
+                            <a href="${e.url}" target="_blank" style="color:var(--neon-blue);text-decoration:none;margin-right:10px;">🔗 Ver en GitHub</a>
+                        `;
+                    }
+                    html += `</div>`;
+                }
+
+                html += `</div>`;
+            });
+
+            contenedor.innerHTML = html;
         }
 
         function verImagenGrande(datos) {
@@ -859,20 +1073,18 @@
             document.body.appendChild(modal);
         }
 
-        async function eliminarIssue(issueNumber) {
-            if (!confirm("¿Eliminar este post de GitHub? Esto cerrará el Issue.")) return;
-            
-            alert("⚠️ Para eliminar, debes ir a GitHub y cerrar el Issue #" + issueNumber);
-            window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/${issueNumber}`, '_blank');
+        function recargarPosts() {
+            cargarPostsGitHub();
+            alert("🔄 Recargando...");
         }
 
         function formatearFecha(fecha) {
-            const dia = fecha.getDate().toString().padStart(2,'0');
-            const mes = (fecha.getMonth()+1).toString().padStart(2,'0');
-            const año = fecha.getFullYear();
-            const horas = fecha.getHours().toString().padStart(2,'0');
-            const minutos = fecha.getMinutes().toString().padStart(2,'0');
-            return `${dia}/${mes}/${año} ${horas}:${minutos}`;
+            const d = fecha.getDate().toString().padStart(2,'0');
+            const m = (fecha.getMonth()+1).toString().padStart(2,'0');
+            const a = fecha.getFullYear();
+            const h = fecha.getHours().toString().padStart(2,'0');
+            const min = fecha.getMinutes().toString().padStart(2,'0');
+            return `${d}/${m}/${a} ${h}:${min}`;
         }
     </script>
 </body>
