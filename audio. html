@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Subir Audio · observatorio</title>
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-green: #0aff0a;
+            --neon-red: #ff003c;
+            --neon-yellow: #ffee00;
+            --neon-purple: #bd00ff;
+            --bg-dark: #0a0a0f;
+            --bg-terminal: #0d1117;
+            --border: #30363d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: var(--bg-dark);
+            color: #c9d1d9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--neon-purple);
+            padding-bottom: 20px;
+        }
+        
+        .glitch-title {
+            font-size: 2.5rem;
+            color: var(--neon-purple);
+            text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue);
+            animation: glitch 2s infinite;
+        }
+        
+        @keyframes glitch {
+            0%, 90%, 100% { text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue); }
+            92% { text-shadow: -2px 0 var(--neon-red), 2px 0 var(--neon-blue); }
+            94% { text-shadow: 2px 0 var(--neon-blue), -2px 0 var(--neon-red); }
+        }
+        
+        .subheader {
+            color: var(--neon-green);
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .volver {
+            margin-bottom: 20px;
+        }
+        
+        .volver a {
+            color: var(--neon-purple);
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .volver a:hover {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .terminal {
+            background: var(--bg-terminal);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 0 30px rgba(189, 0, 255, 0.1);
+        }
+        
+        label {
+            display: block;
+            color: var(--neon-yellow);
+            margin: 15px 0 5px;
+            font-weight: bold;
+        }
+        
+        input[type="text"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            background: #010409;
+            border: 1px solid var(--border);
+            color: #c9d1d9;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 10px rgba(189, 0, 255, 0.3);
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .file-label {
+            display: block;
+            background: linear-gradient(45deg, #21262d, #30363d);
+            border: 2px dashed var(--neon-purple);
+            color: var(--neon-purple);
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 0;
+        }
+        
+        .file-label:hover {
+            background: rgba(189, 0, 255, 0.1);
+            box-shadow: 0 0 20px rgba(189, 0, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .file-label::before {
+            content: "🎧 ";
+            font-size: 2rem;
+        }
+        
+        small {
+            color: var(--neon-purple);
+            display: block;
+            margin-top: 5px;
+        }
+        
+        .preview-container {
+            background: #010409;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .audio-visualizer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 60px;
+            gap: 3px;
+            margin-bottom: 15px;
+        }
+        
+        .bar {
+            width: 4px;
+            background: linear-gradient(to top, var(--neon-purple), var(--neon-blue));
+            border-radius: 2px;
+            animation: bounce 1s ease-in-out infinite;
+        }
+        
+        .bar:nth-child(1) { height: 20%; animation-delay: 0s; }
+        .bar:nth-child(2) { height: 60%; animation-delay: 0.1s; }
+        .bar:nth-child(3) { height: 40%; animation-delay: 0.2s; }
+        .bar:nth-child(4) { height: 80%; animation-delay: 0.3s; }
+        .bar:nth-child(5) { height: 30%; animation-delay: 0.4s; }
+        .bar:nth-child(6) { height: 70%; animation-delay: 0.5s; }
+        .bar:nth-child(7) { height: 50%; animation-delay: 0.6s; }
+        .bar:nth-child(8) { height: 90%; animation-delay: 0.7s; }
+        .bar:nth-child(9) { height: 35%; animation-delay: 0.8s; }
+        .bar:nth-child(10) { height: 65%; animation-delay: 0.9s; }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scaleY(0.5); }
+            50% { transform: scaleY(1); }
+        }
+        
+        audio {
+            width: 100%;
+            border-radius: 30px;
+            margin-top: 10px;
+        }
+        
+        audio::-webkit-media-controls-panel {
+            background: #21262d;
+        }
+        
+        .btn-success, .btn-secondary, .btn-danger {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #238636, #2ea043);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(35, 134, 54, 0.5);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #6e7681, #8b949e);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(110, 118, 129, 0.5);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #da3633, #f85149);
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(218, 54, 51, 0.5);
+        }
+        
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 5px;
+            background: #010409;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            min-height: 45px;
+        }
+        
+        .tag {
+            background: var(--neon-purple);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .tag button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+        }
+        
+        .tag-input input {
+            flex: 1;
+            min-width: 100px;
+            background: transparent;
+            border: none;
+            color: #c9d1d9;
+            padding: 5px;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="glitch-title">~/observatorio/audio $</h1>
+        <p class="subheader">> Subir audio (máx 20MB)</p>
+    </div>
+
+    <div class="volver">
+        <a href="/">← INICIO</a>
+    </div>
+
+    <div class="terminal">
+        <form onsubmit="event.preventDefault(); subirAudio();">
+            <label>📌 TÍTULO:</label>
+            <input type="text" id="titulo" placeholder="Título del audio" required>
+
+            <label>🎤 ARTISTA/CREADOR:</label>
+            <input type="text" id="artista" placeholder="Nombre del artista o creador">
+
+            <label>📝 DESCRIPCIÓN:</label>
+            <textarea id="descripcion" rows="2" placeholder="Descripción del contenido..."></textarea>
+
+            <label>🏷️ GÉNERO/TIPO:</label>
+            <select id="genero">
+                <option value="podcast">🎙️ Podcast</option>
+                <option value="musica">🎵 Música</option>
+                <option value="entrevista">💬 Entrevista</option>
+                <option value="audiobook">📖 Audiolibro</option>
+                <option value="field-recording">🌿 Grabación de campo</option>
+                <option value="otro">🔧 Otro</option>
+            </select>
+
+            <label>🔗 URL EXTERNA (Spotify/SoundCloud):</label>
+            <input type="url" id="urlExterna" placeholder="https://open.spotify.com/episode/...">
+
+            <label>🎧 SELECCIONAR ARCHIVO:</label>
+            <label for="archivo" class="file-label" id="fileLabel">
+                Haz clic para seleccionar audio<br>
+                <small style="color: #8b949e; margin-top: 10px;">o arrastra aquí</small>
+            </label>
+            <input type="file" id="archivo" accept="audio/mpeg,audio/wav,audio/ogg,audio/mp3,audio/aac,audio/flac" onchange="previsualizar(this)">
+            <small>MP3, WAV, OGG, AAC, FLAC · Máx 20MB</small>
+
+            <div id="vistaPrevia" class="preview-container" style="display: none;">
+                <div class="audio-visualizer" id="visualizer">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+                <audio id="audioPreview" controls></audio>
+                <p style="margin-top: 10px;">
+                    <span id="fileInfo" style="color: var(--neon-green);"></span>
+                </p>
+                <p><button type="button" onclick="quitarAudio()" class="btn-danger">✖ QUITAR</button></p>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn-success">🚀 SUBIR A GITHUB</button>
+                <button type="button" onclick="history.back()" class="btn-secondary">↩ CANCELAR</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const GITHUB_USER = 'paulaflechadadeai';
+        const GITHUB_REPO = 'paulaflechadadeai.github.io';
+        let archivoSeleccionado = null;
+
+        function previsualizar(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validar tamaño (20MB)
+                if (file.size > 20 * 1024 * 1024) {
+                    alert("❌ El audio debe ser menor de 20MB");
+                    input.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    archivoSeleccionado = {
+                        datos: e.target.result,
+                        nombre: file.name,
+                        tipo: 'audio',
+                        tamaño: (file.size / (1024 * 1024)).toFixed(2),
+                        duracion: null
+                    };
+                    
+                    const audio = document.getElementById('audioPreview');
+                    audio.src = e.target.result;
+                    
+                    // Obtener duración
+                    audio.onloadedmetadata = function() {
+                        const minutos = Math.floor(audio.duration / 60);
+                        const segundos = Math.floor(audio.duration % 60);
+                        archivoSeleccionado.duracion = `${minutos}:${segundos.toString().padStart(2, '0')}`;
+                        actualizarInfo();
+                    };
+                    
+                    document.getElementById('vistaPrevia').style.display = 'block';
+                    document.getElementById('fileLabel').style.borderColor = 'var(--neon-green)';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function actualizarInfo() {
+            let info = `📊 ${archivoSeleccionado.nombre} (${archivoSeleccionado.tamaño} MB)`;
+            if (archivoSeleccionado.duracion) {
+                info += ` · ⏱️ ${archivoSeleccionado.duracion}`;
+            }
+            document.getElementById('fileInfo').textContent = info;
+        }
+
+        function quitarAudio() {
+            archivoSeleccionado = null;
+            document.getElementById('vistaPrevia').style.display = 'none';
+            document.getElementById('archivo').value = '';
+            document.getElementById('fileLabel').style.borderColor = 'var(--neon-purple)';
+        }
+
+        function subirAudio() {
+            const titulo = document.getElementById('titulo').value.trim();
+            const artista = document.getElementById('artista').value.trim();
+            const descripcion = document.getElementById('descripcion').value.trim();
+            const genero = document.getElementById('genero').value;
+            const urlExterna = document.getElementById('urlExterna').value.trim();
+
+            if (!titulo) {
+                alert("⚠️ El título es obligatorio");
+                return;
+            }
+
+            let cuerpo = '';
+            const generosEmoji = {
+                'podcast': '🎙️',
+                'musica': '🎵',
+                'entrevista': '💬',
+                'audiobook': '📖',
+                'field-recording': '🌿',
+                'otro': '🔧'
+            };
+            
+            cuerpo += `${generosEmoji[genero] || '🎵'} **Género:** ${genero}\n`;
+            if (artista) cuerpo += `🎤 **Artista:** ${artista}\n`;
+            cuerpo += `\n${descripcion || 'Sin descripción'}\n\n`;
+            
+            if (urlExterna) {
+                cuerpo += `🔗 **Escuchar:** [Abrir enlace](${urlExterna})\n\n`;
+            }
+            
+            if (archivoSeleccionado) {
+                cuerpo += `📁 **Archivo:** ${archivoSeleccionado.nombre}`;
+                if (archivoSeleccionado.duracion) cuerpo += ` · ⏱️ ${archivoSeleccionado.duracion}`;
+                cuerpo += ` · 📊 ${archivoSeleccionado.tamaño} MB\n\n`;
+                cuerpo += `⬆️ *Sube el archivo al issue arrastrándolo*\n\n`;
+            }
+            
+            if (!urlExterna && !archivoSeleccionado) {
+                alert("⚠️ Proporciona una URL externa o selecciona un archivo de audio");
+                return;
+            }
+
+            cuerpo += `---\n*Subido desde observatorio-audio*`;
+
+            window.open(
+                `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('🎵 ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=audio,${genero},observatorio`,
+                '_blank'
+            );
+
+            // Resetear formulario
+            document.getElementById('titulo').value = '';
+            document.getElementById('artista').value = '';
+            document.getElementById('descripcion').value = '';
+            document.getElementById('urlExterna').value = '';
+            document.getElementById('genero').value = 'podcast';
+            quitarAudio();
+            
+            alert("✅ Se abrió GitHub. Si subiste un archivo, arrástralo al issue y publícalo.");
+        }
+
+        // Drag and drop
+        const fileLabel = document.getElementById('fileLabel');
+        
+        fileLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileLabel.style.background = 'rgba(189, 0, 255, 0.2)';
+        });
+        
+        fileLabel.addEventListener('dragleave', () => {
+            fileLabel.style.background = '';
+        });
+        
+        fileLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileLabel.style.background = '';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('archivo').files = files;
+                previsualizar(document.getElementById('archivo'));
+            }
+        });
+    </script>
+</body>
+</html>
