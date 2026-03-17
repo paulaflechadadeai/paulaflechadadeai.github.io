@@ -5,14 +5,262 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📸 Subir Imagen · observatorio</title>
     <style>
-        /* Mismos estilos que tu scan-ias.html, los pegas aquí */
-        /* (Copia el bloque <style> de scan-ias.html completo) */
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-green: #0aff0a;
+            --neon-red: #ff003c;
+            --neon-yellow: #ffee00;
+            --neon-pink: #ff00ff;
+            --bg-dark: #0a0a0f;
+            --bg-terminal: #0d1117;
+            --border: #30363d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: var(--bg-dark);
+            color: #c9d1d9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--neon-pink);
+            padding-bottom: 20px;
+        }
+        
+        .glitch-title {
+            font-size: 2.5rem;
+            color: var(--neon-pink);
+            text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue);
+            animation: glitch 2s infinite;
+        }
+        
+        @keyframes glitch {
+            0%, 90%, 100% { text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue); }
+            92% { text-shadow: -2px 0 var(--neon-red), 2px 0 var(--neon-blue); }
+            94% { text-shadow: 2px 0 var(--neon-blue), -2px 0 var(--neon-red); }
+        }
+        
+        .subheader {
+            color: var(--neon-green);
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .volver {
+            margin-bottom: 20px;
+        }
+        
+        .volver a {
+            color: var(--neon-pink);
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .volver a:hover {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .terminal {
+            background: var(--bg-terminal);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.1);
+        }
+        
+        label {
+            display: block;
+            color: var(--neon-yellow);
+            margin: 15px 0 5px;
+            font-weight: bold;
+        }
+        
+        input[type="text"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            background: #010409;
+            border: 1px solid var(--border);
+            color: #c9d1d9;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .file-label {
+            display: block;
+            background: linear-gradient(45deg, #21262d, #30363d);
+            border: 2px dashed var(--neon-pink);
+            color: var(--neon-pink);
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 0;
+        }
+        
+        .file-label:hover {
+            background: rgba(255, 0, 255, 0.1);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .file-label::before {
+            content: "📷 ";
+            font-size: 2rem;
+        }
+        
+        small {
+            color: var(--neon-pink);
+            display: block;
+            margin-top: 5px;
+        }
+        
+        .preview-container {
+            background: #010409;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .preview-container img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 6px;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+        
+        .image-meta {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .meta-tag {
+            background: rgba(255, 0, 255, 0.2);
+            color: var(--neon-pink);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            border: 1px solid var(--neon-pink);
+        }
+        
+        .btn-success, .btn-secondary, .btn-danger {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #238636, #2ea043);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(35, 134, 54, 0.5);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #6e7681, #8b949e);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(110, 118, 129, 0.5);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #da3633, #f85149);
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(218, 54, 51, 0.5);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--neon-pink);
+        }
+        
+        .info-box {
+            background: rgba(255, 238, 0, 0.1);
+            border-left: 3px solid var(--neon-yellow);
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .info-box p {
+            color: var(--neon-yellow);
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1 class="glitch-title">~/observatorio/imagen $</h1>
-        <p class="subheader">> Subir imagen (máx 2MB)</p>
+        <p class="subheader">> Subir imagen (máx 5MB)</p>
     </div>
 
     <div class="volver">
@@ -22,18 +270,65 @@
     <div class="terminal">
         <form onsubmit="event.preventDefault(); subirImagen();">
             <label>📌 TÍTULO:</label>
-            <input type="text" id="titulo" placeholder="Describe la imagen" required>
+            <input type="text" id="titulo" placeholder="Título de la imagen" required>
 
-            <label>📝 DESCRIPCIÓN (opcional):</label>
-            <textarea id="descripcion" rows="2" placeholder="Contexto..."></textarea>
+            <label>✍️ AUTOR/FUENTE:</label>
+            <input type="text" id="autor" placeholder="Quién tomó o creó la imagen">
 
-            <label>🖼️ SELECCIONAR IMAGEN:</label>
-            <input type="file" id="archivo" accept="image/jpeg,image/png,image/gif,image/webp" onchange="previsualizar(this)" required>
-            <small style="color: var(--neon-blue);">JPG, PNG, GIF, WEBP · Máx 2MB</small>
+            <label>📝 DESCRIPCIÓN:</label>
+            <textarea id="descripcion" rows="2" placeholder="Describe lo que muestra la imagen..."></textarea>
+
+            <label>📂 CATEGORÍA:</label>
+            <select id="categoria">
+                <option value="fotografia">📷 Fotografía</option>
+                <option value="screenshot">💻 Screenshot</option>
+                <option value="meme">😂 Meme</option>
+                <option value="arte">🎨 Arte/Diseño</option>
+                <option value="documento">📄 Documento escaneado</option>
+                <option value="otro">🔧 Otro</option>
+            </select>
+
+            <label>🏷️ ETIQUETAS:</label>
+            <div class="checkbox-group">
+                <label class="checkbox-item">
+                    <input type="checkbox" value="nsfw" class="tag-check"> NSFW
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" value="controversial" class="tag-check"> Controversial
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" value="original" class="tag-check"> Contenido original
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" value="archivo" class="tag-check"> Archivo histórico
+                </label>
+            </div>
+
+            <label>🔗 URL EXTERNA (opcional):</label>
+            <input type="url" id="urlExterna" placeholder="https://...">
+            
+            <div class="info-box">
+                <p>💡 Tip: Si la imagen está online, pega la URL arriba. Para subir archivo local, usa el selector debajo.</p>
+            </div>
+
+            <label>📷 SELECCIONAR IMAGEN:</label>
+            <label for="archivo" class="file-label" id="fileLabel">
+                Haz clic para seleccionar imagen<br>
+                <small style="color: #8b949e; margin-top: 10px;">o arrastra aquí</small>
+            </label>
+            <input type="file" id="archivo" accept="image/jpeg,image/png,image/gif,image/webp,image/avif" onchange="previsualizar(this)">
+            <small>JPG, PNG, GIF, WEBP, AVIF · Máx 5MB</small>
 
             <div id="vistaPrevia" class="preview-container" style="display: none;">
-                <img id="imgPreview" style="max-width:200px;">
-                <p><button type="button" onclick="quitarImagen()" class="btn-danger" style="padding:5px 10px;">✖ QUITAR</button></p>
+                <img id="imgPreview" alt="Vista previa">
+                <div class="image-meta">
+                    <span class="meta-tag" id="imgDimensiones">📐 ? x ?</span>
+                    <span class="meta-tag" id="imgTamaño">💾 ? MB</span>
+                    <span class="meta-tag" id="imgFormato">🗂️ ?</span>
+                </div>
+                <p style="margin-top: 15px;">
+                    <button type="button" onclick="quitarImagen()" class="btn-danger">✖ QUITAR</button>
+                </p>
             </div>
 
             <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -52,9 +347,9 @@
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 
-                // Validar tamaño (2MB)
-                if (file.size > 2 * 1024 * 1024) {
-                    alert("❌ La imagen debe ser menor de 2MB");
+                // Validar tamaño (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("❌ La imagen debe ser menor de 5MB");
                     input.value = '';
                     return;
                 }
@@ -64,10 +359,27 @@
                     archivoSeleccionado = {
                         datos: e.target.result,
                         nombre: file.name,
-                        tipo: 'imagen'
+                        tipo: 'imagen',
+                        tamaño: (file.size / (1024 * 1024)).toFixed(2),
+                        formato: file.type.split('/')[1].toUpperCase()
                     };
-                    document.getElementById('imgPreview').src = e.target.result;
+                    
+                    const img = document.getElementById('imgPreview');
+                    img.src = e.target.result;
+                    
+                    // Obtener dimensiones
+                    img.onload = function() {
+                        document.getElementById('imgDimensiones').textContent = 
+                            `📐 ${this.naturalWidth} x ${this.naturalHeight}`;
+                    };
+                    
+                    document.getElementById('imgTamaño').textContent = 
+                        `💾 ${archivoSeleccionado.tamaño} MB`;
+                    document.getElementById('imgFormato').textContent = 
+                        `🗂️ ${archivoSeleccionado.formato}`;
+                    
                     document.getElementById('vistaPrevia').style.display = 'block';
+                    document.getElementById('fileLabel').style.borderColor = 'var(--neon-green)';
                 };
                 reader.readAsDataURL(file);
             }
@@ -77,35 +389,111 @@
             archivoSeleccionado = null;
             document.getElementById('vistaPrevia').style.display = 'none';
             document.getElementById('archivo').value = '';
+            document.getElementById('fileLabel').style.borderColor = 'var(--neon-pink)';
         }
 
         function subirImagen() {
             const titulo = document.getElementById('titulo').value.trim();
+            const autor = document.getElementById('autor').value.trim();
             const descripcion = document.getElementById('descripcion').value.trim();
+            const categoria = document.getElementById('categoria').value;
+            const urlExterna = document.getElementById('urlExterna').value.trim();
+            
+            // Obtener etiquetas seleccionadas
+            const etiquetas = Array.from(document.querySelectorAll('.tag-check:checked')).map(cb => cb.value);
 
             if (!titulo) {
                 alert("⚠️ El título es obligatorio");
                 return;
             }
-            if (!archivoSeleccionado) {
-                alert("⚠️ Selecciona una imagen");
+
+            const categoriasEmoji = {
+                'fotografia': '📷',
+                'screenshot': '💻',
+                'meme': '😂',
+                'arte': '🎨',
+                'documento': '📄',
+                'otro': '🔧'
+            };
+
+            let cuerpo = '';
+            
+            // Encabezado con categoría
+            cuerpo += `${categoriasEmoji[categoria] || '📸'} **Categoría:** ${categoria}\n`;
+            
+            // Autor
+            if (autor) cuerpo += `✍️ **Autor/Fuente:** ${autor}\n`;
+            
+            // Etiquetas
+            if (etiquetas.length > 0) {
+                cuerpo += `🏷️ **Etiquetas:** ${etiquetas.join(', ')}\n`;
+            }
+            
+            cuerpo += `\n## 📝 Descripción\n${descripcion || 'Sin descripción'}\n\n`;
+            
+            // URL externa o archivo
+            if (urlExterna) {
+                cuerpo += `## 🔗 Enlace externo\n![${titulo}](${urlExterna})\n\n`;
+            }
+            
+            if (archivoSeleccionado) {
+                cuerpo += `## 📷 Archivo\n`;
+                cuerpo += `- **Nombre:** ${archivoSeleccionado.nombre}\n`;
+                cuerpo += `- **Tamaño:** ${archivoSeleccionado.tamaño} MB\n`;
+                cuerpo += `- **Formato:** ${archivoSeleccionado.formato}\n\n`;
+                cuerpo += `⬆️ **Acción requerida:** Arrastra la imagen al issue para subirla\n\n`;
+            }
+            
+            if (!urlExterna && !archivoSeleccionado) {
+                alert("⚠️ Proporciona una URL externa o selecciona una imagen");
                 return;
             }
 
-            const cuerpo = `${descripcion || 'Sin descripción'}\n\n![${titulo}](URL_DE_LA_IMAGEN_AQUÍ)\n\n---\n*Subido desde observatorio-imagen*`;
+            cuerpo += `---\n*Subido desde observatorio-imagen*`;
+
+            // Construir labels
+            let labels = `imagen,${categoria},observatorio`;
+            if (etiquetas.includes('nsfw')) labels += ',nsfw';
+            if (etiquetas.includes('controversial')) labels += ',controversial';
 
             window.open(
-                `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent(titulo)}&body=${encodeURIComponent(cuerpo)}&labels=imagen,observatorio`,
+                `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('📸 ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=${encodeURIComponent(labels)}`,
                 '_blank'
             );
 
             // Resetear formulario
             document.getElementById('titulo').value = '';
+            document.getElementById('autor').value = '';
             document.getElementById('descripcion').value = '';
+            document.getElementById('urlExterna').value = '';
+            document.getElementById('categoria').value = 'fotografia';
+            document.querySelectorAll('.tag-check').forEach(cb => cb.checked = false);
             quitarImagen();
             
-            alert("✅ Se abrió GitHub. Arrastra la imagen al issue y publícalo.");
+            alert("✅ Se abrió GitHub. Si subiste un archivo, arrástralo al issue y publícalo.");
         }
+
+        // Drag and drop
+        const fileLabel = document.getElementById('fileLabel');
+        
+        fileLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileLabel.style.background = 'rgba(255, 0, 255, 0.2)';
+        });
+        
+        fileLabel.addEventListener('dragleave', () => {
+            fileLabel.style.background = '';
+        });
+        
+        fileLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileLabel.style.background = '';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('archivo').files = files;
+                previsualizar(document.getElementById('archivo'));
+            }
+        });
     </script>
 </body>
 </html>
