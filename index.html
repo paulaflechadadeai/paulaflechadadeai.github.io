@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>paulaflechadadeai · Sin Sponsors</title>
@@ -10,8 +9,11 @@
             --neon-green: #00ff00;
             --neon-pink: #ff00ff;
             --neon-blue: #00aaff;
+            --neon-red: #ff003c;
+            --neon-yellow: #ffee00;
             --bg-dark: #0a0a0a;
             --bg-darker: #000;
+            --border: #30363d;
         }
 
         body {
@@ -223,24 +225,252 @@
             text-shadow: 0 0 10px var(--neon-pink);
         }
 
+        /* ZONA CONTROVERSIAL - CARRUSEL */
         #controversial-carousel {
             margin-top: 3rem;
             padding: 1.5rem;
             border-top: 2px dashed var(--neon-pink);
         }
 
-        .video-container {
-            margin: 10px 0;
-            border: 1px solid gray;
-            padding: 10px;
-            border-radius: 5px;
-            background: rgba(0, 0, 0, 0.3);
+        .zona-header {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        .video-container video, .video-container img {
+        .zona-titulo {
+            color: var(--neon-pink);
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        /* Filtros del carrusel */
+        .carousel-filtros {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .filtro-chip {
+            background: transparent;
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .filtro-chip:hover, .filtro-chip.activo {
+            background: var(--neon-pink);
+            color: black;
+            box-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        /* Carrusel */
+        .carousel-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            border: 2px solid var(--neon-pink);
+            border-radius: 15px;
+            background: var(--bg-darker);
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            padding: 20px;
+        }
+
+        .issue-card {
+            background: rgba(255, 0, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .issue-header {
+            border-bottom: 1px dashed var(--neon-pink);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .issue-numero {
+            color: var(--neon-yellow);
+            font-size: 0.8rem;
+        }
+
+        .issue-titulo {
+            color: var(--neon-pink);
+            font-size: 1.1rem;
+            margin: 8px 0;
+            word-break: break-word;
+        }
+
+        .issue-labels {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .issue-label {
+            background: rgba(255, 0, 255, 0.2);
+            color: var(--neon-pink);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            border: 1px solid var(--neon-pink);
+        }
+
+        .issue-label.video { border-color: #ff003c; color: #ff003c; background: rgba(255, 0, 60, 0.1); }
+        .issue-label.audio { border-color: #bd00ff; color: #bd00ff; background: rgba(189, 0, 255, 0.1); }
+        .issue-label.imagen { border-color: #ff00ff; color: #ff00ff; background: rgba(255, 0, 255, 0.1); }
+        .issue-label.pdf { border-color: #ff6b35; color: #ff6b35; background: rgba(255, 107, 53, 0.1); }
+
+        .issue-media {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .issue-media img {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+        }
+
+        .issue-media video {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+        }
+
+        .issue-media audio {
             width: 100%;
-            max-height: 300px;
-            object-fit: cover;
+        }
+
+        .issue-desc {
+            color: #c9d1d9;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 10px 0;
+            max-height: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .issue-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .nivel-fuego {
+            color: #ff6b35;
+            font-size: 1.2rem;
+        }
+
+        .issue-link {
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-size: 0.85rem;
+            border: 1px solid var(--neon-blue);
+            padding: 5px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .issue-link:hover {
+            background: var(--neon-blue);
+            color: black;
+        }
+
+        /* Controles */
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .carousel-btn {
+            background: transparent;
+            border: 2px solid var(--neon-pink);
+            color: var(--neon-pink);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .carousel-btn:hover {
+            background: var(--neon-pink);
+            color: black;
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        .carousel-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.activo {
+            background: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        .carousel-counter {
+            text-align: center;
+            color: var(--neon-yellow);
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .estado-carga {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .estado-carga::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neon-pink);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         @media (max-width: 600px) {
@@ -248,6 +478,8 @@
             .glitch-title { font-size: 1.8em; }
             .menu { grid-template-columns: 1fr; }
             .music-controls { justify-content: center; }
+            .carousel-slide { padding: 15px; }
+            .issue-titulo { font-size: 1rem; }
         }
     </style>
 </head>
@@ -297,7 +529,6 @@
             <a href="/observatorio.html">/observatorio</a>
             <div class="desc">Visor de APIs sociales sin middlemen</div>
         </div>
-        <!-- NUEVOS: Reemplazados bitacora, ia-fallos, admin -->
         <div class="menu-item">
             <a href="/video.html">🎬 /video-ai</a>
             <div class="desc">Subir y gestionar contenido de video</div>
@@ -313,6 +544,10 @@
         <div class="menu-item">
             <a href="/pdf.html">📄 /pdf-ai</a>
             <div class="desc">Subir y gestionar documentos PDF</div>
+        </div>
+        <div class="menu-item">
+            <a href="/imagen.html">📸 /imagen-ai</a>
+            <div class="desc">Subir y gestionar imágenes</div>
         </div>
     </div>
 
@@ -368,15 +603,48 @@
         <p><em>"Internet era gratis en el 93. Soñar no tiene sponsor."</em></p>
     </div>
 
-    <!-- Zona Controversial -->
+    <!-- ZONA CONTROVERSIAL - CARRUSEL DINÁMICO -->
     <section id="controversial-carousel">
-        <div style="max-width:800px;margin:2rem auto;padding:2rem;border:2px solid #ff00ff;border-radius:15px;">
-            <h2 style="color:#ff00ff;text-align:center;margin-bottom:2rem;">🔥 Zona Controversial</h2>
-            <div id="controversial-content" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;"></div>
+        <div class="zona-header">
+            <h2 class="zona-titulo">🔥 Zona Controversial</h2>
         </div>
+
+        <!-- Filtros -->
+        <div class="carousel-filtros" id="filtros">
+            <button class="filtro-chip activo" onclick="filtrarIssues('todos')">🔥 Todos</button>
+            <button class="filtro-chip" onclick="filtrarIssues('video')">🎬 Video</button>
+            <button class="filtro-chip" onclick="filtrarIssues('audio')">🎵 Audio</button>
+            <button class="filtro-chip" onclick="filtrarIssues('imagen')">📸 Imagen</button>
+            <button class="filtro-chip" onclick="filtrarIssues('pdf')">📄 PDF</button>
+            <button class="filtro-chip" onclick="filtrarIssues('controversial')">⚠️ Controversial</button>
+            <button class="filtro-chip" onclick="filtrarIssues('nsfw')">🔞 NSFW</button>
+        </div>
+
+        <!-- Carrusel -->
+        <div class="carousel-wrapper">
+            <div class="carousel-track" id="carouselTrack">
+                <div class="estado-carga">Cargando contenido desde GitHub...</div>
+            </div>
+        </div>
+
+        <!-- Controles -->
+        <div class="carousel-controls">
+            <button class="carousel-btn" onclick="anteriorSlide()">◀</button>
+            <div class="carousel-dots" id="carouselDots"></div>
+            <button class="carousel-btn" onclick="siguienteSlide()">▶</button>
+        </div>
+        <div class="carousel-counter" id="carouselCounter">0 / 0</div>
     </section>
 
     <script>
+        // ===== CONFIG =====
+        const GITHUB_USER = 'paulaflechadadeai';
+        const GITHUB_REPO = 'paulaflechadadeai.github.io';
+        
+        let allIssues = [];
+        let filteredIssues = [];
+        let currentSlide = 0;
+
         // ===== FECHA CHILE =====
         const ahora = new Date();
         const opciones = {
@@ -449,6 +717,8 @@
                     console.log("Autoplay bloqueado. Usa los botones para reproducir.");
                 });
             }
+            // Cargar issues
+            cargarIssues();
         });
 
         // ===== WHOAMI =====
@@ -479,50 +749,183 @@
         }
         mostrarWhoami();
 
-        // ===== ZONA CONTROVERSIAL =====
-        function cargarControversial() {
-            const container = document.getElementById('controversial-content');
-            if (!container) return;
+        // ===== CARRUSEL ISSUES =====
+        async function cargarIssues() {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?state=all&per_page=50`);
+                
+                if (!response.ok) throw new Error('Error al cargar');
+                
+                allIssues = await response.json();
+                // Filtrar solo issues (no PRs) y que tengan labels de observatorio
+                allIssues = allIssues.filter(issue => {
+                    if (issue.pull_request) return false;
+                    const labels = issue.labels.map(l => l.name);
+                    return labels.some(l => ['video', 'audio', 'imagen', 'pdf', 'observatorio'].includes(l));
+                });
+                
+                // Ordenar por fecha
+                allIssues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                
+                filtrarIssues('todos');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('carouselTrack').innerHTML = 
+                    '<div style="padding:40px;text-align:center;color:#666;">❌ Error al cargar contenido</div>';
+            }
+        }
 
-            // Lista de archivos en admin/assets/ (actualiza manualmente)
-            const archivosControversiales = [
-                { tipo: 'video', nombre: 'grok_video_2026-03-05-09-50-25.mp4', texto: 'Grok explicando el universo en 2026', nivel: 4 }
-            ];
-
-            let html = '';
-            archivosControversiales.forEach(archivo => {
-                html += '<div class="video-container">';
-                if (archivo.tipo === 'imagen') {
-                    html += `<img src="admin/assets/${archivo.nombre}" alt="${archivo.texto}" loading="lazy" onerror="this.parentElement.innerHTML='<p style=\"padding:2rem;text-align:center;color:#666;\">❌ Error</p>'">`;
-                } else if (archivo.tipo === 'video') {
-                    html += `
-                        <video controls>
-                            <source src="admin/assets/${archivo.nombre}" type="video/mp4">
-                            Tu navegador no soporta el elemento de video.
-                        </video>
-                    `;
+        function filtrarIssues(tipo) {
+            // Actualizar botones
+            document.querySelectorAll('.filtro-chip').forEach(btn => {
+                btn.classList.remove('activo');
+                if (btn.textContent.toLowerCase().includes(tipo) || (tipo === 'todos' && btn.textContent.includes('Todos'))) {
+                    btn.classList.add('activo');
                 }
-                html += `
-                    <div style="padding:1rem;">
-                        <p style="color:#fff;margin:0 0 0.5rem 0;">${archivo.texto}</p>
-                        <div style="display:flex;justify-content:space-between;font-size:0.8rem;">
-                            <span style="color:#ff00ff;">${'🔥'.repeat(archivo.nivel)}</span>
-                            <span style="color:#666;">👁 0</span>
+            });
+
+            // Filtrar
+            if (tipo === 'todos') {
+                filteredIssues = allIssues;
+            } else {
+                filteredIssues = allIssues.filter(issue => 
+                    issue.labels.some(l => l.name.toLowerCase() === tipo.toLowerCase())
+                );
+            }
+
+            currentSlide = 0;
+            renderizarCarrusel();
+        }
+
+        function renderizarCarrusel() {
+            const track = document.getElementById('carouselTrack');
+            const dotsContainer = document.getElementById('carouselDots');
+            
+            if (filteredIssues.length === 0) {
+                track.innerHTML = '<div style="padding:40px;text-align:center;color:#666;">No hay contenido con ese filtro</div>';
+                dotsContainer.innerHTML = '';
+                document.getElementById('carouselCounter').textContent = '0 / 0';
+                return;
+            }
+
+            // Renderizar slides
+            track.innerHTML = filteredIssues.map((issue, index) => {
+                const fecha = new Date(issue.created_at).toLocaleDateString('es-CL');
+                const labels = issue.labels.map(l => {
+                    const tipo = l.name.toLowerCase();
+                    let clase = '';
+                    if (tipo === 'video') clase = 'video';
+                    else if (tipo === 'audio') clase = 'audio';
+                    else if (tipo === 'imagen') clase = 'imagen';
+                    else if (tipo === 'pdf') clase = 'pdf';
+                    return `<span class="issue-label ${clase}">${l.name}</span>`;
+                }).join('');
+
+                // Extraer imagen del cuerpo
+                const imgMatch = issue.body.match(/!\[.*?\]\((.*?)\)/);
+                const imgUrl = imgMatch ? imgMatch[1] : null;
+                
+                // Extraer URLs
+                const urlMatch = issue.body.match(/https?:\/\/[^\s)]+/);
+                const url = urlMatch ? urlMatch[0] : null;
+
+                // Limpiar descripción
+                let desc = issue.body
+                    .replace(/!\[.*?\]\(.*?\)/g, '')
+                    .replace(/\[.*?\]\(.*?\)/g, '')
+                    .replace(/---[\s\S]*$/, '')
+                    .replace(/[#*_]/g, '')
+                    .trim()
+                    .substring(0, 120) + '...';
+
+                // Nivel de fuego según labels
+                let fuegos = '🔥';
+                if (issue.labels.some(l => l.name === 'nsfw')) fuegos = '🔥🔥🔥🔥';
+                else if (issue.labels.some(l => l.name === 'controversial')) fuegos = '🔥🔥🔥';
+                else if (issue.labels.some(l => ['video', 'audio', 'imagen', 'pdf'].includes(l.name))) fuegos = '🔥🔥';
+
+                return `
+                    <div class="carousel-slide" data-index="${index}">
+                        <div class="issue-card">
+                            <div class="issue-header">
+                                <span class="issue-numero">#${issue.number} · ${fecha}</span>
+                                <h3 class="issue-titulo">${issue.title.replace(/^[🎬🎵📸📄]\s*/, '')}</h3>
+                                <div class="issue-labels">${labels}</div>
+                            </div>
+                            
+                            ${imgUrl ? `
+                                <div class="issue-media">
+                                    <img src="${imgUrl}" alt="${issue.title}" loading="lazy" onerror="this.style.display='none'">
+                                </div>
+                            ` : url && issue.labels.some(l => l.name === 'video') ? `
+                                <div class="issue-media">
+                                    <video controls preload="metadata">
+                                        <source src="${url}" type="video/mp4">
+                                    </video>
+                                </div>
+                            ` : url && issue.labels.some(l => l.name === 'audio') ? `
+                                <div class="issue-media">
+                                    <audio controls preload="metadata" src="${url}"></audio>
+                                </div>
+                            ` : ''}
+                            
+                            <p class="issue-desc">${desc}</p>
+                            
+                            <div class="issue-footer">
+                                <span class="nivel-fuego">${fuegos}</span>
+                                <a href="${issue.html_url}" target="_blank" class="issue-link">Ver en GitHub →</a>
+                            </div>
                         </div>
                     </div>
                 `;
-                html += '</div>';
+            }).join('');
+
+            // Renderizar dots
+            dotsContainer.innerHTML = filteredIssues.map((_, i) => 
+                `<div class="dot ${i === 0 ? 'activo' : ''}" onclick="irASlide(${i})"></div>`
+            ).join('');
+
+            actualizarCarrusel();
+        }
+
+        function actualizarCarrusel() {
+            const track = document.getElementById('carouselTrack');
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            document.querySelectorAll('.dot').forEach((dot, i) => {
+                dot.classList.toggle('activo', i === currentSlide);
             });
-
-            container.innerHTML = html;
+            
+            document.getElementById('carouselCounter').textContent = 
+                `${currentSlide + 1} / ${filteredIssues.length}`;
         }
 
-        // Ejecutar al cargar la página
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', cargarControversial);
-        } else {
-            cargarControversial();
+        function siguienteSlide() {
+            currentSlide = (currentSlide + 1) % filteredIssues.length;
+            actualizarCarrusel();
         }
+
+        function anteriorSlide() {
+            currentSlide = (currentSlide - 1 + filteredIssues.length) % filteredIssues.length;
+            actualizarCarrusel();
+        }
+
+        function irASlide(index) {
+            currentSlide = index;
+            actualizarCarrusel();
+        }
+
+        // Auto-avance cada 5 segundos
+        setInterval(() => {
+            if (filteredIssues.length > 1) siguienteSlide();
+        }, 5000);
+
+        // Teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') anteriorSlide();
+            if (e.key === 'ArrowRight') siguienteSlide();
+        });
     </script>
 </body>
 </html>
