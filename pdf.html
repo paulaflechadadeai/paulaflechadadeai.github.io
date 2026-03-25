@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎬 Subir Video · observatorio</title>
+    <title>📄 Subir PDF · observatorio</title>
     <style>
         :root {
             --neon-blue: #00f3ff;
             --neon-green: #0aff0a;
             --neon-red: #ff003c;
             --neon-yellow: #ffee00;
+            --neon-orange: #ff6b35;
             --bg-dark: #0a0a0f;
             --bg-terminal: #0d1117;
             --border: #30363d;
@@ -32,21 +33,21 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
-            border-bottom: 2px solid var(--neon-blue);
+            border-bottom: 2px solid var(--neon-orange);
             padding-bottom: 20px;
         }
         
         .glitch-title {
             font-size: 2.5rem;
-            color: var(--neon-blue);
-            text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-green);
+            color: var(--neon-orange);
+            text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-yellow);
             animation: glitch 2s infinite;
         }
         
         @keyframes glitch {
-            0%, 90%, 100% { text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-green); }
-            92% { text-shadow: -2px 0 var(--neon-red), 2px 0 var(--neon-green); }
-            94% { text-shadow: 2px 0 var(--neon-green), -2px 0 var(--neon-red); }
+            0%, 90%, 100% { text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-yellow); }
+            92% { text-shadow: -2px 0 var(--neon-red), 2px 0 var(--neon-yellow); }
+            94% { text-shadow: 2px 0 var(--neon-yellow), -2px 0 var(--neon-red); }
         }
         
         .subheader {
@@ -60,7 +61,7 @@
         }
         
         .volver a {
-            color: var(--neon-blue);
+            color: var(--neon-orange);
             text-decoration: none;
             font-weight: bold;
             transition: all 0.3s;
@@ -77,8 +78,8 @@
             border-radius: 10px;
             padding: 30px;
             max-width: 600px;
-            margin: 0 auto;
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+            margin: 0 auto 30px;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.1);
         }
         
         label {
@@ -90,7 +91,8 @@
         
         input[type="text"],
         input[type="url"],
-        textarea {
+        textarea,
+        select {
             width: 100%;
             background: #010409;
             border: 1px solid var(--border);
@@ -104,10 +106,11 @@
         
         input[type="text"]:focus,
         input[type="url"]:focus,
-        textarea:focus {
+        textarea:focus,
+        select:focus {
             outline: none;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+            border-color: var(--neon-orange);
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
         }
         
         input[type="file"] {
@@ -117,8 +120,8 @@
         .file-label {
             display: block;
             background: linear-gradient(45deg, #21262d, #30363d);
-            border: 2px dashed var(--neon-blue);
-            color: var(--neon-blue);
+            border: 2px dashed var(--neon-orange);
+            color: var(--neon-orange);
             padding: 40px 20px;
             text-align: center;
             border-radius: 10px;
@@ -128,18 +131,18 @@
         }
         
         .file-label:hover {
-            background: rgba(0, 243, 255, 0.1);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            background: rgba(255, 107, 53, 0.1);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
             transform: translateY(-2px);
         }
         
         .file-label::before {
-            content: "📁 ";
+            content: "📄 ";
             font-size: 2rem;
         }
         
         small {
-            color: var(--neon-blue);
+            color: var(--neon-orange);
             display: block;
             margin-top: 5px;
         }
@@ -148,18 +151,58 @@
             background: #010409;
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 15px;
+            padding: 20px;
             margin: 15px 0;
+        }
+        
+        .pdf-icon {
+            font-size: 4rem;
             text-align: center;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
         }
         
-        video {
-            max-width: 100%;
-            border-radius: 6px;
-            box-shadow: 0 0 20px rgba(255, 0, 60, 0.3);
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--neon-red)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 20px var(--neon-red)); }
         }
         
-        .btn-success, .btn-secondary, .btn-danger {
+        .pdf-info {
+            background: rgba(255, 107, 53, 0.1);
+            border-left: 3px solid var(--neon-orange);
+            padding: 15px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 15px;
+        }
+        
+        .pdf-info h4 {
+            color: var(--neon-orange);
+            margin-bottom: 8px;
+        }
+        
+        .pdf-info p {
+            color: #8b949e;
+            font-size: 0.9rem;
+            margin: 4px 0;
+        }
+        
+        .pdf-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .meta-tag {
+            background: rgba(255, 107, 53, 0.2);
+            color: var(--neon-orange);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            border: 1px solid var(--neon-orange);
+        }
+        
+        .btn-success, .btn-secondary, .btn-danger, .btn-refresh {
             padding: 12px 24px;
             border: none;
             border-radius: 6px;
@@ -202,24 +245,350 @@
             box-shadow: 0 5px 20px rgba(218, 54, 51, 0.5);
         }
         
-        .info-box {
-            background: rgba(255, 238, 0, 0.1);
-            border-left: 3px solid var(--neon-yellow);
-            padding: 10px 15px;
-            margin: 15px 0;
-            border-radius: 0 6px 6px 0;
+        .btn-refresh {
+            background: linear-gradient(45deg, #ff6b35, #ffee00);
+            color: #0a0a0f;
+            padding: 10px 20px;
+            font-size: 0.9rem;
         }
         
-        .info-box p {
-            color: var(--neon-yellow);
+        .btn-refresh:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.5);
+        }
+        
+        .pages-preview {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        
+        .page-thumb {
+            min-width: 80px;
+            height: 100px;
+            background: #21262d;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8b949e;
+            font-size: 0.8rem;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--neon-orange);
+        }
+        
+        .qid-input {
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+        
+        /* Sección de PDFs existentes */
+        .existing-pdfs {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            color: var(--neon-orange);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+        }
+        
+        .loading {
+            text-align: center;
+            color: var(--neon-orange);
+            padding: 20px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .pdf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .pdf-card {
+            background: var(--bg-terminal);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pdf-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-orange), var(--neon-yellow));
+        }
+        
+        .pdf-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+            border-color: var(--neon-orange);
+        }
+        
+        .pdf-card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .pdf-card-icon {
+            font-size: 2.5rem;
+            line-height: 1;
+        }
+        
+        .pdf-card-title {
+            color: var(--neon-green);
+            font-size: 1.1rem;
+            font-weight: bold;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-height: 1.3;
+        }
+        
+        .pdf-card-meta {
+            color: #8b949e;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .pdf-card-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .pdf-card-description {
+            color: #c9d1d9;
             font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 15px;
+            max-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        
+        .pdf-viewer-container {
+            background: #010409;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+        }
+        
+        .pdf-embed {
+            width: 100%;
+            height: 300px;
+            border: none;
+        }
+        
+        .pdf-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .pdf-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .pdf-btn-view {
+            background: rgba(255, 107, 53, 0.2);
+            color: var(--neon-orange);
+            border: 1px solid var(--neon-orange);
+        }
+        
+        .pdf-btn-view:hover {
+            background: var(--neon-orange);
+            color: #0a0a0f;
+        }
+        
+        .pdf-btn-download {
+            background: rgba(10, 255, 10, 0.1);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
+        
+        .pdf-btn-download:hover {
+            background: var(--neon-green);
+            color: #0a0a0f;
+        }
+        
+        .labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .label {
+            background: rgba(255, 107, 53, 0.15);
+            color: var(--neon-orange);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+        
+        .label.tipo {
+            background: rgba(0, 243, 255, 0.15);
+            color: var(--neon-blue);
+            border-color: rgba(0, 243, 255, 0.3);
+        }
+        
+        .label.qid {
+            background: rgba(255, 238, 0, 0.15);
+            color: var(--neon-yellow);
+            border-color: rgba(255, 238, 0, 0.3);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #8b949e;
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            background: rgba(218, 54, 51, 0.1);
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--bg-terminal);
+            border: 2px solid var(--neon-orange);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 107, 53, 0.1);
+        }
+        
+        .modal-title {
+            color: var(--neon-orange);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .modal-close:hover {
+            color: var(--neon-red);
+        }
+        
+        .modal-body {
+            flex: 1;
+            overflow: auto;
+            padding: 0;
+        }
+        
+        .modal-iframe {
+            width: 100%;
+            height: 80vh;
+            border: none;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1 class="glitch-title">~/observatorio/video $</h1>
-        <p class="subheader">> Subir video (máx 50MB)</p>
+        <h1 class="glitch-title">~/observatorio/pdf $</h1>
+        <p class="subheader">> Subir documento PDF (máx 25MB)</p>
     </div>
 
     <div class="volver">
@@ -227,34 +596,71 @@
     </div>
 
     <div class="terminal">
-        <form onsubmit="event.preventDefault(); subirVideo();">
+        <form onsubmit="event.preventDefault(); subirPDF();">
             <label>📌 TÍTULO:</label>
-            <input type="text" id="titulo" placeholder="Título del video" required>
+            <input type="text" id="titulo" placeholder="Título del documento" required>
 
-            <label>📝 DESCRIPCIÓN (opcional):</label>
-            <textarea id="descripcion" rows="2" placeholder="Contexto del video..."></textarea>
+            <label>✍️ AUTOR/EDITOR:</label>
+            <input type="text" id="autor" placeholder="Nombre del autor o institución">
 
-            <label>🔗 URL EXTERNA (YouTube/Vimeo):</label>
-            <input type="url" id="urlExterna" placeholder="https://youtube.com/watch?v=...">
-            
-            <div class="info-box">
-                <p>💡 Tip: Si el video está en YouTube/Vimeo, pega la URL arriba. Para archivos locales, usa el selector debajo.</p>
+            <label>🆔 QID (Wikidata):</label>
+            <input type="text" id="qid" class="qid-input" placeholder="Q123456" pattern="Q[0-9]+" title="Formato: Q seguido de números (ej: Q123456)">
+            <small>Identificador de Wikidata (opcional)</small>
+
+            <label>📝 DESCRIPCIÓN/RESUMEN:</label>
+            <textarea id="descripcion" rows="3" placeholder="Breve descripción o resumen del contenido..."></textarea>
+
+            <label>📚 TIPO DE DOCUMENTO:</label>
+            <select id="tipoDocumento">
+                <option value="articulo">📰 Artículo científico</option>
+                <option value="informe">📊 Informe/Tesis</option>
+                <option value="libro">📖 Libro/Capítulo</option>
+                <option value="presentacion">📑 Presentación</option>
+                <option value="manual">🔧 Manual/Guía</option>
+                <option value="legal">⚖️ Documento legal</option>
+                <option value="otro">📎 Otro</option>
+            </select>
+
+            <label>🏷️ ETIQUETAS:</label>
+            <div class="checkbox-group">
+                <label class="checkbox-item">
+                    <input type="checkbox" value="investigacion" class="tag-check"> Investigación
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" value="educativo" class="tag-check"> Educativo
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" value="tecnico" class="tag-check"> Técnico
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" value="historico" class="tag-check"> Histórico
+                </label>
             </div>
 
-            <label>🎬 SELECCIONAR ARCHIVO:</label>
+            <label>🔗 URL EXTERNA (opcional):</label>
+            <input type="url" id="urlExterna" placeholder="https://doi.org/... o enlace alternativo">
+
+            <label>📄 SELECCIONAR PDF:</label>
             <label for="archivo" class="file-label" id="fileLabel">
-                Haz clic para seleccionar video<br>
+                Haz clic para seleccionar PDF<br>
                 <small style="color: #8b949e; margin-top: 10px;">o arrastra aquí</small>
             </label>
-            <input type="file" id="archivo" accept="video/mp4,video/webm,video/ogg,video/quicktime" onchange="previsualizar(this)">
-            <small>MP4, WEBM, OGG, MOV · Máx 50MB</small>
+            <input type="file" id="archivo" accept=".pdf,application/pdf" onchange="previsualizar(this)">
+            <small>PDF · Máx 25MB</small>
 
             <div id="vistaPrevia" class="preview-container" style="display: none;">
-                <video id="videoPreview" controls></video>
-                <p style="margin-top: 10px;">
-                    <span id="fileInfo" style="color: var(--neon-green);"></span>
+                <div class="pdf-icon">📕</div>
+                <div class="pdf-info">
+                    <h4 id="pdfNombre">documento.pdf</h4>
+                    <div class="pdf-meta">
+                        <span class="meta-tag" id="pdfTamaño">0 MB</span>
+                        <span class="meta-tag" id="pdfPaginas">📄 ? páginas</span>
+                    </div>
+                    <p id="pdfDetalles" style="margin-top: 10px;"></p>
+                </div>
+                <p style="text-align: center;">
+                    <button type="button" onclick="quitarPDF()" class="btn-danger">✖ ELIMINAR</button>
                 </p>
-                <p><button type="button" onclick="quitarVideo()" class="btn-danger">✖ QUITAR</button></p>
             </div>
 
             <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -264,97 +670,387 @@
         </form>
     </div>
 
+    <!-- Sección de PDFs existentes -->
+    <div class="existing-pdfs">
+        <h2 class="section-title">📚 Documentos en el Observatorio</h2>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button onclick="cargarPDFsExistentes()" class="btn-refresh">🔄 Actualizar Lista</button>
+        </div>
+        <div id="pdfsContainer">
+            <div class="loading">⏳ Cargando documentos desde GitHub...</div>
+        </div>
+    </div>
+
+    <!-- Modal para visualizar PDFs -->
+    <div id="pdfModal" class="modal" onclick="cerrarModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">Visualizador PDF</span>
+                <button class="modal-close" onclick="cerrarModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="modalIframe" class="modal-iframe"></iframe>
+            </div>
+        </div>
+    </div>
+
     <script>
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
         let archivoSeleccionado = null;
 
+        // Cargar PDFs existentes al iniciar
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarPDFsExistentes();
+        });
+
         function previsualizar(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 
-                // Validar tamaño (50MB)
-                if (file.size > 50 * 1024 * 1024) {
-                    alert("❌ El video debe ser menor de 50MB");
+                // Validar que sea PDF
+                if (file.type !== 'application/pdf') {
+                    alert("❌ El archivo debe ser un PDF");
+                    input.value = '';
+                    return;
+                }
+                
+                // Validar tamaño (25MB)
+                if (file.size > 25 * 1024 * 1024) {
+                    alert("❌ El PDF debe ser menor de 25MB");
                     input.value = '';
                     return;
                 }
 
+                archivoSeleccionado = {
+                    datos: null,
+                    nombre: file.name,
+                    tipo: 'pdf',
+                    tamaño: (file.size / (1024 * 1024)).toFixed(2),
+                    paginas: 'Desconocido'
+                };
+                
+                // Intentar extraer número de páginas
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    archivoSeleccionado = {
-                        datos: e.target.result,
-                        nombre: file.name,
-                        tipo: 'video',
-                        tamaño: (file.size / (1024 * 1024)).toFixed(2)
-                    };
-                    
-                    const video = document.getElementById('videoPreview');
-                    video.src = e.target.result;
-                    document.getElementById('fileInfo').textContent = `📊 ${archivoSeleccionado.nombre} (${archivoSeleccionado.tamaño} MB)`;
-                    document.getElementById('vistaPrevia').style.display = 'block';
-                    document.getElementById('fileLabel').style.borderColor = 'var(--neon-green)';
+                    const contenido = e.target.result;
+                    const matches = contenido.match(/\/Type\s*\/Page[^s]/g);
+                    if (matches) {
+                        archivoSeleccionado.paginas = matches.length;
+                    }
+                    actualizarVistaPrevia();
                 };
-                reader.readAsDataURL(file);
+                reader.readAsText(file.slice(0, 50000));
+                
+                actualizarVistaPrevia();
+                document.getElementById('fileLabel').style.borderColor = 'var(--neon-green)';
             }
         }
 
-        function quitarVideo() {
+        function actualizarVistaPrevia() {
+            document.getElementById('pdfNombre').textContent = archivoSeleccionado.nombre;
+            document.getElementById('pdfTamaño').textContent = `💾 ${archivoSeleccionado.tamaño} MB`;
+            document.getElementById('pdfPaginas').textContent = `📄 ${archivoSeleccionado.paginas} páginas`;
+            document.getElementById('vistaPrevia').style.display = 'block';
+        }
+
+        function quitarPDF() {
             archivoSeleccionado = null;
             document.getElementById('vistaPrevia').style.display = 'none';
             document.getElementById('archivo').value = '';
-            document.getElementById('fileLabel').style.borderColor = 'var(--neon-blue)';
+            document.getElementById('fileLabel').style.borderColor = 'var(--neon-orange)';
         }
 
-        function subirVideo() {
+        function subirPDF() {
             const titulo = document.getElementById('titulo').value.trim();
+            const autor = document.getElementById('autor').value.trim();
+            const qid = document.getElementById('qid').value.trim();
             const descripcion = document.getElementById('descripcion').value.trim();
+            const tipoDocumento = document.getElementById('tipoDocumento').value;
             const urlExterna = document.getElementById('urlExterna').value.trim();
+            
+            const etiquetas = Array.from(document.querySelectorAll('.tag-check:checked')).map(cb => cb.value);
 
             if (!titulo) {
                 alert("⚠️ El título es obligatorio");
                 return;
             }
 
-            let cuerpo = '';
-            
-            if (urlExterna) {
-                cuerpo = `${descripcion || 'Sin descripción'}\n\n🎬 **Video:** [Ver en línea](${urlExterna})\n\n`;
-                if (urlExterna.includes('youtube.com') || urlExterna.includes('youtu.be')) {
-                    const videoId = urlExterna.match(/(?:v=|\/)([a-zA-Z0-9_-]{11})/);
-                    if (videoId) {
-                        cuerpo += `[![${titulo}](https://img.youtube.com/vi/${videoId[1]}/0.jpg)](${urlExterna})\n\n`;
-                    }
-                }
-            } else if (archivoSeleccionado) {
-                cuerpo = `${descripcion || 'Sin descripción'}\n\n🎬 **Archivo:** ${archivoSeleccionado.nombre} (${archivoSeleccionado.tamaño} MB)\n\n⬆️ *Sube el archivo al issue arrastrándolo*\n\n`;
-            } else {
-                alert("⚠️ Proporciona una URL externa o selecciona un archivo de video");
+            if (!archivoSeleccionado && !urlExterna) {
+                alert("⚠️ Selecciona un PDF o proporciona una URL externa");
                 return;
             }
 
-            cuerpo += `---\n*Subido desde observatorio-video*`;
+            const tiposEmoji = {
+                'articulo': '📰',
+                'informe': '📊',
+                'libro': '📖',
+                'presentacion': '📑',
+                'manual': '🔧',
+                'legal': '⚖️',
+                'otro': '📎'
+            };
+
+            let cuerpo = '';
+            
+            cuerpo += `${tiposEmoji[tipoDocumento] || '📄'} **Tipo:** ${tipoDocumento}\n`;
+            if (autor) cuerpo += `✍️ **Autor:** ${autor}\n`;
+            if (qid) cuerpo += `🆔 **QID:** [${qid}](https://www.wikidata.org/wiki/${qid})\n`;
+            
+            if (etiquetas.length > 0) {
+                cuerpo += `🏷️ **Etiquetas:** ${etiquetas.join(', ')}\n`;
+            }
+            
+            cuerpo += `\n## 📝 Resumen\n${descripcion || 'Sin descripción'}\n\n`;
+            
+            if (archivoSeleccionado) {
+                cuerpo += `## 📄 Archivo\n`;
+                cuerpo += `- **Nombre:** ${archivoSeleccionado.nombre}\n`;
+                cuerpo += `- **Tamaño:** ${archivoSeleccionado.tamaño} MB\n`;
+                cuerpo += `- **Páginas:** ${archivoSeleccionado.paginas}\n\n`;
+                cuerpo += `⬆️ **Acción requerida:** Arrastra el archivo PDF al issue para subirlo\n\n`;
+            }
+            
+            if (urlExterna) {
+                cuerpo += `## 🔗 Enlace externo\n[Acceder al documento](${urlExterna})\n\n`;
+            }
+
+            cuerpo += `---\n*Subido desde observatorio-pdf*`;
+
+            let labels = `pdf,${tipoDocumento},observatorio`;
+            if (etiquetas.includes('investigacion')) labels += ',investigacion';
 
             window.open(
-                `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('🎬 ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=video,observatorio`,
+                `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('📄 ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=${encodeURIComponent(labels)}`,
                 '_blank'
             );
 
             // Resetear formulario
             document.getElementById('titulo').value = '';
+            document.getElementById('autor').value = '';
+            document.getElementById('qid').value = '';
             document.getElementById('descripcion').value = '';
             document.getElementById('urlExterna').value = '';
-            quitarVideo();
+            document.getElementById('tipoDocumento').value = 'articulo';
+            document.querySelectorAll('.tag-check').forEach(cb => cb.checked = false);
+            quitarPDF();
             
             alert("✅ Se abrió GitHub. Si subiste un archivo, arrástralo al issue y publícalo.");
         }
+
+        // Función para cargar PDFs existentes desde GitHub Issues
+        async function cargarPDFsExistentes() {
+            const container = document.getElementById('pdfsContainer');
+            container.innerHTML = '<div class="loading">⏳ Cargando documentos desde GitHub...</div>';
+
+            try {
+                const response = await fetch(
+                    `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?labels=pdf&state=all&per_page=30`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const issues = await response.json();
+                
+                if (issues.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📄</div>
+                            <p>No hay documentos registrados aún.</p>
+                            <p style="font-size: 0.9rem; margin-top: 10px;">¡Sé el primero en subir uno!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const pdfCards = issues.map(issue => crearPDFCard(issue)).join('');
+                container.innerHTML = `<div class="pdf-grid">${pdfCards}</div>`;
+                
+            } catch (error) {
+                console.error('Error al cargar PDFs:', error);
+                container.innerHTML = `
+                    <div class="error-message">
+                        ❌ Error al cargar los documentos: ${error.message}<br>
+                        <small>Verifica tu conexión o que el repositorio sea público</small>
+                    </div>
+                `;
+            }
+        }
+
+        // Función para crear la tarjeta de PDF
+        function crearPDFCard(issue) {
+            const body = issue.body || '';
+            const tipoMatch = body.match(/\*\*Tipo:\*\*\s*(\w+)/);
+            const autorMatch = body.match(/\*\*Autor:\*\*\s*([^\n]+)/);
+            const qidMatch = body.match(/\*\*QID:\*\*\s*\[?(Q\d+)\]?/);
+            const urlMatch = body.match(/\*\*Enlace externo\*\*\n\[([^\]]+)\]\(([^)]+)\)/);
+            const archivoMatch = body.match(/\*\*Archivo:\*\*\s*([^\n]+)/);
+            
+            const tipo = tipoMatch ? tipoMatch[1] : 'documento';
+            const autor = autorMatch ? autorMatch[1].trim() : null;
+            const qid = qidMatch ? qidMatch[1] : null;
+            const urlExterna = urlMatch ? urlMatch[2] : null;
+            const archivoInfo = archivoMatch ? archivoMatch[1].trim() : null;
+            
+            const tiposEmoji = {
+                'articulo': '📰',
+                'informe': '📊',
+                'libro': '📖',
+                'presentacion': '📑',
+                'manual': '🔧',
+                'legal': '⚖️',
+                'otro': '📎'
+            };
+            
+            const emoji = tiposEmoji[tipo] || '📄';
+            
+            // Extraer descripción
+            let descripcion = '';
+            const descripcionMatch = body.match(/## 📝 Resumen\n([\s\S]*?)(?=\n\n##|$)/);
+            if (descripcionMatch) {
+                descripcion = descripcionMatch[1].trim();
+            }
+            
+            // Buscar URL del PDF
+            const pdfUrl = buscarUrlPDF(body, issue);
+            
+            const fecha = new Date(issue.created_at).toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+
+            // Extraer tamaño y páginas si existen
+            const tamañoMatch = body.match(/\*\*Tamaño:\*\*\s*([\d.]+)\s*MB/);
+            const paginasMatch = body.match(/\*\*Páginas:\*\*\s*(\d+|Desconocido)/);
+            const tamaño = tamañoMatch ? `${tamañoMatch[1]} MB` : null;
+            const paginas = paginasMatch ? `${paginasMatch[1]} págs` : null;
+
+            return `
+                <div class="pdf-card">
+                    <div class="pdf-card-header">
+                        <span class="pdf-card-icon">${emoji}</span>
+                        <h3 class="pdf-card-title" title="${issue.title.replace('📄 ', '')}">${issue.title.replace('📄 ', '')}</h3>
+                    </div>
+                    
+                    <div class="pdf-card-meta">
+                        ${autor ? `<span>✍️ ${autor}</span>` : ''}
+                        <span>📅 ${fecha}</span>
+                        ${tamaño ? `<span>💾 ${tamaño}</span>` : ''}
+                        ${paginas ? `<span>📄 ${paginas}</span>` : ''}
+                        ${issue.state === 'closed' ? '<span>✅ Archivado</span>' : ''}
+                    </div>
+                    
+                    <div class="pdf-card-description">${descripcion || 'Sin descripción disponible'}</div>
+                    
+                    <div class="pdf-actions">
+                        ${pdfUrl ? `
+                            <button onclick="verPDF('${pdfUrl}', '${issue.title.replace(/'/g, "\\'")}')" class="pdf-btn pdf-btn-view">
+                                👁️ Ver PDF
+                            </button>
+                            <a href="${pdfUrl}" download class="pdf-btn pdf-btn-download">
+                                ⬇️ Descargar
+                            </a>
+                        ` : urlExterna ? `
+                            <a href="${urlExterna}" target="_blank" class="pdf-btn pdf-btn-view">
+                                🔗 Abrir enlace
+                            </a>
+                        ` : archivoInfo ? `
+                            <span style="color: var(--neon-yellow); font-size: 0.85rem;">
+                                📁 ${archivoInfo}
+                            </span>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="labels">
+                        <span class="label tipo">${tipo}</span>
+                        ${qid ? `<span class="label qid">🆔 ${qid}</span>` : ''}
+                        ${issue.labels
+                            .filter(l => !['pdf', 'observatorio', tipo].includes(l.name))
+                            .map(l => `<span class="label">${l.name}</span>`)
+                            .join('')}
+                    </div>
+                    
+                    <a href="${issue.html_url}" target="_blank" style="color: #8b949e; font-size: 0.8rem; margin-top: 10px; display: inline-block; text-decoration: none;">
+                        💬 Ver en GitHub (${issue.comments} comentarios)
+                    </a>
+                </div>
+            `;
+        }
+
+        // Función para buscar URL del PDF en el issue
+        function buscarUrlPDF(body, issue) {
+            // Buscar en adjuntos de GitHub
+            const githubAssetRegex = /https:\/\/github\.com\/user-attachments\/assets\/[a-zA-Z0-9-]+/g;
+            const githubAssets = body.match(githubAssetRegex);
+            
+            if (githubAssets) {
+                // Filtrar por contexto de PDF
+                for (const url of githubAssets) {
+                    if (body.toLowerCase().includes('.pdf') || body.includes('Archivo:')) {
+                        return url;
+                    }
+                }
+            }
+            
+            // Buscar URL directa a PDF
+            const urlRegex = /(https?:\/\/[^\s]+\.pdf)/i;
+            const directMatch = body.match(urlRegex);
+            if (directMatch) {
+                return directMatch[1];
+            }
+            
+            // Buscar enlace de Google Drive (convertir a vista previa si es posible)
+            const driveMatch = body.match(/https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (driveMatch) {
+                return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+            }
+            
+            return null;
+        }
+
+        // Funciones del modal
+        function verPDF(url, titulo) {
+            const modal = document.getElementById('pdfModal');
+            const iframe = document.getElementById('modalIframe');
+            const title = document.getElementById('modalTitle');
+            
+            // Si es URL de GitHub Assets, forzar visualización
+            if (url.includes('github.com/user-attachments')) {
+                iframe.src = url;
+            } else {
+                iframe.src = url;
+            }
+            
+            title.textContent = titulo.replace('📄 ', '').substring(0, 50) + (titulo.length > 50 ? '...' : '');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            
+            const modal = document.getElementById('pdfModal');
+            const iframe = document.getElementById('modalIframe');
+            
+            modal.classList.remove('active');
+            iframe.src = '';
+            document.body.style.overflow = '';
+        }
+
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') cerrarModal();
+        });
 
         // Drag and drop
         const fileLabel = document.getElementById('fileLabel');
         
         fileLabel.addEventListener('dragover', (e) => {
             e.preventDefault();
-            fileLabel.style.background = 'rgba(0, 243, 255, 0.2)';
+            fileLabel.style.background = 'rgba(255, 107, 53, 0.2)';
         });
         
         fileLabel.addEventListener('dragleave', () => {
@@ -372,4 +1068,4 @@
         });
     </script>
 </body>
-                </html>
+</html>
