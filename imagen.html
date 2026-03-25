@@ -78,7 +78,7 @@
             border-radius: 10px;
             padding: 30px;
             max-width: 600px;
-            margin: 0 auto;
+            margin: 0 auto 30px;
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
         }
         
@@ -181,7 +181,7 @@
             border: 1px solid var(--neon-cyan);
         }
         
-        .btn-success, .btn-secondary, .btn-danger {
+        .btn-success, .btn-secondary, .btn-danger, .btn-refresh {
             padding: 12px 24px;
             border: none;
             border-radius: 6px;
@@ -224,6 +224,18 @@
             box-shadow: 0 5px 20px rgba(218, 54, 51, 0.5);
         }
         
+        .btn-refresh {
+            background: linear-gradient(45deg, #00ffff, #00f3ff);
+            color: #0a0a0f;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-refresh:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.5);
+        }
+        
         .checkbox-group {
             display: flex;
             gap: 15px;
@@ -256,6 +268,337 @@
             color: var(--neon-yellow);
             font-size: 0.9rem;
         }
+        
+        .qid-input {
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+        
+        /* Sección de capturas existentes */
+        .existing-captures {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            color: var(--neon-cyan);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .loading {
+            text-align: center;
+            color: var(--neon-cyan);
+            padding: 20px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        /* Masonry Grid */
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 20px;
+        }
+        
+        @media (min-width: 640px) {
+            .masonry-grid { column-count: 2; }
+        }
+        
+        @media (min-width: 1024px) {
+            .masonry-grid { column-count: 3; }
+        }
+        
+        @media (min-width: 1400px) {
+            .masonry-grid { column-count: 4; }
+        }
+        
+        .capture-card {
+            break-inside: avoid;
+            margin-bottom: 20px;
+            background: var(--bg-terminal);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .capture-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue));
+            z-index: 1;
+        }
+        
+        .capture-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+            border-color: var(--neon-cyan);
+        }
+        
+        .capture-image-container {
+            position: relative;
+            overflow: hidden;
+            background: #010409;
+        }
+        
+        .capture-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .capture-card:hover .capture-image {
+            transform: scale(1.05);
+        }
+        
+        .capture-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.8));
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 15px;
+        }
+        
+        .capture-card:hover .capture-overlay {
+            opacity: 1;
+        }
+        
+        .view-btn {
+            background: var(--neon-cyan);
+            color: #0a0a0f;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        
+        .view-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+        
+        .capture-content {
+            padding: 15px;
+        }
+        
+        .capture-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .capture-icon {
+            font-size: 1.3rem;
+        }
+        
+        .capture-title {
+            color: var(--neon-green);
+            font-size: 0.95rem;
+            font-weight: bold;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .capture-meta {
+            color: #8b949e;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .capture-description {
+            color: #c9d1d9;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            max-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            margin-bottom: 10px;
+        }
+        
+        .labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .label {
+            background: rgba(0, 255, 255, 0.1);
+            color: var(--neon-cyan);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .label.tipo {
+            background: rgba(255, 0, 60, 0.1);
+            color: var(--neon-red);
+            border-color: rgba(255, 0, 60, 0.3);
+        }
+        
+        .label.qid {
+            background: rgba(255, 238, 0, 0.1);
+            color: var(--neon-yellow);
+            border-color: rgba(255, 238, 0, 0.3);
+        }
+        
+        .label.nsfw {
+            background: rgba(255, 0, 60, 0.3);
+            color: #fff;
+            border-color: var(--neon-red);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #8b949e;
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            background: rgba(218, 54, 51, 0.1);
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        /* Modal Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            padding: 20px;
+            overflow: auto;
+        }
+        
+        .lightbox.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+        
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 85vh;
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.3);
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .lightbox-close:hover {
+            color: var(--neon-red);
+        }
+        
+        .lightbox-info {
+            position: absolute;
+            bottom: -60px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #c9d1d9;
+        }
+        
+        .lightbox-title {
+            font-size: 1.2rem;
+            color: var(--neon-cyan);
+            margin-bottom: 5px;
+        }
+        
+        .lightbox-meta {
+            font-size: 0.9rem;
+            color: #8b949e;
+        }
+        
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox-nav:hover {
+            background: var(--neon-cyan);
+            color: #0a0a0f;
+        }
+        
+        .lightbox-prev { left: -70px; }
+        .lightbox-next { right: -70px; }
+        
+        @media (max-width: 768px) {
+            .lightbox-prev { left: 10px; }
+            .lightbox-next { right: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -275,6 +618,10 @@
 
             <label>✍️ AUTOR/FUENTE:</label>
             <input type="text" id="autor" placeholder="Quién capturó esto">
+
+            <label>🆔 QID (Wikidata):</label>
+            <input type="text" id="qid" class="qid-input" placeholder="Q123456" pattern="Q[0-9]+" title="Formato: Q seguido de números (ej: Q123456)">
+            <small>Identificador de Wikidata (opcional)</small>
 
             <label>📝 CONTEXTO:</label>
             <textarea id="descripcion" rows="2" placeholder="¿Qué está pasando en esta captura? ¿Por qué es relevante?"></textarea>
@@ -340,10 +687,42 @@
         </form>
     </div>
 
+    <!-- Sección de capturas existentes -->
+    <div class="existing-captures">
+        <h2 class="section-title">🖼️ Galería de Capturas</h2>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button onclick="cargarCapturasExistentes()" class="btn-refresh">🔄 Actualizar Galería</button>
+        </div>
+        <div id="capturasContainer">
+            <div class="loading">⏳ Cargando capturas desde GitHub...</div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox" onclick="cerrarLightbox(event)">
+        <button class="lightbox-close" onclick="cerrarLightbox()">&times;</button>
+        <button class="lightbox-nav lightbox-prev" onclick="navegarLightbox(-1)">‹</button>
+        <button class="lightbox-nav lightbox-next" onclick="navegarLightbox(1)">›</button>
+        <div class="lightbox-content" onclick="event.stopPropagation()">
+            <img id="lightboxImage" class="lightbox-image" src="" alt="">
+            <div class="lightbox-info">
+                <div class="lightbox-title" id="lightboxTitle"></div>
+                <div class="lightbox-meta" id="lightboxMeta"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
         let archivoSeleccionado = null;
+        let capturasData = []; // Almacena datos para navegación del lightbox
+        let lightboxIndex = 0;
+
+        // Cargar capturas existentes al iniciar
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarCapturasExistentes();
+        });
 
         function previsualizar(input) {
             if (input.files && input.files[0]) {
@@ -397,11 +776,11 @@
         function subirCaptura() {
             const titulo = document.getElementById('titulo').value.trim();
             const autor = document.getElementById('autor').value.trim();
+            const qid = document.getElementById('qid').value.trim();
             const descripcion = document.getElementById('descripcion').value.trim();
             const tipoCaptura = document.getElementById('tipoCaptura').value;
             const urlExterna = document.getElementById('urlExterna').value.trim();
             
-            // Obtener etiquetas seleccionadas
             const etiquetas = Array.from(document.querySelectorAll('.tag-check:checked')).map(cb => cb.value);
 
             if (!titulo) {
@@ -421,20 +800,16 @@
 
             let cuerpo = '';
             
-            // Encabezado con tipo
             cuerpo += `${tiposEmoji[tipoCaptura] || '💻'} **Tipo:** ${tipoCaptura}\n`;
-            
-            // Autor
             if (autor) cuerpo += `✍️ **Capturado por:** ${autor}\n`;
+            if (qid) cuerpo += `🆔 **QID:** [${qid}](https://www.wikidata.org/wiki/${qid})\n`;
             
-            // Etiquetas
             if (etiquetas.length > 0) {
                 cuerpo += `🏷️ **Etiquetas:** ${etiquetas.join(', ')}\n`;
             }
             
             cuerpo += `\n## 📝 Contexto\n${descripcion || 'Sin contexto'}\n\n`;
             
-            // URL externa o archivo
             if (urlExterna) {
                 cuerpo += `## 🔗 Enlace externo\n![${titulo}](${urlExterna})\n\n`;
             }
@@ -454,7 +829,6 @@
 
             cuerpo += `---\n*Subido desde observatorio-capturas*`;
 
-            // Construir labels
             let labels = `captura,${tipoCaptura},observatorio`;
             if (etiquetas.includes('nsfw')) labels += ',nsfw';
             if (etiquetas.includes('controversial')) labels += ',controversial';
@@ -468,6 +842,7 @@
             // Resetear formulario
             document.getElementById('titulo').value = '';
             document.getElementById('autor').value = '';
+            document.getElementById('qid').value = '';
             document.getElementById('descripcion').value = '';
             document.getElementById('urlExterna').value = '';
             document.getElementById('tipoCaptura').value = 'error';
@@ -476,6 +851,244 @@
             
             alert("✅ Se abrió GitHub. Si subiste un archivo, arrástralo al issue y publícalo.");
         }
+
+        // Función para cargar capturas existentes
+        async function cargarCapturasExistentes() {
+            const container = document.getElementById('capturasContainer');
+            container.innerHTML = '<div class="loading">⏳ Cargando capturas desde GitHub...</div>';
+
+            try {
+                const response = await fetch(
+                    `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?labels=captura&state=all&per_page=50`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const issues = await response.json();
+                
+                if (issues.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">💻</div>
+                            <p>No hay capturas registradas aún.</p>
+                            <p style="font-size: 0.9rem; margin-top: 10px;">¡Sé el primero en subir una!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Procesar y filtrar solo las que tienen imágenes
+                capturasData = issues.map(issue => {
+                    const imageUrl = extraerUrlImagen(issue.body || '');
+                    return {
+                        issue: issue,
+                        imageUrl: imageUrl,
+                        procesado: procesarCaptura(issue, imageUrl)
+                    };
+                }).filter(item => item.imageUrl); // Solo mostrar las que tienen imagen
+
+                if (capturasData.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🖼️</div>
+                            <p>No se encontraron imágenes en las capturas.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const cardsHTML = capturasData.map((item, index) => 
+                    crearCapturaCard(item.procesado, index)
+                ).join('');
+                
+                container.innerHTML = `<div class="masonry-grid">${cardsHTML}</div>`;
+                
+            } catch (error) {
+                console.error('Error al cargar capturas:', error);
+                container.innerHTML = `
+                    <div class="error-message">
+                        ❌ Error al cargar las capturas: ${error.message}<br>
+                        <small>Verifica tu conexión o que el repositorio sea público</small>
+                    </div>
+                `;
+            }
+        }
+
+        function procesarCaptura(issue, imageUrl) {
+            const body = issue.body || '';
+            const tipoMatch = body.match(/\*\*Tipo:\*\*\s*(\w+)/);
+            const autorMatch = body.match(/\*\*Capturado por:\*\*\s*([^\n]+)/);
+            const qidMatch = body.match(/\*\*QID:\*\*\s*\[?(Q\d+)\]?/);
+            const etiquetasMatch = body.match(/\*\*Etiquetas:\*\*\s*([^\n]+)/);
+            
+            const tipo = tipoMatch ? tipoMatch[1] : 'otro';
+            const autor = autorMatch ? autorMatch[1].trim() : null;
+            const qid = qidMatch ? qidMatch[1] : null;
+            
+            let descripcion = '';
+            const descripcionMatch = body.match(/## 📝 Contexto\n([\s\S]*?)(?=\n\n##|$)/);
+            if (descripcionMatch) {
+                descripcion = descripcionMatch[1].trim();
+            }
+            
+            const tiposEmoji = {
+                'error': '💥',
+                'ui': '🎨',
+                'mensaje': '💬',
+                'terminal': '⌨️',
+                'redes': '🌐',
+                'ia': '🤖',
+                'otro': '🔧'
+            };
+            
+            const fecha = new Date(issue.created_at).toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+
+            // Extraer etiquetas del body o de los labels
+            let etiquetas = [];
+            if (etiquetasMatch) {
+                etiquetas = etiquetasMatch[1].split(',').map(e => e.trim());
+            }
+            
+            return {
+                title: issue.title.replace('💻 ', ''),
+                tipo: tipo,
+                emoji: tiposEmoji[tipo] || '💻',
+                autor: autor,
+                qid: qid,
+                descripcion: descripcion,
+                fecha: fecha,
+                imageUrl: imageUrl,
+                issueUrl: issue.html_url,
+                comments: issue.comments,
+                labels: issue.labels,
+                etiquetas: etiquetas,
+                state: issue.state
+            };
+        }
+
+        function crearCapturaCard(data, index) {
+            const tieneNSFW = data.etiquetas.includes('nsfw') || data.labels.some(l => l.name === 'nsfw');
+            
+            return `
+                <div class="capture-card" data-index="${index}">
+                    <div class="capture-image-container">
+                        <img src="${data.imageUrl}" 
+                             alt="${data.title}" 
+                             class="capture-image"
+                             loading="lazy"
+                             onclick="abrirLightbox(${index})">
+                        <div class="capture-overlay">
+                            <button class="view-btn" onclick="abrirLightbox(${index})">
+                                🔍 Ver completo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="capture-content">
+                        <div class="capture-header">
+                            <span class="capture-icon">${data.emoji}</span>
+                            <span class="capture-title" title="${data.title}">${data.title}</span>
+                        </div>
+                        <div class="capture-meta">
+                            ${data.autor ? `<span>✍️ ${data.autor}</span>` : ''}
+                            <span>📅 ${data.fecha}</span>
+                        </div>
+                        <div class="capture-description">${data.descripcion}</div>
+                        <div class="labels">
+                            <span class="label tipo">${data.tipo}</span>
+                            ${data.qid ? `<span class="label qid">🆔 ${data.qid}</span>` : ''}
+                            ${tieneNSFW ? '<span class="label nsfw">🔞 NSFW</span>' : ''}
+                            ${data.etiquetas.filter(e => e !== 'nsfw').map(e => 
+                                `<span class="label">${e}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function extraerUrlImagen(body) {
+            // Buscar imagen en markdown: ![alt](url)
+            const markdownMatch = body.match(/!\[([^\]]*)\]\((https:\/\/[^)]+)\)/);
+            if (markdownMatch) {
+                return markdownMatch[2];
+            }
+            
+            // Buscar URL de imagen de GitHub Assets
+            const assetRegex = /https:\/\/github\.com\/user-attachments\/assets\/[a-zA-Z0-9-]+/g;
+            const assets = body.match(assetRegex);
+            if (assets && assets.length > 0) {
+                return assets[0];
+            }
+            
+            // Buscar cualquier URL de imagen
+            const imgRegex = /(https:\/\/[^\s]+\.(?:png|jpg|jpeg|webp|gif))/i;
+            const directMatch = body.match(imgRegex);
+            if (directMatch) {
+                return directMatch[1];
+            }
+            
+            return null;
+        }
+
+        // Lightbox functions
+        function abrirLightbox(index) {
+            lightboxIndex = index;
+            const data = capturasData[index].procesado;
+            
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightboxImage');
+            const title = document.getElementById('lightboxTitle');
+            const meta = document.getElementById('lightboxMeta');
+            
+            img.src = data.imageUrl;
+            title.textContent = data.title;
+            meta.innerHTML = `
+                ${data.emoji} ${data.tipo} | 
+                ${data.autor ? `✍️ ${data.autor} | ` : ''}
+                📅 ${data.fecha} | 
+                <a href="${data.issueUrl}" target="_blank" style="color: var(--neon-cyan);">
+                    💬 Ver en GitHub
+                </a>
+            `;
+            
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarLightbox(event) {
+            if (event && event.target !== event.currentTarget) return;
+            
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightboxImage');
+            
+            lightbox.classList.remove('active');
+            img.src = '';
+            document.body.style.overflow = '';
+        }
+
+        function navegarLightbox(direccion) {
+            const nuevoIndex = lightboxIndex + direccion;
+            
+            if (nuevoIndex >= 0 && nuevoIndex < capturasData.length) {
+                abrirLightbox(nuevoIndex);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const lightbox = document.getElementById('lightbox');
+            if (!lightbox.classList.contains('active')) return;
+            
+            if (e.key === 'Escape') cerrarLightbox();
+            if (e.key === 'ArrowLeft') navegarLightbox(-1);
+            if (e.key === 'ArrowRight') navegarLightbox(1);
+        });
 
         // Drag and drop
         const fileLabel = document.getElementById('fileLabel');
