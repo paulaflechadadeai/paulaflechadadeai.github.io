@@ -16,11 +16,7 @@
             --border: #30363d;
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Courier New', monospace;
@@ -119,7 +115,7 @@
         
         .file-label {
             display: block;
-            background: linear-gradient(45deg, #21262(45deg, #21262d, #30363d);
+            background: linear-gradient(45deg, #21262d, #30363d);
             border: 2px dashed var(--neon-orange);
             color: var(--neon-orange);
             padding: 40px 20px;
@@ -257,29 +253,6 @@
             box-shadow: 0 5px 20px rgba(255, 107, 53, 0.5);
         }
         
-        .pages-preview {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 10px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 6px;
-            margin-top: 10px;
-        }
-        
-        .page-thumb {
-            min-width: 80px;
-            height: 100px;
-            background: #21262d;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #8b949e;
-            font-size: 0.8rem;
-        }
-        
         .checkbox-group {
             display: flex;
             gap: 15px;
@@ -307,7 +280,7 @@
         
         /* Sección de PDFs existentes */
         .existing-pdfs {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         
@@ -328,8 +301,14 @@
         
         .pdf-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
+        }
+        
+        @media (max-width: 640px) {
+            .pdf-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
         .pdf-card {
@@ -360,47 +339,34 @@
         
         .pdf-card-header {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 12px;
             margin-bottom: 12px;
         }
         
         .pdf-card-icon {
             font-size: 2.5rem;
-            line-height: 1;
         }
         
         .pdf-card-title {
             color: var(--neon-green);
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             flex: 1;
             overflow: hidden;
             text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            line-height: 1.3;
+            white-space: nowrap;
         }
         
         .pdf-card-meta {
             color: #8b949e;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             margin-bottom: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .pdf-card-meta span {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
         }
         
         .pdf-card-description {
             color: #c9d1d9;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             line-height: 1.4;
             margin-bottom: 15px;
             max-height: 60px;
@@ -411,43 +377,53 @@
             -webkit-box-orient: vertical;
         }
         
-        .pdf-viewer-container {
-            background: #010409;
+        .pdf-preview-thumb {
+            background: linear-gradient(135deg, #1a1a2e, #0a0a0f);
+            border: 1px dashed var(--border);
             border-radius: 8px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            position: relative;
             overflow: hidden;
-            margin-bottom: 10px;
-            border: 1px solid var(--border);
         }
         
-        .pdf-embed {
-            width: 100%;
-            height: 300px;
-            border: none;
+        .pdf-preview-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .pdf-preview-text {
+            color: #8b949e;
+            font-size: 0.8rem;
         }
         
         .pdf-actions {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 10px;
+            gap: 8px;
         }
         
         .pdf-btn {
-            padding: 8px 16px;
+            flex: 1;
+            padding: 10px;
             border-radius: 6px;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: bold;
+            text-align: center;
             transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+            border: 1px solid;
+            cursor: pointer;
+            font-family: inherit;
         }
         
         .pdf-btn-view {
-            background: rgba(255, 107, 53, 0.2);
+            background: rgba(255, 107, 53, 0.1);
             color: var(--neon-orange);
-            border: 1px solid var(--neon-orange);
+            border-color: var(--neon-orange);
         }
         
         .pdf-btn-view:hover {
@@ -458,7 +434,7 @@
         .pdf-btn-download {
             background: rgba(10, 255, 10, 0.1);
             color: var(--neon-green);
-            border: 1px solid var(--neon-green);
+            border-color: var(--neon-green);
         }
         
         .pdf-btn-download:hover {
@@ -466,11 +442,22 @@
             color: #0a0a0f;
         }
         
+        .pdf-btn-github {
+            background: rgba(110, 118, 129, 0.2);
+            color: #8b949e;
+            border-color: #8b949e;
+        }
+        
+        .pdf-btn-github:hover {
+            background: #8b949e;
+            color: #0a0a0f;
+        }
+        
         .labels {
             display: flex;
             flex-wrap: wrap;
             gap: 5px;
-            margin-top: 10px;
+            margin-top: 12px;
         }
         
         .label {
@@ -514,74 +501,15 @@
             text-align: center;
         }
         
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            padding: 20px;
-        }
-        
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background: var(--bg-terminal);
-            border: 2px solid var(--neon-orange);
-            border-radius: 10px;
-            width: 100%;
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border);
-            background: rgba(255, 107, 53, 0.1);
-        }
-        
-        .modal-title {
-            color: var(--neon-orange);
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            color: #8b949e;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        
-        .modal-close:hover {
-            color: var(--neon-red);
-        }
-        
-        .modal-body {
-            flex: 1;
-            overflow: auto;
-            padding: 0;
-        }
-        
-        .modal-iframe {
-            width: 100%;
-            height: 80vh;
-            border: none;
+        .no-preview-notice {
+            background: rgba(255, 238, 0, 0.1);
+            border: 1px dashed var(--neon-yellow);
+            color: var(--neon-yellow);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -656,7 +584,6 @@
                         <span class="meta-tag" id="pdfTamaño">0 MB</span>
                         <span class="meta-tag" id="pdfPaginas">📄 ? páginas</span>
                     </div>
-                    <p id="pdfDetalles" style="margin-top: 10px;"></p>
                 </div>
                 <p style="text-align: center;">
                     <button type="button" onclick="quitarPDF()" class="btn-danger">✖ ELIMINAR</button>
@@ -681,25 +608,11 @@
         </div>
     </div>
 
-    <!-- Modal para visualizar PDFs -->
-    <div id="pdfModal" class="modal" onclick="cerrarModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <span class="modal-title" id="modalTitle">Visualizador PDF</span>
-                <button class="modal-close" onclick="cerrarModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <iframe id="modalIframe" class="modal-iframe"></iframe>
-            </div>
-        </div>
-    </div>
-
     <script>
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
         let archivoSeleccionado = null;
 
-        // Cargar PDFs existentes al iniciar
         document.addEventListener('DOMContentLoaded', () => {
             cargarPDFsExistentes();
         });
@@ -708,14 +621,12 @@
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 
-                // Validar que sea PDF
                 if (file.type !== 'application/pdf') {
                     alert("❌ El archivo debe ser un PDF");
                     input.value = '';
                     return;
                 }
                 
-                // Validar tamaño (25MB)
                 if (file.size > 25 * 1024 * 1024) {
                     alert("❌ El PDF debe ser menor de 25MB");
                     input.value = '';
@@ -730,7 +641,6 @@
                     paginas: 'Desconocido'
                 };
                 
-                // Intentar extraer número de páginas
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const contenido = e.target.result;
@@ -825,7 +735,6 @@
                 '_blank'
             );
 
-            // Resetear formulario
             document.getElementById('titulo').value = '';
             document.getElementById('autor').value = '';
             document.getElementById('qid').value = '';
@@ -838,7 +747,6 @@
             alert("✅ Se abrió GitHub. Si subiste un archivo, arrástralo al issue y publícalo.");
         }
 
-        // Función para cargar PDFs existentes desde GitHub Issues
         async function cargarPDFsExistentes() {
             const container = document.getElementById('pdfsContainer');
             container.innerHTML = '<div class="loading">⏳ Cargando documentos desde GitHub...</div>';
@@ -879,20 +787,25 @@
             }
         }
 
-        // Función para crear la tarjeta de PDF
         function crearPDFCard(issue) {
             const body = issue.body || '';
             const tipoMatch = body.match(/\*\*Tipo:\*\*\s*(\w+)/);
             const autorMatch = body.match(/\*\*Autor:\*\*\s*([^\n]+)/);
             const qidMatch = body.match(/\*\*QID:\*\*\s*\[?(Q\d+)\]?/);
-            const urlMatch = body.match(/\*\*Enlace externo\*\*\n\[([^\]]+)\]\(([^)]+)\)/);
-            const archivoMatch = body.match(/\*\*Archivo:\*\*\s*([^\n]+)/);
             
             const tipo = tipoMatch ? tipoMatch[1] : 'documento';
             const autor = autorMatch ? autorMatch[1].trim() : null;
             const qid = qidMatch ? qidMatch[1] : null;
-            const urlExterna = urlMatch ? urlMatch[2] : null;
-            const archivoInfo = archivoMatch ? archivoMatch[1].trim() : null;
+            
+            // Extraer descripción
+            let descripcion = '';
+            const descripcionMatch = body.match(/## 📝 Resumen\n([\s\S]*?)(?=\n\n##|$)/);
+            if (descripcionMatch) {
+                descripcion = descripcionMatch[1].trim();
+            }
+            
+            // Buscar URLs de PDF
+            const { pdfUrl, esGitHubAsset, esExterno } = buscarUrlPDF(body);
             
             const tiposEmoji = {
                 'articulo': '📰',
@@ -905,28 +818,22 @@
             };
             
             const emoji = tiposEmoji[tipo] || '📄';
-            
-            // Extraer descripción
-            let descripcion = '';
-            const descripcionMatch = body.match(/## 📝 Resumen\n([\s\S]*?)(?=\n\n##|$)/);
-            if (descripcionMatch) {
-                descripcion = descripcionMatch[1].trim();
-            }
-            
-            // Buscar URL del PDF
-            const pdfUrl = buscarUrlPDF(body, issue);
-            
             const fecha = new Date(issue.created_at).toLocaleDateString('es-ES', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric'
             });
 
-            // Extraer tamaño y páginas si existen
+            // Extraer tamaño y páginas
             const tamañoMatch = body.match(/\*\*Tamaño:\*\*\s*([\d.]+)\s*MB/);
             const paginasMatch = body.match(/\*\*Páginas:\*\*\s*(\d+|Desconocido)/);
             const tamaño = tamañoMatch ? `${tamañoMatch[1]} MB` : null;
             const paginas = paginasMatch ? `${paginasMatch[1]} págs` : null;
+
+            // Determinar si se puede visualizar directamente
+            // Los assets de GitHub NO se pueden mostrar en iframe por seguridad
+            const puedeVisualizar = pdfUrl && !esGitHubAsset;
+            const necesitaGitHub = esGitHubAsset;
 
             return `
                 <div class="pdf-card">
@@ -936,114 +843,83 @@
                     </div>
                     
                     <div class="pdf-card-meta">
-                        ${autor ? `<span>✍️ ${autor}</span>` : ''}
+                        ${autor ? `<span>✍️ ${autor} · </span>` : ''}
                         <span>📅 ${fecha}</span>
-                        ${tamaño ? `<span>💾 ${tamaño}</span>` : ''}
-                        ${paginas ? `<span>📄 ${paginas}</span>` : ''}
-                        ${issue.state === 'closed' ? '<span>✅ Archivado</span>' : ''}
+                        ${tamaño ? `<span> · 💾 ${tamaño}</span>` : ''}
+                        ${paginas ? `<span> · 📄 ${paginas}</span>` : ''}
                     </div>
+                    
+                    <div class="pdf-preview-thumb">
+                        <span class="pdf-preview-icon">📕</span>
+                        <span class="pdf-preview-text">PDF ${paginas || ''}</span>
+                    </div>
+                    
+                    ${necesitaGitHub ? `
+                        <div class="no-preview-notice">
+                            ⚠️ Este PDF está alojado en GitHub.<br>
+                            Abre el issue para verlo/descargarlo.
+                        </div>
+                    ` : ''}
                     
                     <div class="pdf-card-description">${descripcion || 'Sin descripción disponible'}</div>
                     
                     <div class="pdf-actions">
-                        ${pdfUrl ? `
-                            <button onclick="verPDF('${pdfUrl}', '${issue.title.replace(/'/g, "\\'")}')" class="pdf-btn pdf-btn-view">
-                                👁️ Ver PDF
-                            </button>
+                        ${puedeVisualizar ? `
+                            <a href="${pdfUrl}" target="_blank" class="pdf-btn pdf-btn-view">
+                                👁️ Ver
+                            </a>
                             <a href="${pdfUrl}" download class="pdf-btn pdf-btn-download">
                                 ⬇️ Descargar
                             </a>
-                        ` : urlExterna ? `
-                            <a href="${urlExterna}" target="_blank" class="pdf-btn pdf-btn-view">
-                                🔗 Abrir enlace
+                        ` : `
+                            <a href="${issue.html_url}" target="_blank" class="pdf-btn pdf-btn-github" style="flex: 2;">
+                                🔗 Abrir en GitHub
                             </a>
-                        ` : archivoInfo ? `
-                            <span style="color: var(--neon-yellow); font-size: 0.85rem;">
-                                📁 ${archivoInfo}
-                            </span>
-                        ` : ''}
+                        `}
                     </div>
                     
                     <div class="labels">
                         <span class="label tipo">${tipo}</span>
                         ${qid ? `<span class="label qid">🆔 ${qid}</span>` : ''}
-                        ${issue.labels
-                            .filter(l => !['pdf', 'observatorio', tipo].includes(l.name))
-                            .map(l => `<span class="label">${l.name}</span>`)
-                            .join('')}
                     </div>
-                    
-                    <a href="${issue.html_url}" target="_blank" style="color: #8b949e; font-size: 0.8rem; margin-top: 10px; display: inline-block; text-decoration: none;">
-                        💬 Ver en GitHub (${issue.comments} comentarios)
-                    </a>
                 </div>
             `;
         }
 
-        // Función para buscar URL del PDF en el issue
-        function buscarUrlPDF(body, issue) {
-            // Buscar en adjuntos de GitHub
-            const githubAssetRegex = /https:\/\/github\.com\/user-attachments\/assets\/[a-zA-Z0-9-]+/g;
-            const githubAssets = body.match(githubAssetRegex);
-            
-            if (githubAssets) {
-                // Filtrar por contexto de PDF
-                for (const url of githubAssets) {
-                    if (body.toLowerCase().includes('.pdf') || body.includes('Archivo:')) {
-                        return url;
-                    }
-                }
+        function buscarUrlPDF(body) {
+            // Buscar enlace externo primero (estos sí funcionan)
+            const enlaceExterno = body.match(/\[Acceder al documento\]\((https:\/\/[^)]+)\)/);
+            if (enlaceExterno) {
+                return { 
+                    pdfUrl: enlaceExterno[1], 
+                    esGitHubAsset: false,
+                    esExterno: true 
+                };
             }
             
-            // Buscar URL directa a PDF
-            const urlRegex = /(https?:\/\/[^\s]+\.pdf)/i;
-            const directMatch = body.match(urlRegex);
-            if (directMatch) {
-                return directMatch[1];
+            // Buscar URL directa de PDF (no GitHub)
+            const urlDirecta = body.match(/(https:\/\/[^"\s]+\.pdf)/i);
+            if (urlDirecta && !urlDirecta[1].includes('github.com/user-attachments')) {
+                return { 
+                    pdfUrl: urlDirecta[1], 
+                    esGitHubAsset: false,
+                    esExterno: true 
+                };
             }
             
-            // Buscar enlace de Google Drive (convertir a vista previa si es posible)
-            const driveMatch = body.match(/https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-            if (driveMatch) {
-                return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+            // Buscar adjuntos de GitHub (NO se pueden visualizar directamente)
+            const assetRegex = /https:\/\/github\.com\/user-attachments\/assets\/[a-zA-Z0-9-]+/g;
+            const assets = body.match(assetRegex);
+            if (assets && assets.length > 0) {
+                return { 
+                    pdfUrl: assets[0], 
+                    esGitHubAsset: true,
+                    esExterno: false 
+                };
             }
             
-            return null;
+            return { pdfUrl: null, esGitHubAsset: false, esExterno: false };
         }
-
-        // Funciones del modal
-        function verPDF(url, titulo) {
-            const modal = document.getElementById('pdfModal');
-            const iframe = document.getElementById('modalIframe');
-            const title = document.getElementById('modalTitle');
-            
-            // Si es URL de GitHub Assets, forzar visualización
-            if (url.includes('github.com/user-attachments')) {
-                iframe.src = url;
-            } else {
-                iframe.src = url;
-            }
-            
-            title.textContent = titulo.replace('📄 ', '').substring(0, 50) + (titulo.length > 50 ? '...' : '');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function cerrarModal(event) {
-            if (event && event.target !== event.currentTarget) return;
-            
-            const modal = document.getElementById('pdfModal');
-            const iframe = document.getElementById('modalIframe');
-            
-            modal.classList.remove('active');
-            iframe.src = '';
-            document.body.style.overflow = '';
-        }
-
-        // Cerrar modal con ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') cerrarModal();
-        });
 
         // Drag and drop
         const fileLabel = document.getElementById('fileLabel');
