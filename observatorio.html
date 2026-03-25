@@ -2,228 +2,300 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Generador de Gráficos Combinados</title>
-    <!-- ApexCharts CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Observatorio IA - Terminal Feed</title>
     <style>
+        /* Estilo general de la terminal */
         body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 20px auto;
+            background: #0a0e1a;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            margin: 0;
             padding: 20px;
-            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        .dialog {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        input, textarea {
+        .terminal {
+            background: #0c0f1c;
+            border-radius: 12px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
+            max-width: 1200px;
+            overflow: hidden;
+        }
+        .terminal-header {
+            background: #1a1e2c;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #2d3348;
+        }
+        .window-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .window-btn {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+        .close { background: #ff5f56; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #27c93f; }
+        .terminal-title {
+            color: #b9c0e0;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        .terminal-content {
+            padding: 20px;
+            color: #c3e88d;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-y: auto;
+            max-height: 70vh;
+        }
+        .terminal-content::-webkit-scrollbar {
+            width: 8px;
+            background: #1a1e2c;
+        }
+        .terminal-content::-webkit-scrollbar-thumb {
+            background: #3b3f5c;
             border-radius: 4px;
-            font-family: monospace;
         }
-        textarea {
-            height: 100px;
-        }
-        button {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .predefined {
-            margin-top: 10px;
-            font-size: 14px;
-        }
-        .predefined button {
-            background: #6c757d;
+        .prompt {
+            color: #7aa2f7;
             margin-right: 10px;
-            padding: 5px 10px;
-            font-size: 12px;
         }
-        #chart {
-            background: white;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .command {
+            color: #e0af68;
+        }
+        .output-line {
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .repo-line {
+            margin: 10px 0;
+            padding: 8px 12px;
+            border-left: 3px solid #7aa2f7;
+            background: rgba(122, 162, 247, 0.05);
+            transition: 0.2s;
+        }
+        .repo-line:hover {
+            background: rgba(122, 162, 247, 0.12);
+            border-left-color: #c3e88d;
+        }
+        .repo-name {
+            color: #ff9e64;
+            font-weight: bold;
+        }
+        .repo-stars {
+            color: #ffd966;
+            font-size: 0.8rem;
+        }
+        .repo-lang {
+            color: #9ece6a;
+            font-size: 0.8rem;
+        }
+        .repo-desc {
+            color: #bbbbdd;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+        .blinking-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background-color: #c3e88d;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .loading {
+            color: #bbbbdd;
+            font-style: italic;
+        }
+        button.refresh-btn {
+            background: #2d3348;
+            border: none;
+            color: #c3e88d;
+            font-family: monospace;
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: auto;
+            font-size: 0.8rem;
+        }
+        button.refresh-btn:hover {
+            background: #3b3f5c;
+        }
+        .footer {
+            font-size: 0.7rem;
+            text-align: center;
+            color: #555c7a;
+            border-top: 1px solid #1a1e2c;
+            padding: 12px;
+        }
+        a {
+            color: #7aa2f7;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-
-<h1>📊 Editor de Gráficos: Columnas + Líneas</h1>
-
-<div class="dialog">
-    <div class="form-group">
-        <label>📌 Categorías (eje X)</label>
-        <input type="text" id="categories" placeholder="Ej: Ene, Feb, Mar, Abr" value="Ene, Feb, Mar, Abr">
-    </div>
-
-    <div class="form-group">
-        <label>📊 Series (una por línea, formato: nombre;tipo;valores)</label>
-        <textarea id="seriesData" rows="4">
-Ventas;column;100, 150, 200, 180
-Gastos;line;80, 120, 160, 140
-</textarea>
-        <div class="predefined">
-            <button type="button" onclick="loadExample('ventas')">Ejemplo Ventas vs Gastos</button>
-            <button type="button" onclick="loadExample('productos')">Ejemplo Productos A/B</button>
+<div class="terminal">
+    <div class="terminal-header">
+        <div class="window-buttons">
+            <div class="window-btn close"></div>
+            <div class="window-btn minimize"></div>
+            <div class="window-btn maximize"></div>
         </div>
-        <small>Formato: nombre;tipo;valores (separados por coma). Tipos: column, line, area.</small>
+        <div class="terminal-title">observatorio@ai-feed:~/repositorios</div>
+        <button class="refresh-btn" id="refreshBtn">⟳ actualizar</button>
     </div>
-
-    <div class="form-group">
-        <label>📈 Título del gráfico</label>
-        <input type="text" id="title" value="Análisis Mensual">
+    <div class="terminal-content" id="terminalOutput">
+        <div class="output-line">
+            <span class="prompt">$</span>
+            <span class="command"> ./scanner --tag=ai --limit=15 --sort=stars</span>
+        </div>
+        <div class="output-line loading" id="loadingMsg">
+            <span class="prompt">></span> Conectando con GitHub API...
+        </div>
     </div>
-
-    <button onclick="generateChart()">Generar Gráfico</button>
+    <div class="footer">
+        🔍 feed en tiempo real | repositorios con "ai" | datos vía GitHub API
+    </div>
 </div>
 
-<div id="chart"></div>
-
 <script>
-    let chart = null;
+    const terminalOutput = document.getElementById('terminalOutput');
+    const refreshBtn = document.getElementById('refreshBtn');
+    let currentRepos = [];
 
-    // Función principal para renderizar
-    function generateChart() {
-        // Obtener categorías
-        let categoriesStr = document.getElementById('categories').value;
-        let categories = categoriesStr.split(',').map(s => s.trim());
+    // Limpiar y mostrar loading
+    function showLoading() {
+        // Conservamos solo la primera línea (el comando)
+        const firstLine = terminalOutput.children[0];
+        terminalOutput.innerHTML = '';
+        terminalOutput.appendChild(firstLine);
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'output-line loading';
+        loadingDiv.id = 'loadingMsg';
+        loadingDiv.innerHTML = '<span class="prompt">></span> Conectando con GitHub API...';
+        terminalOutput.appendChild(loadingDiv);
+    }
 
-        // Obtener series
-        let seriesText = document.getElementById('seriesData').value;
-        let lines = seriesText.split('\n').filter(l => l.trim() !== '');
-        let series = [];
+    // Formatear un repositorio como línea de terminal
+    function formatRepo(repo) {
+        const stars = repo.stargazers_count.toLocaleString();
+        const lang = repo.language || 'unknown';
+        const desc = repo.description ? repo.description.substring(0, 120) : 'Sin descripción';
+        const url = repo.html_url;
 
-        for (let line of lines) {
-            let parts = line.split(';');
-            if (parts.length < 3) continue;
-            let name = parts[0].trim();
-            let type = parts[1].trim().toLowerCase();
-            let valuesStr = parts[2];
-            let data = valuesStr.split(',').map(v => parseFloat(v.trim()));
-            if (data.length !== categories.length) {
-                alert(`La serie "${name}" tiene ${data.length} valores pero hay ${categories.length} categorías. Ajusta los datos.`);
-                return;
+        return `
+            <div class="repo-line">
+                <div>
+                    <span class="repo-name">📁 ${repo.full_name}</span>
+                    <span class="repo-stars">⭐ ${stars}</span>
+                    <span class="repo-lang"> | 🖥️ ${lang}</span>
+                </div>
+                <div class="repo-desc">${escapeHtml(desc)}</div>
+                <div class="repo-desc" style="font-size:0.7rem">🔗 <a href="${url}" target="_blank">${url}</a></div>
+            </div>
+        `;
+    }
+
+    // Escapar HTML para evitar inyecciones
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Mostrar repos en el terminal
+    function displayRepos(repos) {
+        // Eliminar el mensaje de loading si existe
+        const loadingMsg = document.getElementById('loadingMsg');
+        if (loadingMsg) loadingMsg.remove();
+
+        // Eliminar líneas que no sean la primera (comando)
+        while (terminalOutput.children.length > 1) {
+            terminalOutput.removeChild(terminalOutput.lastChild);
+        }
+
+        // Añadir cabecera de resultados
+        const resultHeader = document.createElement('div');
+        resultHeader.className = 'output-line';
+        resultHeader.innerHTML = `<span class="prompt">></span> ${repos.length} repositorios encontrados con el tag "ai" (ordenados por ⭐)`;
+        terminalOutput.appendChild(resultHeader);
+
+        // Añadir cada repositorio
+        repos.forEach(repo => {
+            const line = document.createElement('div');
+            line.className = 'output-line';
+            line.innerHTML = formatRepo(repo);
+            terminalOutput.appendChild(line);
+        });
+
+        // Añadir línea final con timestamp
+        const timestamp = new Date().toLocaleString();
+        const footerLine = document.createElement('div');
+        footerLine.className = 'output-line';
+        footerLine.innerHTML = `<span class="prompt">></span> Última actualización: ${timestamp} | <span class="command">./feed --active</span>`;
+        terminalOutput.appendChild(footerLine);
+    }
+
+    // Obtener datos de GitHub API
+    async function fetchGitHubRepos() {
+        showLoading();
+        try {
+            // Búsqueda: repositorios con "ai" en nombre, descripción o readme
+            // Ordenamos por estrellas para mostrar los más populares primero
+            const url = 'https://api.github.com/search/repositories?q=ai&sort=stars&order=desc&per_page=15';
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
             }
-            series.push({
-                name: name,
-                type: type,
-                data: data
-            });
+            const data = await response.json();
+            if (!data.items) throw new Error('Formato inesperado');
+            currentRepos = data.items;
+            displayRepos(currentRepos);
+        } catch (error) {
+            console.error(error);
+            const loadingMsg = document.getElementById('loadingMsg');
+            if (loadingMsg) {
+                loadingMsg.innerHTML = `<span class="prompt">></span> ❌ Error: ${error.message}. Reintentando...`;
+                setTimeout(fetchGitHubRepos, 5000);
+            } else {
+                const errorLine = document.createElement('div');
+                errorLine.className = 'output-line';
+                errorLine.innerHTML = `<span class="prompt">></span> ❌ Error: ${error.message}. Intenta de nuevo más tarde.`;
+                terminalOutput.appendChild(errorLine);
+            }
         }
-
-        if (series.length === 0) {
-            alert('Debes ingresar al menos una serie válida.');
-            return;
-        }
-
-        let title = document.getElementById('title').value;
-
-        // Configuración de ApexCharts
-        const options = {
-            chart: {
-                type: 'line', // base, pero se define por serie
-                height: 500,
-                toolbar: {
-                    show: true,
-                    tools: {
-                        download: true,
-                        selection: true,
-                        zoom: true,
-                        zoomin: true,
-                        zoomout: true,
-                        pan: true,
-                        reset: true
-                    }
-                }
-            },
-            title: {
-                text: title,
-                align: 'center'
-            },
-            xaxis: {
-                categories: categories,
-                title: {
-                    text: 'Categorías'
-                }
-            },
-            yaxis: {
-                title: {
-                    text: 'Valores'
-                }
-            },
-            series: series,
-            tooltip: {
-                shared: true,
-                intersect: false
-            },
-            stroke: {
-                width: [0, 2, 2] // columnas sin línea, líneas con grosor
-            },
-            plotOptions: {
-                bar: {
-                    columnWidth: '50%',
-                    endingShape: 'rounded'
-                }
-            },
-            colors: ['#007bff', '#28a745', '#ffc107', '#dc3545']
-        };
-
-        // Ajustar el stroke según tipos (para que las columnas no tengan borde marcado)
-        // En versiones recientes de ApexCharts, el stroke se puede definir por serie,
-        // pero para simplificar, usamos la configuración global que asigna según orden.
-        // Si necesitas más control, se puede personalizar.
-        if (chart) {
-            chart.destroy();
-        }
-        chart = new ApexCharts(document.querySelector("#chart"), options);
-        chart.render();
     }
 
-    // Cargar ejemplos predefinidos
-    function loadExample(example) {
-        if (example === 'ventas') {
-            document.getElementById('categories').value = 'Ene, Feb, Mar, Abr, May';
-            document.getElementById('seriesData').value = 
-                'Ventas;column;120, 150, 180, 200, 170\n' +
-                'Gastos;line;80, 95, 110, 130, 120\n' +
-                'Margen;line;40, 55, 70, 70, 50';
-            document.getElementById('title').value = 'Evolución Ventas vs Gastos';
-        } else if (example === 'productos') {
-            document.getElementById('categories').value = 'Semana 1, Semana 2, Semana 3, Semana 4';
-            document.getElementById('seriesData').value = 
-                'Producto A;column;50, 70, 90, 110\n' +
-                'Producto B;line;45, 65, 85, 105';
-            document.getElementById('title').value = 'Comparación Productos A y B';
-        }
-        generateChart();
-    }
+    // Evento para refrescar manualmente
+    refreshBtn.addEventListener('click', () => {
+        fetchGitHubRepos();
+    });
 
-    // Inicializar con un ejemplo al cargar
-    window.onload = () => {
-        loadExample('ventas');
-    };
+    // Cargar al inicio
+    fetchGitHubRepos();
 </script>
 </body>
 </html>
