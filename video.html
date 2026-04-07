@@ -72,6 +72,33 @@
             text-shadow: 0 0 10px var(--neon-green);
         }
         
+        /* ===== CONTROLES DE EDITOR PROTEGIDOS ===== */
+        .editor-controls {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            text-align: center;
+        }
+        
+        .btn-editor {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-green));
+            border: 2px solid var(--neon-blue);
+            color: #0a0a0f;
+            padding: 12px 24px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .btn-editor:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+        }
+        
         .terminal {
             background: var(--bg-terminal);
             border: 1px solid var(--border);
@@ -470,6 +497,8 @@
             text-align: center;
             transition: all 0.3s;
             border: 1px solid;
+            cursor: pointer;
+            font-family: inherit;
         }
         
         .video-btn-primary {
@@ -584,20 +613,88 @@
         
         .video-modal-meta {
             color: #8b949e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Acciones de admin (solo visibles en modo editor) */
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 10px;
+            text-transform: uppercase;
+        }
+
+        .status-protected {
+            background: rgba(255, 0, 60, 0.2);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+
+        .status-unlocked {
+            background: rgba(10, 255, 10, 0.2);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
+
+        .modal-admin-btn {
+            background: rgba(255, 0, 60, 0.2);
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .modal-admin-btn:hover {
+            background: var(--neon-red);
+            color: white;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1 class="glitch-title">~/observatorio/video $</h1>
-        <p class="subheader">> Subir video (máx 50MB)</p>
+        <p class="subheader">> Biblioteca de videos colaborativa</p>
     </div>
 
     <div class="volver">
         <a href="/">← INICIO</a>
     </div>
 
-    <div class="terminal">
+    <!-- ===== CONTROLES DE AUTENTICACIÓN ===== -->
+    <div class="editor-controls">
+        <button onclick="mostrarSelector()" id="btnMostrarEditor" class="btn-editor">
+            🔒 ACCEDER AL UPLOADER
+        </button>
+        <div id="statusIndicator" style="margin-top: 10px; display: none;">
+            <span class="status-badge status-unlocked">MODO EDITOR ACTIVO</span>
+        </div>
+    </div>
+
+    <!-- ===== FORMULARIO PROTEGIDO ===== -->
+    <div id="panelUpload" class="terminal" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+            <span style="color: var(--neon-green); font-weight: bold;">📝 NUEVO VIDEO</span>
+            <button onclick="cerrarEditor()" class="btn-danger" style="padding: 5px 10px; font-size: 0.8rem;">✖ CERRAR</button>
+        </div>
+
         <form onsubmit="event.preventDefault(); subirVideo();">
             <label>📌 TÍTULO:</label>
             <input type="text" id="titulo" placeholder="Título del video" required>
@@ -649,12 +746,12 @@
 
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button type="submit" class="btn-success">🚀 SUBIR A GITHUB</button>
-                <button type="button" onclick="history.back()" class="btn-secondary">↩ CANCELAR</button>
+                <button type="button" onclick="resetForm()" class="btn-secondary">↩ LIMPIAR</button>
             </div>
         </form>
     </div>
 
-    <!-- Sección de videos existentes -->
+    <!-- Sección de videos existentes (pública) -->
     <div class="existing-videos">
         <h2 class="section-title">🎬 Biblioteca de Videos</h2>
         <div style="text-align: center; margin-bottom: 20px;">
@@ -680,16 +777,67 @@
     </div>
 
     <script>
+        // ============================================
+        // CONFIGURACIÓN Y AUTENTICACIÓN
+        // ============================================
+        const CLAVE_EDITOR = 'patito123';
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
+        
+        let editorActivo = false;
         let archivoSeleccionado = null;
         let videosData = [];
 
-        // Cargar videos existentes al iniciar
+        // Cargar videos existentes al iniciar (público)
         document.addEventListener('DOMContentLoaded', () => {
             cargarVideosExistentes();
         });
 
+        // ============================================
+        // SISTEMA DE AUTENTICACIÓN
+        // ============================================
+        function mostrarSelector() {
+            const clave = prompt("🔑 Ingresa clave de editor:");
+            
+            if (clave === CLAVE_EDITOR) {
+                activarModoEditor();
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta. Acceso denegado.");
+            }
+        }
+
+        function activarModoEditor() {
+            editorActivo = true;
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+            document.getElementById('panelUpload').style.display = 'block';
+            document.getElementById('statusIndicator').style.display = 'block';
+            
+            // Actualizar visualización para mostrar controles de admin
+            cargarVideosExistentes();
+        }
+
+        function cerrarEditor() {
+            editorActivo = false;
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            document.getElementById('panelUpload').style.display = 'none';
+            document.getElementById('statusIndicator').style.display = 'none';
+            resetForm();
+            cargarVideosExistentes();
+        }
+
+        function resetForm() {
+            document.getElementById('titulo').value = '';
+            document.getElementById('autor').value = '';
+            document.getElementById('qid').value = '';
+            document.getElementById('descripcion').value = '';
+            document.getElementById('urlExterna').value = '';
+            document.getElementById('tipoVideo').value = 'tutorial';
+            quitarVideo();
+        }
+
+        // ============================================
+        // GESTIÓN DE ARCHIVOS
+        // ============================================
         function previsualizar(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
@@ -727,7 +875,15 @@
             document.getElementById('fileLabel').style.borderColor = 'var(--neon-blue)';
         }
 
+        // ============================================
+        // SUBIR A GITHUB
+        // ============================================
         function subirVideo() {
+            if (!editorActivo) {
+                alert("⚠️ Debes activar el modo editor primero");
+                return;
+            }
+
             const titulo = document.getElementById('titulo').value.trim();
             const autor = document.getElementById('autor').value.trim();
             const qid = document.getElementById('qid').value.trim();
@@ -785,19 +941,13 @@
                 '_blank'
             );
 
-            // Resetear formulario
-            document.getElementById('titulo').value = '';
-            document.getElementById('autor').value = '';
-            document.getElementById('qid').value = '';
-            document.getElementById('descripcion').value = '';
-            document.getElementById('urlExterna').value = '';
-            document.getElementById('tipoVideo').value = 'tutorial';
-            quitarVideo();
-            
+            resetForm();
             alert("✅ Se abrió GitHub. Si subiste un archivo, arrástralo al issue y publícalo.");
         }
 
-        // Función para cargar videos existentes
+        // ============================================
+        // CARGAR VIDEOS EXISTENTES
+        // ============================================
         async function cargarVideosExistentes() {
             const container = document.getElementById('videosContainer');
             container.innerHTML = '<div class="loading">⏳ Cargando videos desde GitHub...</div>';
@@ -844,7 +994,7 @@
                 }
 
                 const cardsHTML = videosData.map((item, index) => 
-                    crearVideoCard(item.info, index)
+                    crearVideoCard(item.info, index, item.issue.number)
                 ).join('');
                 
                 container.innerHTML = `<div class="video-grid">${cardsHTML}</div>`;
@@ -903,7 +1053,7 @@
                 platform = 'vimeo';
                 const videoId = vimeoMatch[1];
                 embedUrl = `https://player.vimeo.com/video/${videoId}`;
-                thumbnail = null; // Vimeo requiere API para thumbnails
+                thumbnail = null;
             }
             
             // Buscar archivo de video adjunto
@@ -961,10 +1111,22 @@
             };
         }
 
-        function crearVideoCard(data, index) {
+        function crearVideoCard(data, index, issueNumber) {
             const plataformaClass = `platform-${data.platform}`;
             const plataformaNombre = data.platform === 'youtube' ? 'YouTube' : 
                                     data.platform === 'vimeo' ? 'Vimeo' : 'Archivo Local';
+            
+            // Controles de admin solo si editorActivo es true
+            let adminControls = '';
+            if (editorActivo) {
+                adminControls = `
+                    <div class="admin-actions">
+                        <button onclick="eliminarVideo(${issueNumber})" class="video-btn video-btn-secondary" style="flex: none; padding: 5px 10px; font-size: 0.8rem;">
+                            🗑️ Cerrar Issue
+                        </button>
+                    </div>
+                `;
+            }
             
             return `
                 <div class="video-card" data-index="${index}">
@@ -995,6 +1157,7 @@
                             ${data.autor ? `<span>✍️ ${data.autor}</span>` : ''}
                             <span>📅 ${data.fecha}</span>
                             <span class="video-platform ${plataformaClass}">${plataformaNombre}</span>
+                            ${data.state === 'closed' ? '<span style="color: var(--neon-red);">🔒 Cerrado</span>' : ''}
                         </div>
                         <div class="video-description">${data.descripcion || 'Sin descripción'}</div>
                         <div class="labels">
@@ -1009,9 +1172,16 @@
                                 💬 GitHub
                             </a>
                         </div>
+                        ${adminControls}
                     </div>
                 </div>
             `;
+        }
+
+        async function eliminarVideo(issueNumber) {
+            if (!confirm(`¿Cerrar el issue #${issueNumber}?\n\nEsto marcará el video como cerrado en GitHub.`)) return;
+            alert(`⚠️ Para eliminar completamente, debes ir a GitHub y cerrar el Issue #${issueNumber}`);
+            window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/${issueNumber}`, '_blank');
         }
 
         function extraerYouTubeId(url) {
@@ -1019,7 +1189,9 @@
             return match ? match[1] : null;
         }
 
-        // Modal functions
+        // ============================================
+        // MODAL DE VIDEO
+        // ============================================
         function abrirVideoModal(index) {
             const data = videosData[index].info;
             const modal = document.getElementById('videoModal');
@@ -1035,20 +1207,37 @@
             } else if (data.platform === 'vimeo' && data.embedUrl) {
                 playerHTML = `<iframe src="${data.embedUrl}?autoplay=1" allowfullscreen allow="autoplay"></iframe>`;
             } else if (data.videoUrl) {
-                // Video local o directo
                 playerHTML = `<video controls autoplay style="width: 100%; height: 100%;"><source src="${data.videoUrl}" type="video/mp4"></video>`;
             }
             
             player.innerHTML = playerHTML;
             title.textContent = data.title;
-            meta.innerHTML = `
+            
+            // Construir meta con enlace a GitHub y botón de admin si aplica
+            let metaHTML = `
                 ${data.emoji} ${data.tipo} | 
                 ${data.autor ? `✍️ ${data.autor} | ` : ''}
-                📅 ${data.fecha}
+                📅 ${data.fecha} | 
+                <a href="${data.issueUrl}" target="_blank" style="color: var(--neon-blue);">💬 Ver en GitHub</a>
             `;
+            
+            if (editorActivo) {
+                metaHTML += ` | <button onclick="eliminarVideoDesdeModal()" class="modal-admin-btn">🗑️ Cerrar Issue</button>`;
+            }
+            
+            meta.innerHTML = metaHTML;
             
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+        }
+
+        function eliminarVideoDesdeModal() {
+            // Encontrar el issue number del video actual en el modal
+            const currentTitle = document.getElementById('modalTitle').textContent;
+            const currentVideo = videosData.find(v => v.info.title === currentTitle);
+            if (currentVideo) {
+                eliminarVideo(currentVideo.issue.number);
+            }
         }
 
         function cerrarVideoModal(event) {
