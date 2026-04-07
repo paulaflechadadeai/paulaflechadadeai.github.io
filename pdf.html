@@ -11,6 +11,7 @@
             --neon-red: #ff003c;
             --neon-yellow: #ffee00;
             --neon-orange: #ff6b35;
+            --neon-purple: #bd00ff;
             --bg-dark: #0a0a0f;
             --bg-terminal: #0d1117;
             --border: #30363d;
@@ -70,6 +71,33 @@
         .volver a:hover {
             color: var(--neon-green);
             text-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        /* ===== CONTROLES DE EDITOR PROTEGIDOS ===== */
+        .editor-controls {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            text-align: center;
+        }
+        
+        .btn-editor {
+            background: linear-gradient(45deg, var(--neon-orange), var(--neon-yellow));
+            border: 2px solid var(--neon-orange);
+            color: #0a0a0f;
+            padding: 12px 24px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .btn-editor:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
         }
         
         .terminal {
@@ -442,12 +470,16 @@
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            cursor: pointer;
+            font-family: inherit;
+            border: 1px solid;
+            background: transparent;
         }
         
         .pdf-btn-view {
             background: rgba(255, 107, 53, 0.2);
             color: var(--neon-orange);
-            border: 1px solid var(--neon-orange);
+            border-color: var(--neon-orange);
         }
         
         .pdf-btn-view:hover {
@@ -458,7 +490,7 @@
         .pdf-btn-download {
             background: rgba(10, 255, 10, 0.1);
             color: var(--neon-green);
-            border: 1px solid var(--neon-green);
+            border-color: var(--neon-green);
         }
         
         .pdf-btn-download:hover {
@@ -583,19 +615,84 @@
             height: 80vh;
             border: none;
         }
+
+        /* Acciones de admin (solo visibles en modo editor) */
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border);
+            justify-content: flex-end;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 10px;
+            text-transform: uppercase;
+        }
+
+        .status-protected {
+            background: rgba(255, 0, 60, 0.2);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+
+        .status-unlocked {
+            background: rgba(10, 255, 10, 0.2);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
+
+        .modal-admin-btn {
+            background: rgba(255, 0, 60, 0.2);
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+
+        .modal-admin-btn:hover {
+            background: var(--neon-red);
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1 class="glitch-title">~/observatorio/pdf $</h1>
-        <p class="subheader">> Subir documento PDF (máx 25MB)</p>
+        <p class="subheader">> Repositorio de documentos PDF</p>
     </div>
 
     <div class="volver">
         <a href="/">← INICIO</a>
     </div>
 
-    <div class="terminal">
+    <!-- ===== CONTROLES DE AUTENTICACIÓN ===== -->
+    <div class="editor-controls">
+        <button onclick="mostrarSelector()" id="btnMostrarEditor" class="btn-editor">
+            🔒 ACCEDER AL UPLOADER
+        </button>
+        <div id="statusIndicator" style="margin-top: 10px; display: none;">
+            <span class="status-badge status-unlocked">MODO EDITOR ACTIVO</span>
+        </div>
+    </div>
+
+    <!-- ===== FORMULARIO PROTEGIDO ===== -->
+    <div id="panelUpload" class="terminal" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+            <span style="color: var(--neon-green); font-weight: bold;">📝 NUEVO DOCUMENTO</span>
+            <button onclick="cerrarEditor()" class="btn-danger" style="padding: 5px 10px; font-size: 0.8rem;">✖ CERRAR</button>
+        </div>
+
         <form onsubmit="event.preventDefault(); subirPDF();">
             <label>📌 TÍTULO:</label>
             <input type="text" id="titulo" placeholder="Título del documento" required>
@@ -665,12 +762,12 @@
 
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button type="submit" class="btn-success">🚀 SUBIR A GITHUB</button>
-                <button type="button" onclick="history.back()" class="btn-secondary">↩ CANCELAR</button>
+                <button type="button" onclick="resetForm()" class="btn-secondary">↩ LIMPIAR</button>
             </div>
         </form>
     </div>
 
-    <!-- Sección de PDFs existentes -->
+    <!-- Sección de PDFs existentes (pública) -->
     <div class="existing-pdfs">
         <h2 class="section-title">📚 Documentos en el Observatorio</h2>
         <div style="text-align: center; margin-bottom: 20px;">
@@ -686,7 +783,12 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <span class="modal-title" id="modalTitle">Visualizador PDF</span>
-                <button class="modal-close" onclick="cerrarModal()">&times;</button>
+                <div>
+                    <button id="modalAdminBtn" class="modal-admin-btn" style="display: none;" onclick="eliminarPDFDesdeModal()">
+                        🗑️ Cerrar Issue
+                    </button>
+                    <button class="modal-close" onclick="cerrarModal()">&times;</button>
+                </div>
             </div>
             <div class="modal-body">
                 <iframe id="modalIframe" class="modal-iframe"></iframe>
@@ -695,15 +797,69 @@
     </div>
 
     <script>
+        // ============================================
+        // CONFIGURACIÓN Y AUTENTICACIÓN
+        // ============================================
+        const CLAVE_EDITOR = 'patito123';
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
+        
+        let editorActivo = false;
         let archivoSeleccionado = null;
+        let pdfsData = []; // Almacena datos para referencia del modal
+        let currentPdfIndex = -1;
 
-        // Cargar PDFs existentes al iniciar
+        // Cargar PDFs existentes al iniciar (público)
         document.addEventListener('DOMContentLoaded', () => {
             cargarPDFsExistentes();
         });
 
+        // ============================================
+        // SISTEMA DE AUTENTICACIÓN
+        // ============================================
+        function mostrarSelector() {
+            const clave = prompt("🔑 Ingresa clave de editor:");
+            
+            if (clave === CLAVE_EDITOR) {
+                activarModoEditor();
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta. Acceso denegado.");
+            }
+        }
+
+        function activarModoEditor() {
+            editorActivo = true;
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+            document.getElementById('panelUpload').style.display = 'block';
+            document.getElementById('statusIndicator').style.display = 'block';
+            
+            // Actualizar visualización para mostrar controles de admin
+            cargarPDFsExistentes();
+        }
+
+        function cerrarEditor() {
+            editorActivo = false;
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            document.getElementById('panelUpload').style.display = 'none';
+            document.getElementById('statusIndicator').style.display = 'none';
+            resetForm();
+            cargarPDFsExistentes();
+        }
+
+        function resetForm() {
+            document.getElementById('titulo').value = '';
+            document.getElementById('autor').value = '';
+            document.getElementById('qid').value = '';
+            document.getElementById('descripcion').value = '';
+            document.getElementById('urlExterna').value = '';
+            document.getElementById('tipoDocumento').value = 'articulo';
+            document.querySelectorAll('.tag-check').forEach(cb => cb.checked = false);
+            quitarPDF();
+        }
+
+        // ============================================
+        // GESTIÓN DE ARCHIVOS
+        // ============================================
         function previsualizar(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
@@ -761,7 +917,15 @@
             document.getElementById('fileLabel').style.borderColor = 'var(--neon-orange)';
         }
 
+        // ============================================
+        // SUBIR A GITHUB
+        // ============================================
         function subirPDF() {
+            if (!editorActivo) {
+                alert("⚠️ Debes activar el modo editor primero");
+                return;
+            }
+
             const titulo = document.getElementById('titulo').value.trim();
             const autor = document.getElementById('autor').value.trim();
             const qid = document.getElementById('qid').value.trim();
@@ -825,20 +989,13 @@
                 '_blank'
             );
 
-            // Resetear formulario
-            document.getElementById('titulo').value = '';
-            document.getElementById('autor').value = '';
-            document.getElementById('qid').value = '';
-            document.getElementById('descripcion').value = '';
-            document.getElementById('urlExterna').value = '';
-            document.getElementById('tipoDocumento').value = 'articulo';
-            document.querySelectorAll('.tag-check').forEach(cb => cb.checked = false);
-            quitarPDF();
-            
+            resetForm();
             alert("✅ Se abrió GitHub. Si subiste un archivo, arrástralo al issue y publícalo.");
         }
 
-        // Función para cargar PDFs existentes desde GitHub Issues
+        // ============================================
+        // CARGAR PDFs EXISTENTES
+        // ============================================
         async function cargarPDFsExistentes() {
             const container = document.getElementById('pdfsContainer');
             container.innerHTML = '<div class="loading">⏳ Cargando documentos desde GitHub...</div>';
@@ -865,7 +1022,16 @@
                     return;
                 }
 
-                const pdfCards = issues.map(issue => crearPDFCard(issue)).join('');
+                // Almacenar datos para referencia del modal
+                pdfsData = issues.map(issue => ({
+                    issue: issue,
+                    info: extraerInfoPDF(issue)
+                }));
+
+                const pdfCards = pdfsData.map((item, index) => 
+                    crearPDFCard(item.info, item.issue, index)
+                ).join('');
+                
                 container.innerHTML = `<div class="pdf-grid">${pdfCards}</div>`;
                 
             } catch (error) {
@@ -879,8 +1045,7 @@
             }
         }
 
-        // Función para crear la tarjeta de PDF
-        function crearPDFCard(issue) {
+        function extraerInfoPDF(issue) {
             const body = issue.body || '';
             const tipoMatch = body.match(/\*\*Tipo:\*\*\s*(\w+)/);
             const autorMatch = body.match(/\*\*Autor:\*\*\s*([^\n]+)/);
@@ -916,78 +1081,39 @@
             // Buscar URL del PDF
             const pdfUrl = buscarUrlPDF(body, issue);
             
-            const fecha = new Date(issue.created_at).toLocaleDateString('es-ES', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-
             // Extraer tamaño y páginas si existen
             const tamañoMatch = body.match(/\*\*Tamaño:\*\*\s*([\d.]+)\s*MB/);
             const paginasMatch = body.match(/\*\*Páginas:\*\*\s*(\d+|Desconocido)/);
-            const tamaño = tamañoMatch ? `${tamañoMatch[1]} MB` : null;
-            const paginas = paginasMatch ? `${paginasMatch[1]} págs` : null;
-
-            return `
-                <div class="pdf-card">
-                    <div class="pdf-card-header">
-                        <span class="pdf-card-icon">${emoji}</span>
-                        <h3 class="pdf-card-title" title="${issue.title.replace('📄 ', '')}">${issue.title.replace('📄 ', '')}</h3>
-                    </div>
-                    
-                    <div class="pdf-card-meta">
-                        ${autor ? `<span>✍️ ${autor}</span>` : ''}
-                        <span>📅 ${fecha}</span>
-                        ${tamaño ? `<span>💾 ${tamaño}</span>` : ''}
-                        ${paginas ? `<span>📄 ${paginas}</span>` : ''}
-                        ${issue.state === 'closed' ? '<span>✅ Archivado</span>' : ''}
-                    </div>
-                    
-                    <div class="pdf-card-description">${descripcion || 'Sin descripción disponible'}</div>
-                    
-                    <div class="pdf-actions">
-                        ${pdfUrl ? `
-                            <button onclick="verPDF('${pdfUrl}', '${issue.title.replace(/'/g, "\\'")}')" class="pdf-btn pdf-btn-view">
-                                👁️ Ver PDF
-                            </button>
-                            <a href="${pdfUrl}" download class="pdf-btn pdf-btn-download">
-                                ⬇️ Descargar
-                            </a>
-                        ` : urlExterna ? `
-                            <a href="${urlExterna}" target="_blank" class="pdf-btn pdf-btn-view">
-                                🔗 Abrir enlace
-                            </a>
-                        ` : archivoInfo ? `
-                            <span style="color: var(--neon-yellow); font-size: 0.85rem;">
-                                📁 ${archivoInfo}
-                            </span>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="labels">
-                        <span class="label tipo">${tipo}</span>
-                        ${qid ? `<span class="label qid">🆔 ${qid}</span>` : ''}
-                        ${issue.labels
-                            .filter(l => !['pdf', 'observatorio', tipo].includes(l.name))
-                            .map(l => `<span class="label">${l.name}</span>`)
-                            .join('')}
-                    </div>
-                    
-                    <a href="${issue.html_url}" target="_blank" style="color: #8b949e; font-size: 0.8rem; margin-top: 10px; display: inline-block; text-decoration: none;">
-                        💬 Ver en GitHub (${issue.comments} comentarios)
-                    </a>
-                </div>
-            `;
+            
+            return {
+                title: issue.title.replace('📄 ', ''),
+                tipo: tipo,
+                emoji: emoji,
+                autor: autor,
+                qid: qid,
+                descripcion: descripcion,
+                fecha: new Date(issue.created_at).toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                }),
+                pdfUrl: pdfUrl,
+                urlExterna: urlExterna,
+                archivoInfo: archivoInfo,
+                tamaño: tamañoMatch ? `${tamañoMatch[1]} MB` : null,
+                paginas: paginasMatch ? `${paginasMatch[1]} págs` : null,
+                state: issue.state,
+                issueUrl: issue.html_url,
+                comments: issue.comments,
+                labels: issue.labels
+            };
         }
 
-        // Función para buscar URL del PDF en el issue
         function buscarUrlPDF(body, issue) {
-            // Buscar en adjuntos de GitHub
             const githubAssetRegex = /https:\/\/github\.com\/user-attachments\/assets\/[a-zA-Z0-9-]+/g;
             const githubAssets = body.match(githubAssetRegex);
             
             if (githubAssets) {
-                // Filtrar por contexto de PDF
                 for (const url of githubAssets) {
                     if (body.toLowerCase().includes('.pdf') || body.includes('Archivo:')) {
                         return url;
@@ -995,38 +1121,118 @@
                 }
             }
             
-            // Buscar URL directa a PDF
             const urlRegex = /(https?:\/\/[^\s]+\.pdf)/i;
             const directMatch = body.match(urlRegex);
-            if (directMatch) {
-                return directMatch[1];
-            }
+            if (directMatch) return directMatch[1];
             
-            // Buscar enlace de Google Drive (convertir a vista previa si es posible)
             const driveMatch = body.match(/https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-            if (driveMatch) {
-                return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
-            }
+            if (driveMatch) return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
             
             return null;
         }
 
-        // Funciones del modal
-        function verPDF(url, titulo) {
+        function crearPDFCard(data, issue, index) {
+            // Controles de admin solo si editorActivo es true
+            let adminControls = '';
+            if (editorActivo) {
+                adminControls = `
+                    <div class="admin-actions">
+                        <button onclick="eliminarPDF(${issue.number})" class="pdf-btn" style="background: rgba(255, 0, 60, 0.2); color: var(--neon-red); border-color: var(--neon-red);">
+                            🗑️ Cerrar Issue #${issue.number}
+                        </button>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="pdf-card" data-index="${index}">
+                    <div class="pdf-card-header">
+                        <span class="pdf-card-icon">${data.emoji}</span>
+                        <h3 class="pdf-card-title" title="${data.title}">${data.title}</h3>
+                    </div>
+                    
+                    <div class="pdf-card-meta">
+                        ${data.autor ? `<span>✍️ ${data.autor}</span>` : ''}
+                        <span>📅 ${data.fecha}</span>
+                        ${data.tamaño ? `<span>💾 ${data.tamaño}</span>` : ''}
+                        ${data.paginas ? `<span>📄 ${data.paginas}</span>` : ''}
+                        ${data.state === 'closed' ? '<span style="color: var(--neon-red);">🔒 Archivado</span>' : ''}
+                    </div>
+                    
+                    <div class="pdf-card-description">${data.descripcion || 'Sin descripción disponible'}</div>
+                    
+                    <div class="pdf-actions">
+                        ${data.pdfUrl ? `
+                            <button onclick="verPDF('${data.pdfUrl}', '${data.title.replace(/'/g, "\\'")}', ${index})" class="pdf-btn pdf-btn-view">
+                                👁️ Ver PDF
+                            </button>
+                            <a href="${data.pdfUrl}" download class="pdf-btn pdf-btn-download">
+                                ⬇️ Descargar
+                            </a>
+                        ` : data.urlExterna ? `
+                            <a href="${data.urlExterna}" target="_blank" class="pdf-btn pdf-btn-view">
+                                🔗 Abrir enlace
+                            </a>
+                        ` : data.archivoInfo ? `
+                            <span style="color: var(--neon-yellow); font-size: 0.85rem;">
+                                📁 ${data.archivoInfo}
+                            </span>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="labels">
+                        <span class="label tipo">${data.tipo}</span>
+                        ${data.qid ? `<span class="label qid">🆔 ${data.qid}</span>` : ''}
+                        ${data.labels
+                            .filter(l => !['pdf', 'observatorio', data.tipo].includes(l.name))
+                            .map(l => `<span class="label">${l.name}</span>`)
+                            .join('')}
+                    </div>
+                    
+                    ${adminControls}
+                    
+                    <a href="${data.issueUrl}" target="_blank" style="color: #8b949e; font-size: 0.8rem; margin-top: 10px; display: inline-block; text-decoration: none;">
+                        💬 Ver en GitHub (${data.comments} comentarios)
+                    </a>
+                </div>
+            `;
+        }
+
+        async function eliminarPDF(issueNumber) {
+            if (!confirm(`¿Cerrar el issue #${issueNumber}?\n\nEsto marcará el documento como archivado en GitHub.`)) return;
+            alert(`⚠️ Para eliminar completamente, debes ir a GitHub y cerrar el Issue #${issueNumber}`);
+            window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/${issueNumber}`, '_blank');
+        }
+
+        // ============================================
+        // MODAL DE PDF
+        // ============================================
+        function verPDF(url, titulo, index) {
+            currentPdfIndex = index;
             const modal = document.getElementById('pdfModal');
             const iframe = document.getElementById('modalIframe');
             const title = document.getElementById('modalTitle');
+            const adminBtn = document.getElementById('modalAdminBtn');
             
-            // Si es URL de GitHub Assets, forzar visualización
-            if (url.includes('github.com/user-attachments')) {
-                iframe.src = url;
-            } else {
-                iframe.src = url;
+            iframe.src = url;
+            title.textContent = titulo.substring(0, 50) + (titulo.length > 50 ? '...' : '');
+            
+            // Mostrar botón de admin solo en modo editor
+            if (editorActivo && adminBtn) {
+                adminBtn.style.display = 'inline-block';
+            } else if (adminBtn) {
+                adminBtn.style.display = 'none';
             }
             
-            title.textContent = titulo.replace('📄 ', '').substring(0, 50) + (titulo.length > 50 ? '...' : '');
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+        }
+
+        function eliminarPDFDesdeModal() {
+            if (currentPdfIndex >= 0 && pdfsData[currentPdfIndex]) {
+                const issueNumber = pdfsData[currentPdfIndex].issue.number;
+                eliminarPDF(issueNumber);
+            }
         }
 
         function cerrarModal(event) {
@@ -1037,6 +1243,7 @@
             
             modal.classList.remove('active');
             iframe.src = '';
+            currentPdfIndex = -1;
             document.body.style.overflow = '';
         }
 
@@ -1069,3 +1276,4 @@
     </script>
 </body>
 </html>
+
