@@ -11,6 +11,7 @@
             --neon-red: #ff003c;
             --neon-yellow: #ffee00;
             --neon-cyan: #00ffff;
+            --neon-purple: #bd00ff;
             --bg-dark: #0a0a0f;
             --bg-terminal: #0d1117;
             --border: #30363d;
@@ -70,6 +71,33 @@
         .volver a:hover {
             color: var(--neon-green);
             text-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        /* ===== CONTROLES DE EDITOR PROTEGIDOS ===== */
+        .editor-controls {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            text-align: center;
+        }
+        
+        .btn-editor {
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+            border: 2px solid var(--neon-cyan);
+            color: #0a0a0f;
+            padding: 12px 24px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .btn-editor:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         }
         
         .terminal {
@@ -599,19 +627,66 @@
             .lightbox-prev { left: 10px; }
             .lightbox-next { right: 10px; }
         }
+
+        /* Acciones de admin (solo visibles en modo editor) */
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border);
+            justify-content: flex-end;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 10px;
+            text-transform: uppercase;
+        }
+
+        .status-protected {
+            background: rgba(255, 0, 60, 0.2);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+
+        .status-unlocked {
+            background: rgba(10, 255, 10, 0.2);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1 class="glitch-title">~/observatorio/capturas $</h1>
-        <p class="subheader">> Subir captura de pantalla (máx 5MB)</p>
+        <p class="subheader">> Galería de capturas de pantalla</p>
     </div>
 
     <div class="volver">
         <a href="/">← INICIO</a>
     </div>
 
-    <div class="terminal">
+    <!-- ===== CONTROLES DE AUTENTICACIÓN ===== -->
+    <div class="editor-controls">
+        <button onclick="mostrarSelector()" id="btnMostrarEditor" class="btn-editor">
+            🔒 ACCEDER AL UPLOADER
+        </button>
+        <div id="statusIndicator" style="margin-top: 10px; display: none;">
+            <span class="status-badge status-unlocked">MODO EDITOR ACTIVO</span>
+        </div>
+    </div>
+
+    <!-- ===== FORMULARIO PROTEGIDO ===== -->
+    <div id="panelUpload" class="terminal" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+            <span style="color: var(--neon-green); font-weight: bold;">📝 NUEVA CAPTURA</span>
+            <button onclick="cerrarEditor()" class="btn-danger" style="padding: 5px 10px; font-size: 0.8rem;">✖ CERRAR</button>
+        </div>
+
         <form onsubmit="event.preventDefault(); subirCaptura();">
             <label>📌 TÍTULO:</label>
             <input type="text" id="titulo" placeholder="Título de la captura" required>
@@ -682,12 +757,12 @@
 
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button type="submit" class="btn-success">🚀 SUBIR A GITHUB</button>
-                <button type="button" onclick="history.back()" class="btn-secondary">↩ CANCELAR</button>
+                <button type="button" onclick="resetForm()" class="btn-secondary">↩ LIMPIAR</button>
             </div>
         </form>
     </div>
 
-    <!-- Sección de capturas existentes -->
+    <!-- Sección de capturas existentes (pública) -->
     <div class="existing-captures">
         <h2 class="section-title">🖼️ Galería de Capturas</h2>
         <div style="text-align: center; margin-bottom: 20px;">
@@ -713,17 +788,69 @@
     </div>
 
     <script>
+        // ============================================
+        // CONFIGURACIÓN Y AUTENTICACIÓN
+        // ============================================
+        const CLAVE_EDITOR = 'patito123';
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
+        
+        let editorActivo = false;
         let archivoSeleccionado = null;
-        let capturasData = []; // Almacena datos para navegación del lightbox
+        let capturasData = [];
         let lightboxIndex = 0;
 
-        // Cargar capturas existentes al iniciar
+        // Cargar capturas existentes al iniciar (público)
         document.addEventListener('DOMContentLoaded', () => {
             cargarCapturasExistentes();
         });
 
+        // ============================================
+        // SISTEMA DE AUTENTICACIÓN
+        // ============================================
+        function mostrarSelector() {
+            const clave = prompt("🔑 Ingresa clave de editor:");
+            
+            if (clave === CLAVE_EDITOR) {
+                activarModoEditor();
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta. Acceso denegado.");
+            }
+        }
+
+        function activarModoEditor() {
+            editorActivo = true;
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+            document.getElementById('panelUpload').style.display = 'block';
+            document.getElementById('statusIndicator').style.display = 'block';
+            
+            // Actualizar visualización para mostrar controles de admin
+            cargarCapturasExistentes();
+        }
+
+        function cerrarEditor() {
+            editorActivo = false;
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            document.getElementById('panelUpload').style.display = 'none';
+            document.getElementById('statusIndicator').style.display = 'none';
+            resetForm();
+            cargarCapturasExistentes();
+        }
+
+        function resetForm() {
+            document.getElementById('titulo').value = '';
+            document.getElementById('autor').value = '';
+            document.getElementById('qid').value = '';
+            document.getElementById('descripcion').value = '';
+            document.getElementById('urlExterna').value = '';
+            document.getElementById('tipoCaptura').value = 'error';
+            document.querySelectorAll('.tag-check').forEach(cb => cb.checked = false);
+            quitarCaptura();
+        }
+
+        // ============================================
+        // GESTIÓN DE ARCHIVOS
+        // ============================================
         function previsualizar(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
@@ -773,7 +900,15 @@
             document.getElementById('fileLabel').style.borderColor = 'var(--neon-cyan)';
         }
 
+        // ============================================
+        // SUBIR A GITHUB
+        // ============================================
         function subirCaptura() {
+            if (!editorActivo) {
+                alert("⚠️ Debes activar el modo editor primero");
+                return;
+            }
+
             const titulo = document.getElementById('titulo').value.trim();
             const autor = document.getElementById('autor').value.trim();
             const qid = document.getElementById('qid').value.trim();
@@ -839,55 +974,16 @@
                 '_blank'
             );
 
-            // Resetear formulario
-            document.getElementById('titulo').value = '';
-            document.getElementById('autor').value = '';
-            document.getElementById('qid').value = '';
-            document.getElementById('descripcion').value = '';
-            document.getElementById('urlExterna').value = '';
-            document.getElementById('tipoCaptura').value = 'error';
-            document.querySelectorAll('.tag-check').forEach(cb => cb.checked = false);
-            quitarCaptura();
-            
+            resetForm();
             alert("✅ Se abrió GitHub. Si subiste un archivo, arrástralo al issue y publícalo.");
-            // Recargar galería después de unos segundos (tiempo para que GitHub procese)
+            
+            // Recargar galería después de unos segundos
             setTimeout(() => cargarCapturasExistentes(), 3000);
         }
 
-        // Función mejorada para extraer URLs de imágenes
-        function extraerUrlImagen(body) {
-            if (!body) return null;
-
-            // 1. Buscar imágenes en formato markdown: ![alt](url)
-            const markdownMatch = body.match(/!\[([^\]]*)\]\(([^)]+)\)/);
-            if (markdownMatch && markdownMatch[2]) {
-                return markdownMatch[2];
-            }
-
-            // 2. Buscar URLs de assets de GitHub (formato antiguo y nuevo)
-            const assetRegex = /https:\/\/github\.com\/[^\/]+\/[^\/]+\/assets\/[a-f0-9-]+/i;
-            const assetMatch = body.match(assetRegex);
-            if (assetMatch) return assetMatch[0];
-
-            // 3. Buscar cualquier URL que termine en extensión de imagen común
-            const directRegex = /(https?:\/\/[^\s]+?\.(?:png|jpg|jpeg|webp|gif|svg))/i;
-            const directMatch = body.match(directRegex);
-            if (directMatch) return directMatch[1];
-
-            // 4. Buscar imágenes dentro de etiquetas <img> (por si acaso)
-            const imgTagRegex = /<img[^>]+src="([^">]+)"/i;
-            const imgTagMatch = body.match(imgTagRegex);
-            if (imgTagMatch) return imgTagMatch[1];
-
-            // 5. Buscar cualquier URL que contenga "user-attachments" (fallback)
-            const userAttachRegex = /https:\/\/github\.com\/user-attachments\/assets\/[^\s"']+/i;
-            const userAttachMatch = body.match(userAttachRegex);
-            if (userAttachMatch) return userAttachMatch[0];
-
-            return null;
-        }
-
-        // Función para cargar capturas existentes
+        // ============================================
+        // CARGAR CAPTURAS EXISTENTES
+        // ============================================
         async function cargarCapturasExistentes() {
             const container = document.getElementById('capturasContainer');
             container.innerHTML = '<div class="loading">⏳ Cargando capturas desde GitHub...</div>';
@@ -922,7 +1018,7 @@
                         imageUrl: imageUrl,
                         procesado: procesarCaptura(issue, imageUrl)
                     };
-                }).filter(item => item.imageUrl); // Solo mostrar las que tienen imagen
+                }).filter(item => item.imageUrl);
 
                 if (capturasData.length === 0) {
                     container.innerHTML = `
@@ -936,7 +1032,7 @@
                 }
 
                 const cardsHTML = capturasData.map((item, index) => 
-                    crearCapturaCard(item.procesado, index)
+                    crearCapturaCard(item.procesado, index, item.issue.number)
                 ).join('');
                 
                 container.innerHTML = `<div class="masonry-grid">${cardsHTML}</div>`;
@@ -950,6 +1046,31 @@
                     </div>
                 `;
             }
+        }
+
+        function extraerUrlImagen(body) {
+            if (!body) return null;
+
+            const markdownMatch = body.match(/!\[([^\]]*)\]\(([^)]+)\)/);
+            if (markdownMatch && markdownMatch[2]) return markdownMatch[2];
+
+            const assetRegex = /https:\/\/github\.com\/[^\/]+\/[^\/]+\/assets\/[a-f0-9-]+/i;
+            const assetMatch = body.match(assetRegex);
+            if (assetMatch) return assetMatch[0];
+
+            const directRegex = /(https?:\/\/[^\s]+?\.(?:png|jpg|jpeg|webp|gif|svg))/i;
+            const directMatch = body.match(directRegex);
+            if (directMatch) return directMatch[1];
+
+            const imgTagRegex = /<img[^>]+src="([^">]+)"/i;
+            const imgTagMatch = body.match(imgTagRegex);
+            if (imgTagMatch) return imgTagMatch[1];
+
+            const userAttachRegex = /https:\/\/github\.com\/user-attachments\/assets\/[^\s"']+/i;
+            const userAttachMatch = body.match(userAttachRegex);
+            if (userAttachMatch) return userAttachMatch[0];
+
+            return null;
         }
 
         function procesarCaptura(issue, imageUrl) {
@@ -985,7 +1106,6 @@
                 day: 'numeric'
             });
 
-            // Extraer etiquetas del body o de los labels
             let etiquetas = [];
             if (etiquetasMatch) {
                 etiquetas = etiquetasMatch[1].split(',').map(e => e.trim());
@@ -1008,8 +1128,20 @@
             };
         }
 
-        function crearCapturaCard(data, index) {
+        function crearCapturaCard(data, index, issueNumber) {
             const tieneNSFW = data.etiquetas.includes('nsfw') || data.labels.some(l => l.name === 'nsfw');
+            
+            // Controles de admin solo si editorActivo es true
+            let adminControls = '';
+            if (editorActivo) {
+                adminControls = `
+                    <div class="admin-actions">
+                        <button onclick="eliminarCaptura(${issueNumber})" class="btn-danger" style="padding: 5px 10px; font-size: 0.8rem;">
+                            🗑️ Cerrar Issue #${issueNumber}
+                        </button>
+                    </div>
+                `;
+            }
             
             return `
                 <div class="capture-card" data-index="${index}">
@@ -1034,6 +1166,7 @@
                         <div class="capture-meta">
                             ${data.autor ? `<span>✍️ ${data.autor}</span>` : ''}
                             <span>📅 ${data.fecha}</span>
+                            ${data.state === 'closed' ? '<span style="color: var(--neon-red);">🔒 Cerrado</span>' : ''}
                         </div>
                         <div class="capture-description">${data.descripcion}</div>
                         <div class="labels">
@@ -1044,12 +1177,21 @@
                                 `<span class="label">${e}</span>`
                             ).join('')}
                         </div>
+                        ${adminControls}
                     </div>
                 </div>
             `;
         }
 
-        // Lightbox functions
+        async function eliminarCaptura(issueNumber) {
+            if (!confirm(`¿Cerrar el issue #${issueNumber}?\n\nEsto marcará la captura como cerrada en GitHub.`)) return;
+            alert(`⚠️ Para eliminar completamente, debes ir a GitHub y cerrar el Issue #${issueNumber}`);
+            window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/${issueNumber}`, '_blank');
+        }
+
+        // ============================================
+        // LIGHTBOX
+        // ============================================
         function abrirLightbox(index) {
             lightboxIndex = index;
             const data = capturasData[index].procesado;
@@ -1061,17 +1203,29 @@
             
             img.src = data.imageUrl;
             title.textContent = data.title;
-            meta.innerHTML = `
+            
+            let metaHTML = `
                 ${data.emoji} ${data.tipo} | 
                 ${data.autor ? `✍️ ${data.autor} | ` : ''}
-                📅 ${data.fecha} | 
-                <a href="${data.issueUrl}" target="_blank" style="color: var(--neon-cyan);">
-                    💬 Ver en GitHub
-                </a>
+                📅 ${data.fecha}
             `;
+            
+            // En modo editor, mostrar enlace a GitHub. En modo público, también.
+            metaHTML += ` | <a href="${data.issueUrl}" target="_blank" style="color: var(--neon-cyan);">💬 Ver en GitHub</a>`;
+            
+            if (editorActivo) {
+                metaHTML += ` | <button onclick="eliminarCapturaDesdeLightbox()" style="background: none; border: none; color: var(--neon-red); cursor: pointer; text-decoration: underline;">🗑️ Cerrar Issue</button>`;
+            }
+            
+            meta.innerHTML = metaHTML;
             
             lightbox.classList.add('active');
             document.body.style.overflow = 'hidden';
+        }
+
+        function eliminarCapturaDesdeLightbox() {
+            const issueNumber = capturasData[lightboxIndex].issue.number;
+            eliminarCaptura(issueNumber);
         }
 
         function cerrarLightbox(event) {
