@@ -873,18 +873,14 @@
                     return `<span class="issue-label ${clase}">${escapeHtml(l.name)}</span>`;
                 }).join('');
 
-                // EVITAR CRASHEO SI EL ISSUE NO TIENE CUERPO
                 const bodyText = issue.body || '';
 
-                // Extraer imagen del cuerpo
                 const imgMatch = bodyText.match(/!\[.*?\]\((.*?)\)/);
                 const imgUrl = imgMatch ? imgMatch[1] : null;
                 
-                // Regex mejorada para URLs
                 const urlMatch = bodyText.match(/https?:\/\/[^\s)\]]+/);
                 const url = urlMatch ? urlMatch[0] : null;
 
-                // Limpiar descripción
                 let desc = bodyText
                     .replace(/!\[.*?\]\(.*?\)/g, '')
                     .replace(/\[.*?\]\(.*?\)/g, '')
@@ -1081,7 +1077,10 @@
             });
 
             const data = await response.json();
-            document.getElementById(loadingId).remove();
+            
+            // BORRADO SEGURO
+            const loadingElement = document.getElementById(loadingId);
+            if (loadingElement) loadingElement.remove();
 
             if (data.error) throw new Error(data.error.message);
 
@@ -1092,8 +1091,12 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
         } catch (error) {
-            document.getElementById(loadingId).remove();
-            chatBox.innerHTML += `<div><span style="color: red;">[ERROR_DE_ENLACE]:</span> ${error.message || 'Fallo en la conexión'}</div>`;
+            // BORRADO SEGURO ANTI-CHOQUES
+            const loadingElement = document.getElementById(loadingId);
+            if (loadingElement) loadingElement.remove();
+            
+            chatBox.innerHTML += `<div><span style="color: var(--neon-red);">[ERROR_DE_ENLACE]:</span> ${error.message || 'Fallo en la conexión. Revisa que el dominio esté bien escrito en la consola de Google Cloud.'}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
     }
 
