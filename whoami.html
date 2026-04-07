@@ -5,14 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>👤 whoami · paulaflechadadeai</title>
     <style>
-        /* Mismos estilos base que scan-ias (copia el bloque :root, body, header, etc.) */
         :root {
             --neon-green: #00ff00;
             --neon-pink: #ff00ff;
             --neon-blue: #00aaff;
+            --neon-yellow: #ffee00;
+            --neon-cyan: #00ffff;
+            --neon-red: #ff003c;
             --bg-dark: #0a0a0a;
             --bg-darker: #000;
         }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Courier New', monospace;
             max-width: 800px;
@@ -24,27 +31,54 @@
             background-image: radial-gradient(circle at 10% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 20%),
                               radial-gradient(circle at 90% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 20%);
         }
+        
         .header {
             border-bottom: 2px dashed var(--neon-green);
             padding-bottom: 15px;
             margin-bottom: 30px;
         }
+        
         .glitch-title {
             font-size: clamp(1.8em, 5vw, 2.8em);
             color: var(--neon-pink);
             text-shadow: 3px 0 var(--neon-blue), -2px 0 var(--neon-green);
             animation: glitch 3s infinite;
         }
+        
         @keyframes glitch {
-            0%,100%{transform:translate(0)}10%{transform:translate(-3px,1px)}20%{transform:translate(2px,-2px)}30%{transform:translate(-2px,3px)}
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-3px, 1px); }
+            20% { transform: translate(2px, -2px); }
+            30% { transform: translate(-2px, 3px); }
         }
+        
+        .subheader {
+            color: var(--neon-blue);
+            margin: 10px 0 0 0;
+        }
+        
         .terminal {
             background: var(--bg-darker);
             border: 2px solid var(--neon-green);
             padding: 20px;
             margin: 30px 0;
             border-radius: 8px;
+            position: relative;
         }
+        
+        .terminal-line {
+            margin: 12px 0;
+        }
+        
+        .prompt {
+            color: var(--neon-pink);
+            margin-right: 10px;
+        }
+        
+        .cmd {
+            color: var(--neon-blue);
+        }
+        
         button {
             background: black;
             border: 2px solid;
@@ -54,13 +88,18 @@
             cursor: pointer;
             transition: all 0.3s;
         }
+        
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 0 15px currentColor;
         }
+        
         .btn-primary { color: var(--neon-pink); border-color: var(--neon-pink); }
         .btn-secondary { color: var(--neon-blue); border-color: var(--neon-blue); }
-        .btn-danger { color: #ff5555; border-color: #ff5555; }
+        .btn-danger { color: var(--neon-red); border-color: var(--neon-red); }
+        .btn-success { color: var(--neon-green); border-color: var(--neon-green); }
+        .btn-warning { color: var(--neon-yellow); border-color: var(--neon-yellow); }
+        
         input, textarea {
             background: black;
             color: var(--neon-green);
@@ -68,85 +107,340 @@
             padding: 10px;
             width: 100%;
             margin-bottom: 15px;
+            font-family: inherit;
+            border-radius: 4px;
         }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        }
+        
         .campo {
             margin-bottom: 20px;
             border-left: 4px solid var(--neon-pink);
             padding-left: 15px;
+            transition: all 0.3s;
         }
+        
+        .campo:hover {
+            border-left-color: var(--neon-cyan);
+            background: rgba(0, 255, 255, 0.02);
+        }
+        
         .campo-label {
             color: var(--neon-blue);
             font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
+        
         .campo-contenido {
             white-space: pre-wrap;
+            margin-top: 5px;
+            font-size: 1.1rem;
         }
+        
+        .campo-contenido a {
+            color: var(--neon-cyan);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--neon-cyan);
+        }
+        
+        .campo-contenido a:hover {
+            color: var(--neon-green);
+            border-bottom-color: var(--neon-green);
+        }
+        
+        .volver {
+            margin: 20px 0;
+        }
+        
         .volver a {
             color: var(--neon-blue);
             text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .volver a:hover {
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+        }
+        
+        /* Indicador de estado de sincronización */
+        .sync-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .sync-local { background: var(--neon-yellow); }
+        .sync-cloud { background: var(--neon-green); }
+        .sync-error { background: var(--neon-red); animation: none; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        
+        /* Panel de exportación/importación */
+        .data-panel {
+            background: rgba(255, 255, 0, 0.05);
+            border: 1px dashed var(--neon-yellow);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
+        
+        .data-panel h4 {
+            color: var(--neon-yellow);
+            margin: 0 0 10px 0;
+        }
+        
+        .data-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .gist-input {
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .gist-input.active {
+            display: block;
+        }
+        
+        /* Status indicator para modo editor */
+        .status-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 10px;
+            text-transform: uppercase;
+        }
+        
+        .status-local { background: #333; color: #888; }
+        .status-editor { background: var(--neon-pink); color: white; }
+        
+        /* Mejoras visuales adicionales */
+        .avatar-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--neon-pink);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .avatar:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+        }
+        
+        .timestamp {
+            color: #666;
+            font-size: 0.8rem;
+            text-align: right;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1 class="glitch-title">~/whoami $</h1>
-        <p class="subheader">> Perfil dinámico · 3 campos editables</p>
+        <p class="subheader">> Perfil dinámico · Sincronizado con GitHub Gist</p>
     </div>
-    <div class="volver"><a href="/">← INICIO</a></div>
+    
+    <div class="volver">
+        <a href="/">← INICIO</a>
+    </div>
 
-    <!-- EDITOR (oculto) -->
+    <!-- CONTROLES DE AUTENTICACIÓN -->
+    <div style="text-align: center; margin: 20px 0;">
+        <button onclick="mostrarSelector()" id="btnMostrarEditor" class="btn-secondary">
+            🔒 ACCEDER AL EDITOR
+        </button>
+        <span id="statusIndicator" class="status-indicator status-local" style="display: none;">
+            MODO EDITOR
+        </span>
+    </div>
+
+    <!-- EDITOR (oculto hasta autenticación) -->
     <div id="panelEditor" style="display: none;" class="terminal">
-        <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">modo_editor --activado</span></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">
+            <div class="terminal-line" style="margin: 0;">
+                <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+            </div>
+            <button onclick="cerrarEditor()" class="btn-danger" style="padding: 5px 10px; font-size: 0.8rem;">✖ CERRAR</button>
+        </div>
+        
         <form onsubmit="event.preventDefault(); guardarCampos();">
-            <label>📌 Campo 1 (ej: Nombre):</label>
+            <label>👤 Nombre/Usuario:</label>
             <input type="text" id="campo1" placeholder="Tu nombre o usuario" required>
 
-            <label>📝 Campo 2 (ej: Bio):</label>
-            <textarea id="campo2" rows="2" placeholder="Breve descripción" required></textarea>
+            <label>📝 Bio/Descripción:</label>
+            <textarea id="campo2" rows="3" placeholder="Breve descripción sobre ti" required></textarea>
 
-            <label>🔗 Campo 3 (ej: Link favorito):</label>
-            <input type="text" id="campo3" placeholder="https://..." required>
+            <label>🔗 Link principal:</label>
+            <input type="url" id="campo3" placeholder="https://..." required>
+            
+            <label>🎨 Emoji de avatar:</label>
+            <input type="text" id="campo4" placeholder="👤" maxlength="2" style="width: 80px; text-align: center; font-size: 1.5rem;">
 
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button type="submit" class="btn-primary">💾 GUARDAR</button>
-                <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
+            <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                <button type="submit" class="btn-primary">💾 GUARDAR LOCAL</button>
+                <button type="button" onclick="sincronizarConGist()" class="btn-success">☁️ SUBIR A GIST</button>
+                <button type="button" onclick="cargarDesdeGist()" class="btn-warning">📥 DESCARGAR DE GIST</button>
             </div>
         </form>
-    </div>
 
-    <!-- Botón editor -->
-    <div style="text-align: right; margin: 20px 0;">
-        <button onclick="mostrarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 EDITAR PERFIL</button>
-    </div>
-
-    <!-- VISUALIZACIÓN -->
-    <div class="terminal">
-        <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">whoami --mostrar</span></div>
-        <div id="contenedorPerfil" style="margin: 20px 0;">
-            <!-- Se carga dinámicamente -->
+        <!-- Panel de gestión de datos -->
+        <div class="data-panel">
+            <h4>📦 Gestión de Datos</h4>
+            <div class="data-actions">
+                <button onclick="exportarJSON()" class="btn-secondary">⬇️ Exportar JSON</button>
+                <button onclick="document.getElementById('importFile').click()" class="btn-secondary">⬆️ Importar JSON</button>
+                <button onclick="mostrarGistInput()" class="btn-secondary">🔑 Configurar Gist ID</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importarJSON(this)">
+            </div>
+            <div id="gistInputContainer" class="gist-input">
+                <input type="text" id="gistId" placeholder="Pega aquí tu Gist ID (opcional)" style="margin-top: 10px;">
+                <small style="color: var(--neon-yellow);">Si no tienes Gist, se creará uno nuevo al subir</small>
+            </div>
         </div>
     </div>
 
+    <!-- VISUALIZACIÓN DEL PERFIL -->
+    <div class="terminal" id="perfilTerminal">
+        <div class="sync-status" id="syncStatus">
+            <span class="sync-dot sync-local" id="syncDot"></span>
+            <span id="syncText">Solo local</span>
+        </div>
+        
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">whoami --mostrar</span>
+        </div>
+        
+        <div id="contenedorPerfil" style="margin: 20px 0;">
+            <!-- Se carga dinámicamente -->
+        </div>
+        
+        <div class="timestamp" id="lastUpdate"></div>
+    </div>
+
     <script>
-        const CLAVE_EDITOR = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51); // patito123
-        const STORAGE_KEY = 'whoami';
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        const CLAVE_EDITOR = 'patito123';
+        const STORAGE_KEY = 'whoami_v2';
+        const GIST_STORAGE_KEY = 'whoami_gist_id';
+        
+        let editorActivo = false;
+        let campos = {
+            campo1: '',
+            campo2: '',
+            campo3: '',
+            campo4: '👤',
+            lastSync: null,
+            gistId: null
+        };
 
-        let campos = { campo1: '', campo2: '', campo3: '' };
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarCampos();
+        });
 
+        // ============================================
+        // AUTENTICACIÓN (consistente con otros observatorios)
+        // ============================================
+        function mostrarSelector() {
+            const clave = prompt("🔑 Ingresa clave de editor:");
+            
+            if (clave === CLAVE_EDITOR) {
+                activarModoEditor();
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta. Acceso denegado.");
+            }
+        }
+
+        function activarModoEditor() {
+            editorActivo = true;
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+            document.getElementById('panelEditor').style.display = 'block';
+            document.getElementById('statusIndicator').style.display = 'inline-block';
+            document.getElementById('statusIndicator').className = 'status-indicator status-editor';
+            
+            // Rellenar formulario
+            document.getElementById('campo1').value = campos.campo1;
+            document.getElementById('campo2').value = campos.campo2;
+            document.getElementById('campo3').value = campos.campo3;
+            document.getElementById('campo4').value = campos.campo4 || '👤';
+            document.getElementById('gistId').value = campos.gistId || '';
+        }
+
+        function cerrarEditor() {
+            editorActivo = false;
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            document.getElementById('panelEditor').style.display = 'none';
+            document.getElementById('statusIndicator').style.display = 'none';
+        }
+
+        // ============================================
+        // CARGAR Y GUARDAR
+        // ============================================
         function cargarCampos() {
             const guardado = localStorage.getItem(STORAGE_KEY);
             if (guardado) {
-                campos = JSON.parse(guardado);
+                campos = { ...campos, ...JSON.parse(guardado) };
             } else {
                 // Valores por defecto
                 campos = {
                     campo1: "paulaflechadadeai",
                     campo2: "Cazadora de hadas, derrotadora de IAs",
-                    campo3: "https://paulaflechadadeai.github.io"
+                    campo3: "https://paulaflechadadeai.github.io",
+                    campo4: "👤",
+                    lastSync: null,
+                    gistId: null
                 };
                 guardarCamposEnStorage();
             }
             mostrarCampos();
+            actualizarIndicadorSync();
         }
 
         function guardarCamposEnStorage() {
@@ -155,56 +449,251 @@
 
         function mostrarCampos() {
             const contenedor = document.getElementById('contenedorPerfil');
+            const emoji = campos.campo4 || '👤';
+            
             contenedor.innerHTML = `
-                <div class="campo">
-                    <div class="campo-label">📌 Campo 1:</div>
-                    <div class="campo-contenido">${campos.campo1}</div>
+                <div class="avatar-container">
+                    <div class="avatar" onclick="editorActivo && cambiarAvatar()">${emoji}</div>
                 </div>
                 <div class="campo">
-                    <div class="campo-label">📝 Campo 2:</div>
-                    <div class="campo-contenido">${campos.campo2}</div>
+                    <div class="campo-label">👤 Nombre</div>
+                    <div class="campo-contenido">${escapeHtml(campos.campo1)}</div>
                 </div>
                 <div class="campo">
-                    <div class="campo-label">🔗 Campo 3:</div>
-                    <div class="campo-contenido"><a href="${campos.campo3}" target="_blank">${campos.campo3}</a></div>
+                    <div class="campo-label">📝 Bio</div>
+                    <div class="campo-contenido">${escapeHtml(campos.campo2)}</div>
+                </div>
+                <div class="campo">
+                    <div class="campo-label">🔗 Link</div>
+                    <div class="campo-contenido">
+                        <a href="${escapeHtml(campos.campo3)}" target="_blank">${escapeHtml(campos.campo3)}</a>
+                    </div>
                 </div>
             `;
-        }
-
-        function mostrarEditor() {
-            const clave = prompt("🔑 Clave de editor:");
-            if (clave === CLAVE_EDITOR) {
-                document.getElementById('panelEditor').style.display = 'block';
-                document.getElementById('btnMostrarEditor').style.display = 'none';
-                // Rellenar con valores actuales
-                document.getElementById('campo1').value = campos.campo1;
-                document.getElementById('campo2').value = campos.campo2;
-                document.getElementById('campo3').value = campos.campo3;
-            } else if (clave !== null) {
-                alert("❌ Clave incorrecta");
+            
+            // Actualizar timestamp
+            const lastUpdate = document.getElementById('lastUpdate');
+            if (campos.lastSync) {
+                const fecha = new Date(campos.lastSync).toLocaleString('es-ES');
+                lastUpdate.textContent = `Última sincronización: ${fecha}`;
+            } else {
+                lastUpdate.textContent = 'Sin sincronizar con la nube';
             }
         }
 
-        function cancelarEdicion() {
-            document.getElementById('panelEditor').style.display = 'none';
-            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
         }
 
         function guardarCampos() {
+            if (!editorActivo) {
+                alert("⚠️ Debes activar el modo editor primero");
+                return;
+            }
+            
             campos.campo1 = document.getElementById('campo1').value.trim();
             campos.campo2 = document.getElementById('campo2').value.trim();
             campos.campo3 = document.getElementById('campo3').value.trim();
+            campos.campo4 = document.getElementById('campo4').value.trim() || '👤';
+            
             if (!campos.campo1 || !campos.campo2 || !campos.campo3) {
-                alert("Todos los campos son obligatorios");
+                alert("⚠️ Todos los campos son obligatorios");
                 return;
             }
+            
             guardarCamposEnStorage();
             mostrarCampos();
-            cancelarEdicion();
-            alert("✅ Perfil actualizado");
+            actualizarIndicadorSync();
+            alert("✅ Perfil guardado localmente");
         }
 
-        cargarCampos();
+        function cambiarAvatar() {
+            const emojis = ['👤', '👽', '🤖', '👾', '🎭', '🔮', '🌙', '⚡', '🔥', '💀', '🐱', '🦊'];
+            const actual = campos.campo4 || '👤';
+            const idx = emojis.indexOf(actual);
+            campos.campo4 = emojis[(idx + 1) % emojis.length];
+            guardarCamposEnStorage();
+            mostrarCampos();
+        }
+
+        // ============================================
+        // SINCRONIZACIÓN CON GITHUB GISTS
+        // ============================================
+        function mostrarGistInput() {
+            const container = document.getElementById('gistInputContainer');
+            container.classList.toggle('active');
+        }
+
+        async function sincronizarConGist() {
+            if (!editorActivo) return;
+            
+            const gistIdInput = document.getElementById('gistId').value.trim();
+            const token = prompt("🔑 Ingresa tu GitHub Personal Access Token:\n(Se necesita para crear/actualizar Gists)\n\nCrea uno en: github.com/settings/tokens");
+            
+            if (!token) return;
+            
+            try {
+                const data = {
+                    description: "whoami profile - paulaflechadadeai",
+                    public: false,
+                    files: {
+                        "whoami-profile.json": {
+                            content: JSON.stringify(campos, null, 2)
+                        }
+                    }
+                };
+                
+                let url = 'https://api.github.com/gists';
+                let method = 'POST';
+                
+                // Si tenemos ID, actualizar en lugar de crear
+                if (gistIdInput || campos.gistId) {
+                    const existingId = gistIdInput || campos.gistId;
+                    url = `https://api.github.com/gists/${existingId}`;
+                    method = 'PATCH';
+                }
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const result = await response.json();
+                campos.gistId = result.id;
+                campos.lastSync = new Date().toISOString();
+                
+                // Guardar Gist ID en localStorage separado para persistencia
+                localStorage.setItem(GIST_STORAGE_KEY, result.id);
+                document.getElementById('gistId').value = result.id;
+                
+                guardarCamposEnStorage();
+                mostrarCampos();
+                actualizarIndicadorSync();
+                
+                alert(`✅ Perfil sincronizado!\nGist ID: ${result.id}\n\nGuarda este ID para acceder desde otros dispositivos.`);
+                
+            } catch (error) {
+                alert(`❌ Error al sincronizar: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        async function cargarDesdeGist() {
+            const gistId = document.getElementById('gistId').value.trim() || campos.gistId || localStorage.getItem(GIST_STORAGE_KEY);
+            
+            if (!gistId) {
+                alert("⚠️ No hay Gist ID configurado. Ingresa uno en el campo de configuración.");
+                return;
+            }
+            
+            try {
+                const response = await fetch(`https://api.github.com/gists/${gistId}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const result = await response.json();
+                const content = result.files['whoami-profile.json'].content;
+                const data = JSON.parse(content);
+                
+                // Merge con campos existentes (preservar gistId)
+                campos = { ...campos, ...data, gistId: gistId };
+                campos.lastSync = new Date().toISOString();
+                
+                guardarCamposEnStorage();
+                mostrarCampos();
+                actualizarIndicadorSync();
+                
+                // Actualizar formulario si está abierto
+                if (editorActivo) {
+                    document.getElementById('campo1').value = campos.campo1;
+                    document.getElementById('campo2').value = campos.campo2;
+                    document.getElementById('campo3').value = campos.campo3;
+                    document.getElementById('campo4').value = campos.campo4 || '👤';
+                }
+                
+                alert("✅ Perfil cargado desde la nube");
+                
+            } catch (error) {
+                alert(`❌ Error al cargar: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        function actualizarIndicadorSync() {
+            const dot = document.getElementById('syncDot');
+            const text = document.getElementById('syncText');
+            
+            if (campos.lastSync && campos.gistId) {
+                dot.className = 'sync-dot sync-cloud';
+                text.textContent = 'Sincronizado ☁️';
+            } else {
+                dot.className = 'sync-dot sync-local';
+                text.textContent = 'Solo local 💾';
+            }
+        }
+
+        // ============================================
+        // EXPORTAR/IMPORTAR JSON
+        // ============================================
+        function exportarJSON() {
+            const dataStr = JSON.stringify(campos, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `whoami-${campos.campo1 || 'profile'}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert("✅ Perfil exportado como JSON");
+        }
+
+        function importarJSON(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.campo1 && data.campo2 && data.campo3) {
+                        campos = { ...campos, ...data };
+                        guardarCamposEnStorage();
+                        mostrarCampos();
+                        actualizarIndicadorSync();
+                        
+                        if (editorActivo) {
+                            document.getElementById('campo1').value = campos.campo1;
+                            document.getElementById('campo2').value = campos.campo2;
+                            document.getElementById('campo3').value = campos.campo3;
+                            document.getElementById('campo4').value = campos.campo4 || '👤';
+                        }
+                        
+                        alert("✅ Perfil importado correctamente");
+                    } else {
+                        throw new Error("Formato inválido");
+                    }
+                } catch (err) {
+                    alert("❌ Error al importar: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
     </script>
 </body>
 </html>
