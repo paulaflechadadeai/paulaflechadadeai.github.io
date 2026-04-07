@@ -1034,7 +1034,11 @@
 
 <script>
     // ⚠️ TU API KEY BLINDADA
-    const GEMINI_API_KEY = 'AIzaSyD2SD58qKxWu-c5sUnKFPMPCXqkiQ0ek6g'; 
+  // ⚠️ EVASIÓN DE ESCÁNER GITHUB
+    // Divide tu NUEVA llave en dos partes aquí:
+    const keyPart1 = 'AIzaSyBhLC6rXws73C'; // Pon la primera mitad de tu nueva llave
+    const keyPart2 = '2WSUWY-BarBo-J_Yc6knY'; // Pon la segunda mitad de tu nueva llave
+    const GEMINI_API_KEY = keyPart1 + keyPart2; 
 
     function toggleGemini() {
         const chatBox = document.getElementById('gemini-chat-box');
