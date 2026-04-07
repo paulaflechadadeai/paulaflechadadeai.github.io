@@ -72,6 +72,33 @@
             text-shadow: 0 0 10px var(--neon-green);
         }
         
+        /* ===== CONTROLES DE EDITOR PROTEGIDOS ===== */
+        .editor-controls {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            text-align: center;
+        }
+        
+        .btn-editor {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-blue));
+            border: 2px solid var(--neon-purple);
+            color: white;
+            padding: 12px 24px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .btn-editor:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(189, 0, 255, 0.5);
+        }
+        
         .terminal {
             background: var(--bg-terminal);
             border: 1px solid var(--border);
@@ -420,19 +447,65 @@
             font-family: monospace;
             letter-spacing: 1px;
         }
+
+        /* Acciones de admin (solo visibles en modo editor) */
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 10px;
+            text-transform: uppercase;
+        }
+
+        .status-protected {
+            background: rgba(255, 0, 60, 0.2);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+
+        .status-unlocked {
+            background: rgba(10, 255, 10, 0.2);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1 class="glitch-title">~/observatorio/audio $</h1>
-        <p class="subheader">> Subir audio (máx 20MB)</p>
+        <p class="subheader">> Repositorio de audio colaborativo</p>
     </div>
 
     <div class="volver">
         <a href="/">← INICIO</a>
     </div>
 
-    <div class="terminal">
+    <!-- ===== CONTROLES DE AUTENTICACIÓN ===== -->
+    <div class="editor-controls">
+        <button onclick="mostrarSelector()" id="btnMostrarEditor" class="btn-editor">
+            🔒 ACCEDER AL UPLOADER
+        </button>
+        <div id="statusIndicator" style="margin-top: 10px; display: none;">
+            <span class="status-badge status-protected">MODO EDITOR ACTIVO</span>
+        </div>
+    </div>
+
+    <!-- ===== FORMULARIO PROTEGIDO ===== -->
+    <div id="panelUpload" class="terminal" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+            <span style="color: var(--neon-green); font-weight: bold;">📝 NUEVO AUDIO</span>
+            <button onclick="cerrarEditor()" class="btn-danger" style="padding: 5px 10px; font-size: 0.8rem;">✖ CERRAR</button>
+        </div>
+
         <form onsubmit="event.preventDefault(); subirAudio();">
             <label>📌 TÍTULO:</label>
             <input type="text" id="titulo" placeholder="Título del audio" required>
@@ -470,16 +543,8 @@
 
             <div id="vistaPrevia" class="preview-container" style="display: none;">
                 <div class="audio-visualizer" id="visualizer">
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
                 </div>
                 <audio id="audioPreview" controls></audio>
                 <p style="margin-top: 10px;">
@@ -490,12 +555,12 @@
 
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button type="submit" class="btn-success">🚀 SUBIR A GITHUB</button>
-                <button type="button" onclick="history.back()" class="btn-secondary">↩ CANCELAR</button>
+                <button type="button" onclick="resetForm()" class="btn-secondary">↩ LIMPIAR</button>
             </div>
         </form>
     </div>
 
-    <!-- Sección de audios existentes -->
+    <!-- Sección de audios existentes (pública) -->
     <div class="existing-audios">
         <h2 class="section-title">📚 Audios en el Observatorio</h2>
         <div style="text-align: center; margin-bottom: 20px;">
@@ -507,15 +572,66 @@
     </div>
 
     <script>
+        // ============================================
+        // CONFIGURACIÓN Y AUTENTICACIÓN
+        // ============================================
+        const CLAVE_EDITOR = 'patito123';
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
+        
+        let editorActivo = false;
         let archivoSeleccionado = null;
 
-        // Cargar audios existentes al iniciar
+        // Cargar audios existentes al iniciar (público)
         document.addEventListener('DOMContentLoaded', () => {
             cargarAudiosExistentes();
         });
 
+        // ============================================
+        // SISTEMA DE AUTENTICACIÓN
+        // ============================================
+        function mostrarSelector() {
+            const clave = prompt("🔑 Ingresa clave de editor:");
+            
+            if (clave === CLAVE_EDITOR) {
+                activarModoEditor();
+            } else if (clave !== null) {
+                alert("❌ Clave incorrecta. Acceso denegado.");
+            }
+        }
+
+        function activarModoEditor() {
+            editorActivo = true;
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+            document.getElementById('panelUpload').style.display = 'block';
+            document.getElementById('statusIndicator').style.display = 'block';
+            
+            // Actualizar visualización para mostrar controles de admin
+            cargarAudiosExistentes();
+        }
+
+        function cerrarEditor() {
+            editorActivo = false;
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            document.getElementById('panelUpload').style.display = 'none';
+            document.getElementById('statusIndicator').style.display = 'none';
+            resetForm();
+            cargarAudiosExistentes();
+        }
+
+        function resetForm() {
+            document.getElementById('titulo').value = '';
+            document.getElementById('artista').value = '';
+            document.getElementById('qid').value = '';
+            document.getElementById('descripcion').value = '';
+            document.getElementById('urlExterna').value = '';
+            document.getElementById('genero').value = 'podcast';
+            quitarAudio();
+        }
+
+        // ============================================
+        // GESTIÓN DE ARCHIVOS (igual que antes)
+        // ============================================
         function previsualizar(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
@@ -570,7 +686,15 @@
             document.getElementById('fileLabel').style.borderColor = 'var(--neon-purple)';
         }
 
+        // ============================================
+        // SUBIR A GITHUB
+        // ============================================
         function subirAudio() {
+            if (!editorActivo) {
+                alert("⚠️ Debes activar el modo editor primero");
+                return;
+            }
+
             const titulo = document.getElementById('titulo').value.trim();
             const artista = document.getElementById('artista').value.trim();
             const qid = document.getElementById('qid').value.trim();
@@ -621,19 +745,13 @@
                 '_blank'
             );
 
-            // Resetear formulario
-            document.getElementById('titulo').value = '';
-            document.getElementById('artista').value = '';
-            document.getElementById('qid').value = '';
-            document.getElementById('descripcion').value = '';
-            document.getElementById('urlExterna').value = '';
-            document.getElementById('genero').value = 'podcast';
-            quitarAudio();
-            
+            resetForm();
             alert("✅ Se abrió GitHub. Si subiste un archivo, arrástralo al issue y publícalo.");
         }
 
-        // Función para cargar audios existentes desde GitHub Issues
+        // ============================================
+        // CARGAR AUDIOS EXISTENTES
+        // ============================================
         async function cargarAudiosExistentes() {
             const container = document.getElementById('audiosContainer');
             container.innerHTML = '<div class="loading">⏳ Cargando audios desde GitHub...</div>';
@@ -674,9 +792,7 @@
             }
         }
 
-        // Función para crear la tarjeta de audio
         function crearAudioCard(issue) {
-            // Extraer información del cuerpo del issue
             const body = issue.body || '';
             const generoMatch = body.match(/\*\*Género:\*\*\s*(\w+)/);
             const artistaMatch = body.match(/\*\*Artista:\*\*\s*([^\n]+)/);
@@ -701,13 +817,11 @@
             
             const emoji = generosEmoji[genero] || '🎵';
             
-            // Extraer descripción (texto entre metadatos y separadores)
             let descripcion = body.split('\n\n')[1] || 'Sin descripción';
             if (descripcion.includes('**')) {
                 descripcion = 'Sin descripción';
             }
             
-            // Buscar URLs de audio en los comentarios o cuerpo
             const audioUrl = buscarUrlAudio(body, issue);
             
             const fecha = new Date(issue.created_at).toLocaleDateString('es-ES', {
@@ -715,6 +829,21 @@
                 month: 'short',
                 day: 'numeric'
             });
+
+            // Controles de admin solo si editorActivo es true
+            let adminControls = '';
+            if (editorActivo) {
+                adminControls = `
+                    <div class="admin-actions">
+                        <a href="${issue.html_url}" target="_blank" class="audio-link" style="margin-right: auto;">
+                            💬 Ver Issue #${issue.number}
+                        </a>
+                        <button onclick="eliminarAudio(${issue.number})" class="btn-danger" style="padding: 5px 10px; font-size: 0.8rem;">
+                            🗑️ Cerrar Issue
+                        </button>
+                    </div>
+                `;
+            }
 
             return `
                 <div class="audio-card">
@@ -749,29 +878,23 @@
                     <div class="labels">
                         <span class="label genero">${genero}</span>
                         ${qid ? `<span class="label">🆔 ${qid}</span>` : ''}
-                        ${issue.labels.filter(l => l.name !== 'audio' && !['podcast', 'musica', 'entrevista', 'audiobook', 'field-recording', 'otro'].includes(l.name)).map(l => 
-                            `<span class="label">${l.name}</span>`
-                        ).join('')}
                     </div>
                     
-                    <a href="${issue.html_url}" target="_blank" class="audio-link" style="margin-top: 10px;">
-                        💬 Ver en GitHub (${issue.comments} comentarios)
-                    </a>
+                    ${editorActivo ? adminControls : `
+                        <a href="${issue.html_url}" target="_blank" class="audio-link" style="margin-top: 10px;">
+                            💬 Ver en GitHub (${issue.comments} comentarios)
+                        </a>
+                    `}
                 </div>
             `;
         }
 
-        // Función para buscar URL de audio en el issue
         function buscarUrlAudio(body, issue) {
-            // Buscar enlaces directos a archivos de audio en el cuerpo
             const audioExtensions = ['.mp3', '.wav', '.ogg', '.aac', '.flac', '.m4a'];
-            
-            // Buscar URL en markdown de imágenes/adjuntos de GitHub
             const githubAssetRegex = /https:\/\/github\.com\/user-attachments\/assets\/[a-zA-Z0-9-]+/g;
             const githubAssets = body.match(githubAssetRegex);
             
             if (githubAssets) {
-                // Verificar si alguno parece ser audio por el contexto o nombre
                 for (const url of githubAssets) {
                     if (audioExtensions.some(ext => body.toLowerCase().includes(ext))) {
                         return url;
@@ -779,17 +902,19 @@
                 }
             }
             
-            // Buscar cualquier URL que termine en extensión de audio
             const urlRegex = /(https?:\/\/[^\s]+\.(?:mp3|wav|ogg|aac|flac|m4a))/i;
             const directMatch = body.match(urlRegex);
             if (directMatch) {
                 return directMatch[1];
             }
             
-            // Buscar en comentarios si hay
-            // Nota: Esto requeriría otra llamada a la API por issue
-            
             return null;
+        }
+
+        async function eliminarAudio(issueNumber) {
+            if (!confirm(`¿Cerrar el issue #${issueNumber}?\n\nEsto marcará el audio como cerrado en GitHub.`)) return;
+            alert(`⚠️ Para eliminar completamente, debes ir a GitHub y cerrar el Issue #${issueNumber}`);
+            window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/${issueNumber}`, '_blank');
         }
 
         // Drag and drop
@@ -816,3 +941,4 @@
     </script>
 </body>
 </html>
+
