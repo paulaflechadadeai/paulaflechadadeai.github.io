@@ -3,109 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Observatorio IA - Terminal Feed</title>
+    <title>🔭 Observatorio IA · Terminal Feed</title>
     <style>
-        /* Estilo general de la terminal */
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-green: #0aff0a;
+            --neon-red: #ff003c;
+            --neon-yellow: #ffee00;
+            --neon-pink: #ff00ff;
+            --neon-purple: #bd00ff;
+            --neon-cyan: #00ffff;
+            --bg-dark: #0a0e1a;
+            --bg-terminal: #0c0f1c;
+            --bg-header: #1a1e2c;
+            --border-color: #2d3348;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
-            background: #0a0e1a;
+            background: var(--bg-dark);
             font-family: 'Courier New', 'Fira Code', monospace;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
+            color: #c3e88d;
         }
+        
+        /* ===== NAVEGACIÓN SUPERIOR ===== */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 26, 0.95);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 6px 12px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .nav-btn:hover {
+            background: var(--neon-blue);
+            color: var(--bg-dark);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+        }
+        
+        .nav-title {
+            color: #b9c0e0;
+            font-size: 0.85rem;
+            margin-left: auto;
+            letter-spacing: 0.5px;
+        }
+        
+        /* ===== TERMINAL PRINCIPAL ===== */
         .terminal {
-            background: #0c0f1c;
+            background: var(--bg-terminal);
             border-radius: 12px;
             box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
             width: 100%;
             max-width: 1200px;
             overflow: hidden;
+            margin-top: 60px; /* Espacio para la nav fija */
         }
+        
         .terminal-header {
-            background: #1a1e2c;
+            background: var(--bg-header);
             padding: 12px 20px;
             display: flex;
             align-items: center;
             gap: 12px;
-            border-bottom: 1px solid #2d3348;
+            border-bottom: 1px solid var(--border-color);
         }
+        
         .window-buttons {
             display: flex;
             gap: 8px;
         }
+        
         .window-btn {
             width: 14px;
             height: 14px;
             border-radius: 50%;
             transition: 0.2s;
         }
+        
         .close { background: #ff5f56; }
         .minimize { background: #ffbd2e; }
         .maximize { background: #27c93f; }
+        
         .terminal-title {
             color: #b9c0e0;
             font-size: 0.85rem;
             letter-spacing: 0.5px;
         }
+        
+        /* ===== CONTROLES Y FILTROS ===== */
+        .controls-panel {
+            background: rgba(26, 30, 44, 0.5);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filter-label {
+            color: #7aa2f7;
+            font-size: 0.8rem;
+        }
+        
+        select, input[type="number"] {
+            background: #0c0f1c;
+            border: 1px solid #3b3f5c;
+            color: #c3e88d;
+            padding: 6px 10px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            border-radius: 4px;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #7aa2f7;
+        }
+        
+        .btn-control {
+            background: #2d3348;
+            border: 1px solid #3b3f5c;
+            color: #c3e88d;
+            padding: 6px 12px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .btn-control:hover {
+            background: #3b3f5c;
+            border-color: #7aa2f7;
+        }
+        
+        .btn-control.active {
+            background: rgba(122, 162, 247, 0.2);
+            border-color: #7aa2f7;
+            color: #7aa2f7;
+        }
+        
+        .btn-favorites {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+        
+        .btn-favorites:hover, .btn-favorites.active {
+            background: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+        
+        /* ===== CONTENIDO DEL TERMINAL ===== */
         .terminal-content {
             padding: 20px;
             color: #c3e88d;
             font-size: 0.9rem;
             line-height: 1.5;
             overflow-y: auto;
-            max-height: 70vh;
+            max-height: calc(70vh - 60px);
         }
+        
         .terminal-content::-webkit-scrollbar {
             width: 8px;
             background: #1a1e2c;
         }
+        
         .terminal-content::-webkit-scrollbar-thumb {
             background: #3b3f5c;
             border-radius: 4px;
         }
+        
         .prompt {
             color: #7aa2f7;
             margin-right: 10px;
         }
+        
         .command {
             color: #e0af68;
         }
+        
         .output-line {
             margin-bottom: 12px;
             white-space: pre-wrap;
             word-break: break-word;
         }
+        
+        /* ===== TARJETAS DE REPOSITORIO ===== */
         .repo-line {
             margin: 10px 0;
-            padding: 8px 12px;
+            padding: 12px 15px;
             border-left: 3px solid #7aa2f7;
             background: rgba(122, 162, 247, 0.05);
-            transition: 0.2s;
+            transition: all 0.2s;
+            border-radius: 0 8px 8px 0;
+            position: relative;
         }
+        
         .repo-line:hover {
             background: rgba(122, 162, 247, 0.12);
             border-left-color: #c3e88d;
+            transform: translateX(5px);
         }
+        
+        .repo-line.favorite {
+            border-left-color: #ffd700;
+            background: rgba(255, 215, 0, 0.08);
+        }
+        
+        .repo-line.favorite:hover {
+            background: rgba(255, 215, 0, 0.15);
+        }
+        
+        .repo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
         .repo-name {
             color: #ff9e64;
             font-weight: bold;
+            font-size: 1rem;
         }
+        
+        .repo-name a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        .repo-name a:hover {
+            text-decoration: underline;
+            color: #ff7b43;
+        }
+        
+        .repo-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .repo-btn {
+            background: transparent;
+            border: 1px solid #3b3f5c;
+            color: #8b949e;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .repo-btn:hover {
+            border-color: currentColor;
+        }
+        
+        .repo-btn.star {
+            color: #ffd700;
+        }
+        
+        .repo-btn.star.active {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+        }
+        
+        .repo-btn.viewed {
+            color: #7aa2f7;
+        }
+        
+        .repo-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        
         .repo-stars {
             color: #ffd966;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
+        
         .repo-lang {
             color: #9ece6a;
+            font-size: 0.85rem;
+        }
+        
+        .repo-updated {
+            color: #7aa2f7;
             font-size: 0.8rem;
         }
+        
         .repo-desc {
             color: #bbbbdd;
             font-size: 0.85rem;
             margin-top: 4px;
+            line-height: 1.4;
         }
+        
+        .repo-topics {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .topic-tag {
+            background: rgba(122, 162, 247, 0.15);
+            color: #7aa2f7;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            border-radius: 10px;
+        }
+        
+        /* ===== ESTADOS Y ANIMACIONES ===== */
+        .loading {
+            color: #bbbbdd;
+            font-style: italic;
+        }
+        
         .blinking-cursor {
             display: inline-block;
             width: 10px;
@@ -114,188 +372,649 @@
             vertical-align: middle;
             animation: blink 1s step-end infinite;
         }
+        
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
         }
-        .loading {
-            color: #bbbbdd;
-            font-style: italic;
-        }
-        button.refresh-btn {
-            background: #2d3348;
-            border: none;
-            color: #c3e88d;
-            font-family: monospace;
-            padding: 4px 12px;
-            border-radius: 6px;
-            cursor: pointer;
+        
+        .cache-indicator {
+            color: #9ece6a;
+            font-size: 0.75rem;
             margin-left: auto;
-            font-size: 0.8rem;
         }
-        button.refresh-btn:hover {
-            background: #3b3f5c;
+        
+        .cache-indicator.stale {
+            color: #e0af68;
         }
+        
+        .error-message {
+            color: #ff5f56;
+            background: rgba(255, 95, 86, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #ff5f56;
+        }
+        
+        /* ===== PANEL DE FAVORITOS ===== */
+        .favorites-panel {
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px dashed #ffd700;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .favorites-panel.active {
+            display: block;
+        }
+        
+        .favorites-title {
+            color: #ffd700;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .favorite-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+            margin: 5px 0;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .favorite-item a {
+            color: #ff9e64;
+        }
+        
+        /* ===== FOOTER ===== */
         .footer {
             font-size: 0.7rem;
             text-align: center;
             color: #555c7a;
-            border-top: 1px solid #1a1e2c;
+            border-top: 1px solid var(--border-color);
             padding: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
-        a {
-            color: #7aa2f7;
-            text-decoration: none;
+        
+        .footer span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
-        a:hover {
-            text-decoration: underline;
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .nav-bar {
+                padding: 8px 10px;
+                font-size: 0.75rem;
+            }
+            
+            .nav-title {
+                display: none;
+            }
+            
+            .terminal {
+                margin-top: 50px;
+            }
+            
+            .controls-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                justify-content: space-between;
+            }
+            
+            select, input[type="number"] {
+                flex: 1;
+            }
+            
+            .terminal-content {
+                max-height: calc(60vh - 50px);
+                padding: 15px;
+            }
+            
+            .repo-header {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-<div class="terminal">
-    <div class="terminal-header">
-        <div class="window-buttons">
-            <div class="window-btn close"></div>
-            <div class="window-btn minimize"></div>
-            <div class="window-btn maximize"></div>
-        </div>
-        <div class="terminal-title">observatorio@ai-feed:~/repositorios</div>
-        <button class="refresh-btn" id="refreshBtn">⟳ actualizar</button>
-    </div>
-    <div class="terminal-content" id="terminalOutput">
-        <div class="output-line">
-            <span class="prompt">$</span>
-            <span class="command"> ./scanner --tag=ai --limit=15 --sort=stars</span>
-        </div>
-        <div class="output-line loading" id="loadingMsg">
-            <span class="prompt">></span> Conectando con GitHub API...
-        </div>
-    </div>
-    <div class="footer">
-        🔍 feed en tiempo real | repositorios con "ai" | datos vía GitHub API
-    </div>
-</div>
+    <!-- ===== BARRA DE NAVEGACIÓN FIJA ===== -->
+    <nav class="nav-bar">
+        <a href="/" class="nav-btn">← VOLVER AL MENÚ</a>
+        <a href="/observatorio.html" class="nav-btn">🔭 OBSERVATORIO</a>
+        <span class="nav-title">observatorio@ai-feed:~/repositorios</span>
+    </nav>
 
-<script>
-    const terminalOutput = document.getElementById('terminalOutput');
-    const refreshBtn = document.getElementById('refreshBtn');
-    let currentRepos = [];
-
-    // Limpiar y mostrar loading
-    function showLoading() {
-        // Conservamos solo la primera línea (el comando)
-        const firstLine = terminalOutput.children[0];
-        terminalOutput.innerHTML = '';
-        terminalOutput.appendChild(firstLine);
-        const loadingDiv = document.createElement('div');
-        loadingDiv.className = 'output-line loading';
-        loadingDiv.id = 'loadingMsg';
-        loadingDiv.innerHTML = '<span class="prompt">></span> Conectando con GitHub API...';
-        terminalOutput.appendChild(loadingDiv);
-    }
-
-    // Formatear un repositorio como línea de terminal
-    function formatRepo(repo) {
-        const stars = repo.stargazers_count.toLocaleString();
-        const lang = repo.language || 'unknown';
-        const desc = repo.description ? repo.description.substring(0, 120) : 'Sin descripción';
-        const url = repo.html_url;
-
-        return `
-            <div class="repo-line">
-                <div>
-                    <span class="repo-name">📁 ${repo.full_name}</span>
-                    <span class="repo-stars">⭐ ${stars}</span>
-                    <span class="repo-lang"> | 🖥️ ${lang}</span>
-                </div>
-                <div class="repo-desc">${escapeHtml(desc)}</div>
-                <div class="repo-desc" style="font-size:0.7rem">🔗 <a href="${url}" target="_blank">${url}</a></div>
+    <div class="terminal">
+        <div class="terminal-header">
+            <div class="window-buttons">
+                <div class="window-btn close"></div>
+                <div class="window-btn minimize"></div>
+                <div class="window-btn maximize"></div>
             </div>
-        `;
-    }
+            <div class="terminal-title">observatorio@ai-feed:~/repositorios</div>
+            <span class="cache-indicator" id="cacheStatus"></span>
+        </div>
+        
+        <!-- ===== PANEL DE CONTROLES ===== -->
+        <div class="controls-panel">
+            <div class="filter-group">
+                <span class="filter-label">Lenguaje:</span>
+                <select id="filterLang" onchange="aplicarFiltros()">
+                    <option value="">Todos</option>
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="typescript">TypeScript</option>
+                    <option value="rust">Rust</option>
+                    <option value="go">Go</option>
+                    <option value="cpp">C++</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <span class="filter-label">Mín ⭐:</span>
+                <input type="number" id="minStars" value="0" min="0" step="100" onchange="aplicarFiltros()" style="width: 80px;">
+            </div>
+            
+            <div class="filter-group">
+                <span class="filter-label">Orden:</span>
+                <select id="sortOrder" onchange="aplicarFiltros()">
+                    <option value="stars">Estrellas ↓</option>
+                    <option value="updated">Actualizado ↓</option>
+                    <option value="name">Nombre A-Z</option>
+                </select>
+            </div>
+            
+            <button class="btn-control btn-favorites" id="btnFavorites" onclick="toggleFavoritesView()">
+                ⭐ Favoritos (<span id="favCount">0</span>)
+            </button>
+            
+            <button class="btn-control" onclick="forzarRefresh()" style="margin-left: auto;">
+                🔄 Actualizar
+            </button>
+        </div>
+        
+        <!-- ===== PANEL DE FAVORITOS ===== -->
+        <div class="favorites-panel" id="favoritesPanel">
+            <div class="favorites-title">
+                ⭐ Tus Repositorios Favoritos
+                <button class="repo-btn" onclick="exportarFavoritos()" style="margin-left: auto;">⬇️ Exportar</button>
+            </div>
+            <div id="favoritesList"></div>
+        </div>
+        
+        <!-- ===== CONTENIDO PRINCIPAL ===== -->
+        <div class="terminal-content" id="terminalOutput">
+            <div class="output-line">
+                <span class="prompt">$</span>
+                <span class="command"> ./scanner --tag=ai --limit=15 --sort=stars --cache=smart</span>
+            </div>
+            <div class="output-line loading" id="loadingMsg">
+                <span class="prompt">></span> Conectando con GitHub API...
+            </div>
+        </div>
+        
+        <div class="footer">
+            <span>🔍 feed en tiempo real | repositorios con "ai"</span>
+            <span>💾 caché inteligente | ⭐ favoritos locales</span>
+            <span>datos vía GitHub API</span>
+        </div>
+    </div>
 
-    // Escapar HTML para evitar inyecciones
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
+    <script>
+        // ============================================
+        // CONFIGURACIÓN Y ESTADO
+        // ============================================
+        const CONFIG = {
+            CACHE_DURATION: 60 * 60 * 1000, // 1 hora en ms
+            DEFAULT_LIMIT: 15,
+            API_URL: 'https://api.github.com/search/repositories?q=ai&sort=stars&order=desc&per_page=30'
+        };
+        
+        const STORAGE_KEYS = {
+            CACHE: 'github_feed_cache_v2',
+            FAVORITES: 'github_favorites_v2',
+            LAST_UPDATE: 'feed_last_update',
+            VIEWED: 'repos_viewed'
+        };
+        
+        let state = {
+            allRepos: [],
+            filteredRepos: [],
+            favorites: [],
+            viewed: new Set(),
+            mostrandoFavoritos: false,
+            lastFetch: null
+        };
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarEstado();
+            inicializarFeed();
         });
-    }
 
-    // Mostrar repos en el terminal
-    function displayRepos(repos) {
-        // Eliminar el mensaje de loading si existe
-        const loadingMsg = document.getElementById('loadingMsg');
-        if (loadingMsg) loadingMsg.remove();
-
-        // Eliminar líneas que no sean la primera (comando)
-        while (terminalOutput.children.length > 1) {
-            terminalOutput.removeChild(terminalOutput.lastChild);
+        function cargarEstado() {
+            // Cargar favoritos
+            const favs = localStorage.getItem(STORAGE_KEYS.FAVORITES);
+            state.favorites = favs ? JSON.parse(favs) : [];
+            actualizarContadorFavoritos();
+            
+            // Cargar vistos
+            const viewed = localStorage.getItem(STORAGE_KEYS.VIEWED);
+            if (viewed) {
+                state.viewed = new Set(JSON.parse(viewed));
+            }
         }
 
-        // Añadir cabecera de resultados
-        const resultHeader = document.createElement('div');
-        resultHeader.className = 'output-line';
-        resultHeader.innerHTML = `<span class="prompt">></span> ${repos.length} repositorios encontrados con el tag "ai" (ordenados por ⭐)`;
-        terminalOutput.appendChild(resultHeader);
+        // ============================================
+        // SISTEMA DE CACHÉ INTELIGENTE
+        // ============================================
+        function debeActualizar() {
+            const lastUpdate = localStorage.getItem(STORAGE_KEYS.LAST_UPDATE);
+            if (!lastUpdate) return true;
+            
+            const tiempoTranscurrido = Date.now() - parseInt(lastUpdate);
+            return tiempoTranscurrido > CONFIG.CACHE_DURATION;
+        }
 
-        // Añadir cada repositorio
-        repos.forEach(repo => {
-            const line = document.createElement('div');
-            line.className = 'output-line';
-            line.innerHTML = formatRepo(repo);
-            terminalOutput.appendChild(line);
-        });
+        function guardarEnCache(repos) {
+            const cacheData = {
+                repos: repos,
+                timestamp: Date.now(),
+                query: 'ai'
+            };
+            localStorage.setItem(STORAGE_KEYS.CACHE, JSON.stringify(cacheData));
+            localStorage.setItem(STORAGE_KEYS.LAST_UPDATE, Date.now().toString());
+        }
 
-        // Añadir línea final con timestamp
-        const timestamp = new Date().toLocaleString();
-        const footerLine = document.createElement('div');
-        footerLine.className = 'output-line';
-        footerLine.innerHTML = `<span class="prompt">></span> Última actualización: ${timestamp} | <span class="command">./feed --active</span>`;
-        terminalOutput.appendChild(footerLine);
-    }
-
-    // Obtener datos de GitHub API
-    async function fetchGitHubRepos() {
-        showLoading();
-        try {
-            // Búsqueda: repositorios con "ai" en nombre, descripción o readme
-            // Ordenamos por estrellas para mostrar los más populares primero
-            const url = 'https://api.github.com/search/repositories?q=ai&sort=stars&order=desc&per_page=15';
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
+        function cargarDesdeCache() {
+            const cached = localStorage.getItem(STORAGE_KEYS.CACHE);
+            if (!cached) return null;
+            
+            try {
+                const data = JSON.parse(cached);
+                // Verificar que el caché no sea muy viejo (máx 24h incluso si no pasó la hora)
+                const cacheAge = Date.now() - data.timestamp;
+                if (cacheAge > 24 * 60 * 60 * 1000) {
+                    localStorage.removeItem(STORAGE_KEYS.CACHE);
+                    return null;
+                }
+                return data;
+            } catch (e) {
+                return null;
             }
-            const data = await response.json();
-            if (!data.items) throw new Error('Formato inesperado');
-            currentRepos = data.items;
-            displayRepos(currentRepos);
-        } catch (error) {
-            console.error(error);
+        }
+
+        function mostrarEstadoCache(desdeCache, timestamp) {
+            const indicator = document.getElementById('cacheStatus');
+            if (desdeCache && timestamp) {
+                const fecha = new Date(timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                indicator.textContent = `💾 Caché ${fecha}`;
+                indicator.className = 'cache-indicator';
+            } else {
+                indicator.textContent = '🌐 En vivo';
+                indicator.className = 'cache-indicator stale';
+            }
+        }
+
+        // ============================================
+        // FETCH DE DATOS
+        // ============================================
+        async function inicializarFeed() {
+            mostrarLoading();
+            
+            // Intentar cargar desde caché primero
+            const cache = cargarDesdeCache();
+            const necesitaRefresh = debeActualizar();
+            
+            if (cache && !necesitaRefresh) {
+                // Usar caché si es reciente
+                state.allRepos = cache.repos;
+                aplicarFiltros();
+                mostrarEstadoCache(true, cache.timestamp);
+                
+                // Silenciosamente actualizar en background si pasó media hora
+                if (Date.now() - cache.timestamp > 30 * 60 * 1000) {
+                    actualizarEnBackground();
+                }
+            } else if (cache && necesitaRefresh) {
+                // Mostrar caché mientras actualizamos
+                state.allRepos = cache.repos;
+                aplicarFiltros();
+                mostrarEstadoCache(true, cache.timestamp);
+                
+                // Actualizar ahora
+                await fetchGitHubRepos();
+            } else {
+                // No hay caché, cargar obligatoriamente
+                await fetchGitHubRepos();
+            }
+        }
+
+        async function fetchGitHubRepos() {
+            try {
+                const response = await fetch(CONFIG.API_URL);
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        throw new Error('Rate limit de GitHub API. Intenta más tarde o usa un token.');
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                if (!data.items) throw new Error('Formato inesperado');
+                
+                state.allRepos = data.items;
+                guardarEnCache(state.allRepos);
+                state.lastFetch = Date.now();
+                
+                aplicarFiltros();
+                mostrarEstadoCache(false);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarError(error.message);
+                
+                // Si hay caché, usarla como fallback
+                const cache = cargarDesdeCache();
+                if (cache) {
+                    state.allRepos = cache.repos;
+                    aplicarFiltros();
+                    mostrarEstadoCache(true, cache.timestamp);
+                }
+            }
+        }
+
+        async function actualizarEnBackground() {
+            try {
+                const response = await fetch(CONFIG.API_URL);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.items) {
+                        state.allRepos = data.items;
+                        guardarEnCache(state.allRepos);
+                        if (!state.mostrandoFavoritos) {
+                            aplicarFiltros();
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log('Background update failed:', e);
+            }
+        }
+
+        function forzarRefresh() {
+            localStorage.removeItem(STORAGE_KEYS.LAST_UPDATE);
+            fetchGitHubRepos();
+        }
+
+        // ============================================
+        // FILTROS Y ORDENAMIENTO
+        // ============================================
+        function aplicarFiltros() {
+            const lang = document.getElementById('filterLang').value;
+            const minStars = parseInt(document.getElementById('minStars').value) || 0;
+            const sortOrder = document.getElementById('sortOrder').value;
+            
+            let repos = [...state.allRepos];
+            
+            // Filtrar por lenguaje
+            if (lang) {
+                repos = repos.filter(r => r.language && r.language.toLowerCase() === lang.toLowerCase());
+            }
+            
+            // Filtrar por estrellas mínimas
+            if (minStars > 0) {
+                repos = repos.filter(r => r.stargazers_count >= minStars);
+            }
+            
+            // Ordenar
+            repos.sort((a, b) => {
+                switch(sortOrder) {
+                    case 'stars':
+                        return b.stargazers_count - a.stargazers_count;
+                    case 'updated':
+                        return new Date(b.updated_at) - new Date(a.updated_at);
+                    case 'name':
+                        return a.full_name.localeCompare(b.full_name);
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Limitar resultados
+            state.filteredRepos = repos.slice(0, CONFIG.DEFAULT_LIMIT);
+            
+            if (!state.mostrandoFavoritos) {
+                displayRepos(state.filteredRepos);
+            }
+        }
+
+        // ============================================
+        // SISTEMA DE FAVORITOS
+        // ============================================
+        function toggleFavorite(repoId) {
+            const repo = state.allRepos.find(r => r.id === repoId);
+            if (!repo) return;
+            
+            const exists = state.favorites.find(f => f.id === repoId);
+            
+            if (exists) {
+                state.favorites = state.favorites.filter(f => f.id !== repoId);
+            } else {
+                state.favorites.push({
+                    id: repo.id,
+                    full_name: repo.full_name,
+                    html_url: repo.html_url,
+                    description: repo.description,
+                    stargazers_count: repo.stargazers_count,
+                    language: repo.language,
+                    saved_at: new Date().toISOString()
+                });
+            }
+            
+            localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(state.favorites));
+            actualizarContadorFavoritos();
+            
+            // Actualizar UI
+            if (!state.mostrandoFavoritos) {
+                displayRepos(state.filteredRepos);
+            } else {
+                mostrarFavoritos();
+            }
+            
+            return !exists; // true si se agregó
+        }
+
+        function toggleFavoritesView() {
+            state.mostrandoFavoritos = !state.mostrandoFavoritos;
+            const btn = document.getElementById('btnFavorites');
+            const panel = document.getElementById('favoritesPanel');
+            
+            if (state.mostrandoFavoritos) {
+                btn.classList.add('active');
+                panel.classList.add('active');
+                mostrarFavoritos();
+            } else {
+                btn.classList.remove('active');
+                panel.classList.remove('active');
+                aplicarFiltros();
+            }
+        }
+
+        function mostrarFavoritos() {
+            const container = document.getElementById('favoritesList');
+            
+            if (state.favorites.length === 0) {
+                container.innerHTML = '<div style="color: #8b949e; text-align: center; padding: 20px;">No tienes favoritos guardados. ⭐ marca repos desde la lista principal.</div>';
+                return;
+            }
+            
+            container.innerHTML = state.favorites.map(fav => `
+                <div class="favorite-item">
+                    <div>
+                        <a href="${fav.html_url}" target="_blank">${fav.full_name}</a>
+                        <span style="color: #ffd966; margin-left: 10px;">⭐ ${fav.stargazers_count.toLocaleString()}</span>
+                    </div>
+                    <button class="repo-btn" onclick="toggleFavorite(${fav.id})" style="color: #ff5f56;">🗑️</button>
+                </div>
+            `).join('');
+            
+            // Mostrar también en el terminal principal los favoritos destacados
+            displayRepos(state.favorites, true);
+        }
+
+        function actualizarContadorFavoritos() {
+            document.getElementById('favCount').textContent = state.favorites.length;
+        }
+
+        function exportarFavoritos() {
+            const dataStr = JSON.stringify(state.favorites, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `github-favoritos-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ============================================
+        // RENDERIZADO
+        // ============================================
+        function displayRepos(repos, esFavoritos = false) {
+            const loadingMsg = document.getElementById('loadingMsg');
+            if (loadingMsg) loadingMsg.remove();
+            
+            // Mantener solo la línea de comando
+            while (terminalOutput.children.length > 1) {
+                terminalOutput.removeChild(terminalOutput.lastChild);
+            }
+            
+            // Cabecera de resultados
+            const resultHeader = document.createElement('div');
+            resultHeader.className = 'output-line';
+            const textoHeader = esFavoritos 
+                ? `⭐ Mostrando ${repos.length} favoritos guardados`
+                : `📊 ${repos.length} repositorios encontrados (filtrados de ${state.allRepos.length})`;
+            resultHeader.innerHTML = `<span class="prompt">></span> ${textoHeader}`;
+            terminalOutput.appendChild(resultHeader);
+            
+            // Repos
+            repos.forEach(repo => {
+                const line = document.createElement('div');
+                line.className = 'output-line';
+                line.innerHTML = formatRepo(repo);
+                terminalOutput.appendChild(line);
+            });
+            
+            // Footer con timestamp
+            const timestamp = new Date().toLocaleString('es-ES');
+            const footerLine = document.createElement('div');
+            footerLine.className = 'output-line';
+            footerLine.style.marginTop = '20px';
+            footerLine.innerHTML = `<span class="prompt">></span> Última actualización: ${timestamp} | <span class="command">./feed --active --cache=${debeActualizar() ? 'stale' : 'fresh'}</span>`;
+            terminalOutput.appendChild(footerLine);
+        }
+
+        function formatRepo(repo) {
+            const stars = repo.stargazers_count.toLocaleString();
+            const lang = repo.language || 'unknown';
+            const desc = repo.description ? escapeHtml(repo.description.substring(0, 120)) : 'Sin descripción';
+            const url = repo.html_url;
+            const updated = new Date(repo.updated_at).toLocaleDateString('es-ES');
+            const isFav = state.favorites.some(f => f.id === repo.id);
+            const isViewed = state.viewed.has(repo.id);
+            
+            const topics = repo.topics ? repo.topics.slice(0, 3).map(t => 
+                `<span class="topic-tag">${escapeHtml(t)}</span>`
+            ).join('') : '';
+            
+            return `
+                <div class="repo-line ${isFav ? 'favorite' : ''}" data-id="${repo.id}">
+                    <div class="repo-header">
+                        <span class="repo-name">
+                            <a href="${url}" target="_blank" onclick="marcarVisto(${repo.id})">📁 ${repo.full_name}</a>
+                        </span>
+                        <div class="repo-actions">
+                            <button class="repo-btn star ${isFav ? 'active' : ''}" onclick="event.preventDefault(); toggleFavorite(${repo.id})" title="${isFav ? 'Quitar de favoritos' : 'Añadir a favoritos'}">
+                                ${isFav ? '★' : '☆'}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="repo-stats">
+                        <span class="repo-stars">⭐ ${stars}</span>
+                        <span class="repo-lang">🖥️ ${lang}</span>
+                        <span class="repo-updated">📅 ${updated}</span>
+                        ${isViewed ? '<span style="color: #7aa2f7; font-size: 0.8rem;">👁️ Visto</span>' : ''}
+                    </div>
+                    <div class="repo-desc">${desc}</div>
+                    ${topics ? `<div class="repo-topics">${topics}</div>` : ''}
+                </div>
+            `;
+        }
+
+        function marcarVisto(repoId) {
+            state.viewed.add(repoId);
+            localStorage.setItem(STORAGE_KEYS.VIEWED, JSON.stringify([...state.viewed]));
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // ============================================
+        // UTILIDADES
+        // ============================================
+        function mostrarLoading() {
+            const firstLine = terminalOutput.children[0];
+            terminalOutput.innerHTML = '';
+            terminalOutput.appendChild(firstLine);
+            
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'output-line loading';
+            loadingDiv.id = 'loadingMsg';
+            loadingDiv.innerHTML = '<span class="prompt">></span> Conectando con GitHub API... <span class="blinking-cursor"></span>';
+            terminalOutput.appendChild(loadingDiv);
+        }
+
+        function mostrarError(mensaje) {
             const loadingMsg = document.getElementById('loadingMsg');
             if (loadingMsg) {
-                loadingMsg.innerHTML = `<span class="prompt">></span> ❌ Error: ${error.message}. Reintentando...`;
-                setTimeout(fetchGitHubRepos, 5000);
-            } else {
-                const errorLine = document.createElement('div');
-                errorLine.className = 'output-line';
-                errorLine.innerHTML = `<span class="prompt">></span> ❌ Error: ${error.message}. Intenta de nuevo más tarde.`;
-                terminalOutput.appendChild(errorLine);
+                loadingMsg.className = 'output-line error-message';
+                loadingMsg.innerHTML = `<span class="prompt">></span> ❌ ${mensaje}`;
             }
         }
-    }
-
-    // Evento para refrescar manualmente
-    refreshBtn.addEventListener('click', () => {
-        fetchGitHubRepos();
-    });
-
-    // Cargar al inicio
-    fetchGitHubRepos();
-</script>
+    </script>
 </body>
 </html>
