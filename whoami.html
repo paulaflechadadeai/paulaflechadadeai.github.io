@@ -447,29 +447,58 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(campos));
         }
 
-        function mostrarCampos() {
+                function mostrarCampos() {
             const contenedor = document.getElementById('contenedorPerfil');
             const emoji = campos.campo4 || '👤';
+            
+            // Procesador de Nodos (Redes Sociales)
+            let nodosHTML = '';
+            if (campos.campo3) {
+                const lineas = campos.campo3.split('\n');
+                lineas.forEach(linea => {
+                    const partes = linea.split('|');
+                    if (partes.length === 2) {
+                        const nombre = escapeHtml(partes[0].trim());
+                        const url = escapeHtml(partes[1].trim());
+                        nodosHTML += `<a href="${url}" target="_blank" class="nodo-link">${nombre}</a>`;
+                    } else if (linea.trim() !== '') {
+                        // Por si solo pone un link sin el formato "Nombre | URL"
+                        const url = escapeHtml(linea.trim());
+                        nodosHTML += `<a href="${url}" target="_blank" class="nodo-link">Enlace</a>`;
+                    }
+                });
+            }
             
             contenedor.innerHTML = `
                 <div class="avatar-container">
                     <div class="avatar" onclick="editorActivo && cambiarAvatar()">${emoji}</div>
                 </div>
                 <div class="campo">
-                    <div class="campo-label">👤 Nombre</div>
+                    <div class="campo-label">👤 Identidad</div>
                     <div class="campo-contenido">${escapeHtml(campos.campo1)}</div>
                 </div>
                 <div class="campo">
-                    <div class="campo-label">📝 Bio</div>
+                    <div class="campo-label">📝 Manifiesto / Bio</div>
                     <div class="campo-contenido">${escapeHtml(campos.campo2)}</div>
                 </div>
                 <div class="campo">
-                    <div class="campo-label">🔗 Link</div>
-                    <div class="campo-contenido">
-                        <a href="${escapeHtml(campos.campo3)}" target="_blank">${escapeHtml(campos.campo3)}</a>
+                    <div class="campo-label">🔗 Puertos Activos</div>
+                    <div class="redes-grid">
+                        ${nodosHTML}
                     </div>
                 </div>
             `;
+            
+            // Actualizar timestamp
+            const lastUpdate = document.getElementById('lastUpdate');
+            if (campos.lastSync) {
+                const fecha = new Date(campos.lastSync).toLocaleString('es-ES');
+                lastUpdate.textContent = `Última sincronización: ${fecha}`;
+            } else {
+                lastUpdate.textContent = 'Sin sincronizar con la nube';
+            }
+        }
+
             
             // Actualizar timestamp
             const lastUpdate = document.getElementById('lastUpdate');
