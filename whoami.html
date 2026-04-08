@@ -170,6 +170,42 @@
             text-shadow: 0 0 10px var(--neon-pink);
         }
         
+        /* Estilos para Redes Sociales / Nodos (NUEVO) */
+        .redes-grid {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .nodo-link {
+            background: rgba(0, 170, 255, 0.05);
+            border: 1px dashed var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 6px 15px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 3px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nodo-link:hover {
+            background: var(--neon-blue);
+            color: black;
+            border-style: solid;
+            box-shadow: 0 0 15px var(--neon-blue);
+            transform: translateY(-2px);
+        }
+        
+        .nodo-link::before {
+            content: ">>";
+            font-size: 0.8em;
+        }
+        
         /* Indicador de estado de sincronización */
         .sync-status {
             position: absolute;
@@ -287,7 +323,6 @@
         <a href="/">← INICIO</a>
     </div>
 
-    <!-- CONTROLES DE AUTENTICACIÓN -->
     <div style="text-align: center; margin: 20px 0;">
         <button onclick="mostrarSelector()" id="btnMostrarEditor" class="btn-secondary">
             🔒 ACCEDER AL EDITOR
@@ -297,7 +332,6 @@
         </span>
     </div>
 
-    <!-- EDITOR (oculto hasta autenticación) -->
     <div id="panelEditor" style="display: none;" class="terminal">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">
             <div class="terminal-line" style="margin: 0;">
@@ -313,8 +347,9 @@
             <label>📝 Bio/Descripción:</label>
             <textarea id="campo2" rows="3" placeholder="Breve descripción sobre ti" required></textarea>
 
-            <label>🔗 Link principal:</label>
-            <input type="url" id="campo3" placeholder="https://..." required>
+            <label>🔗 Nodos de conexión (Redes):</label>
+            <textarea id="campo3" rows="3" placeholder="Ejemplo:&#10;GitHub | https://github.com/...&#10;Instagram | https://instagram.com/..." required></textarea>
+            <small style="color: var(--neon-yellow); display: block; margin-top: -10px; margin-bottom: 15px;">Formato: Nombre | URL (una por línea)</small>
             
             <label>🎨 Emoji de avatar:</label>
             <input type="text" id="campo4" placeholder="👤" maxlength="2" style="width: 80px; text-align: center; font-size: 1.5rem;">
@@ -326,7 +361,6 @@
             </div>
         </form>
 
-        <!-- Panel de gestión de datos -->
         <div class="data-panel">
             <h4>📦 Gestión de Datos</h4>
             <div class="data-actions">
@@ -342,7 +376,6 @@
         </div>
     </div>
 
-    <!-- VISUALIZACIÓN DEL PERFIL -->
     <div class="terminal" id="perfilTerminal">
         <div class="sync-status" id="syncStatus">
             <span class="sync-dot sync-local" id="syncDot"></span>
@@ -354,8 +387,7 @@
         </div>
         
         <div id="contenedorPerfil" style="margin: 20px 0;">
-            <!-- Se carga dinámicamente -->
-        </div>
+            </div>
         
         <div class="timestamp" id="lastUpdate"></div>
     </div>
@@ -432,7 +464,7 @@
                 campos = {
                     campo1: "paulaflechadadeai",
                     campo2: "Cazadora de hadas, derrotadora de IAs",
-                    campo3: "https://paulaflechadadeai.github.io",
+                    campo3: "GitHub | https://github.com/paulaflechadadeai\nInstagram | https://instagram.com/paulaflechadadeai",
                     campo4: "👤",
                     lastSync: null,
                     gistId: null
@@ -447,7 +479,7 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(campos));
         }
 
-                function mostrarCampos() {
+        function mostrarCampos() {
             const contenedor = document.getElementById('contenedorPerfil');
             const emoji = campos.campo4 || '👤';
             
@@ -462,7 +494,6 @@
                         const url = escapeHtml(partes[1].trim());
                         nodosHTML += `<a href="${url}" target="_blank" class="nodo-link">${nombre}</a>`;
                     } else if (linea.trim() !== '') {
-                        // Por si solo pone un link sin el formato "Nombre | URL"
                         const url = escapeHtml(linea.trim());
                         nodosHTML += `<a href="${url}" target="_blank" class="nodo-link">Enlace</a>`;
                     }
@@ -488,17 +519,6 @@
                     </div>
                 </div>
             `;
-            
-            // Actualizar timestamp
-            const lastUpdate = document.getElementById('lastUpdate');
-            if (campos.lastSync) {
-                const fecha = new Date(campos.lastSync).toLocaleString('es-ES');
-                lastUpdate.textContent = `Última sincronización: ${fecha}`;
-            } else {
-                lastUpdate.textContent = 'Sin sincronizar con la nube';
-            }
-        }
-
             
             // Actualizar timestamp
             const lastUpdate = document.getElementById('lastUpdate');
@@ -581,7 +601,6 @@
                 let url = 'https://api.github.com/gists';
                 let method = 'POST';
                 
-                // Si tenemos ID, actualizar en lugar de crear
                 if (gistIdInput || campos.gistId) {
                     const existingId = gistIdInput || campos.gistId;
                     url = `https://api.github.com/gists/${existingId}`;
@@ -603,7 +622,6 @@
                 campos.gistId = result.id;
                 campos.lastSync = new Date().toISOString();
                 
-                // Guardar Gist ID en localStorage separado para persistencia
                 localStorage.setItem(GIST_STORAGE_KEY, result.id);
                 document.getElementById('gistId').value = result.id;
                 
@@ -635,7 +653,6 @@
                 const content = result.files['whoami-profile.json'].content;
                 const data = JSON.parse(content);
                 
-                // Merge con campos existentes (preservar gistId)
                 campos = { ...campos, ...data, gistId: gistId };
                 campos.lastSync = new Date().toISOString();
                 
@@ -643,7 +660,6 @@
                 mostrarCampos();
                 actualizarIndicadorSync();
                 
-                // Actualizar formulario si está abierto
                 if (editorActivo) {
                     document.getElementById('campo1').value = campos.campo1;
                     document.getElementById('campo2').value = campos.campo2;
