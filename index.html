@@ -551,6 +551,7 @@
         </div>
     </div>
 
+    <!-- ===== MENÚ PRINCIPAL (con todos los cajones iguales, incluido juego, donate y publicidad) ===== -->
     <div class="menu">
         <div class="menu-item">
             <a href="/hadasmalvadas.html">🧚 /hadasmalvadas</a>
@@ -580,13 +581,33 @@
             <a href="/imagen.html">📸 /Capturas-ai</a>
             <div class="desc">Subir y gestionar imágenes</div>
         </div>
-    </div>
+
+        <!-- Cajón del juego (antes estaba fuera, ahora dentro del grid) -->
         <div class="menu-item">
             <a href="/polillacatete/">🕵️‍♀️ /polillacatete</a>
             <div class="desc">Juego de detectives y ladrones</div>
         </div>
 
-  
+        <!-- NUEVO CAJÓN: DONATE -->
+        <div class="menu-item">
+            <a href="#" onclick="return false;" style="cursor: default; color: var(--neon-green);">❤️ /donate</a>
+            <div class="desc">
+                Apoya el proyecto sin sponsors. Invítame un café virtual.
+                <!-- Botón de PayPal (reemplaza TU_ID_AQUÍ con tu ID real) -->
+                <form action="https://www.paypal.com/donate" method="post" target="_top" style="margin-top: 8px;">
+                    <input type="hidden" name="hosted_button_id" value="TU_ID_AQUÍ" />
+                    <input type="image" src="https://www.paypalobjects.com/es_XC/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal" alt="Donar" style="max-width: 100%;" />
+                </form>
+            </div>
+        </div>
+
+        <!-- NUEVO CAJÓN: PUBLICIDAD -->
+        <div class="menu-item">
+            <a href="mailto:publicidad@paulaflechadadeai.com?subject=Solicitud%20de%20publicidad&body=Hola,%20me%20interesa%20publicar%20mi%20demo%20en%20tu%20web.">📢 /publicidad</a>
+            <div class="desc">¿Quieres mostrar tu demo (imagen, PDF, vídeo, audio)? Escríbeme y acordamos tarifas.</div>
+        </div>
+    </div>
+
     <div class="music-player" id="musicPlayer">
         <div class="terminal-line">
             <span class="prompt">$</span> <span class="cmd">sistema_audio --play</span>
@@ -1019,99 +1040,97 @@
             if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
         });
     </script>
-<div id="gemini-terminal" style="position: fixed; bottom: 20px; right: 20px; width: 350px; background: var(--bg-darker); border: 1px solid var(--neon-green); border-radius: 5px; box-shadow: 0 0 15px rgba(0, 255, 0, 0.2); display: flex; flex-direction: column; z-index: 1000; font-family: 'Courier New', monospace; transition: all 0.3s;">
-    
-    <div style="background: rgba(0, 255, 0, 0.05); padding: 10px; border-bottom: 1px dashed var(--neon-green); color: var(--neon-pink); font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleGemini()">
-        <span>~/gemini_link $</span>
-        <span id="gemini-toggle-icon">▼</span>
-    </div>
-
-    <div id="gemini-chat-box" style="height: 300px; overflow-y: auto; padding: 15px; color: var(--neon-green); font-size: 0.9em; display: flex; flex-direction: column; gap: 10px;">
-        <div><span class="cmd">></span> Sistema de IA inicializado. Enlace directo establecido. ¿Qué necesitas?</div>
-    </div>
-
-    <div id="gemini-input-area" style="padding: 10px; border-top: 1px dashed #333; display: flex; gap: 8px; align-items: center;">
-        <span style="color: var(--neon-pink); font-weight: bold;">$</span>
-        <input type="text" id="gemini-input" placeholder="Ingresa comando..." style="background: transparent; border: none; color: var(--neon-green); outline: none; width: 100%; font-family: inherit;">
-        <button onclick="ejecutarConsulta()" style="background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); cursor: pointer; border-radius: 3px; padding: 3px 8px; font-family: inherit; transition: all 0.2s;">[EXE]</button>
-    </div>
-</div>
-
-<script>
-    // ⚠️ TU API KEY BLINDADA
-  // ⚠️ EVASIÓN DE ESCÁNER GITHUB
-    // Divide tu NUEVA llave en dos partes aquí:
-    const keyPart1 = 'AIzaSyBhLC6rXws73C'; // Pon la primera mitad de tu nueva llave
-    const keyPart2 = '2WSUWY-BarBo-J_Yc6knY'; // Pon la segunda mitad de tu nueva llave
-    const GEMINI_API_KEY = keyPart1 + keyPart2; 
-
-    function toggleGemini() {
-        const chatBox = document.getElementById('gemini-chat-box');
-        const inputArea = document.getElementById('gemini-input-area');
-        const icon = document.getElementById('gemini-toggle-icon');
+    <div id="gemini-terminal" style="position: fixed; bottom: 20px; right: 20px; width: 350px; background: var(--bg-darker); border: 1px solid var(--neon-green); border-radius: 5px; box-shadow: 0 0 15px rgba(0, 255, 0, 0.2); display: flex; flex-direction: column; z-index: 1000; font-family: 'Courier New', monospace; transition: all 0.3s;">
         
-        if (chatBox.style.display === 'none') {
-            chatBox.style.display = 'flex';
-            inputArea.style.display = 'flex';
-            icon.textContent = '▼';
-        } else {
-            chatBox.style.display = 'none';
-            inputArea.style.display = 'none';
-            icon.textContent = '▲';
-        }
-    }
+        <div style="background: rgba(0, 255, 0, 0.05); padding: 10px; border-bottom: 1px dashed var(--neon-green); color: var(--neon-pink); font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleGemini()">
+            <span>~/gemini_link $</span>
+            <span id="gemini-toggle-icon">▼</span>
+        </div>
 
-    async function ejecutarConsulta() {
-        const input = document.getElementById('gemini-input');
-        const chatBox = document.getElementById('gemini-chat-box');
-        const texto = input.value.trim();
-        
-        if (!texto) return;
+        <div id="gemini-chat-box" style="height: 300px; overflow-y: auto; padding: 15px; color: var(--neon-green); font-size: 0.9em; display: flex; flex-direction: column; gap: 10px;">
+            <div><span class="cmd">></span> Sistema de IA inicializado. Enlace directo establecido. ¿Qué necesitas?</div>
+        </div>
 
-        chatBox.innerHTML += `<div><span style="color: var(--neon-pink);">usr@host:</span> ${texto}</div>`;
-        input.value = '';
-        chatBox.scrollTop = chatBox.scrollHeight;
+        <div id="gemini-input-area" style="padding: 10px; border-top: 1px dashed #333; display: flex; gap: 8px; align-items: center;">
+            <span style="color: var(--neon-pink); font-weight: bold;">$</span>
+            <input type="text" id="gemini-input" placeholder="Ingresa comando..." style="background: transparent; border: none; color: var(--neon-green); outline: none; width: 100%; font-family: inherit;">
+            <button onclick="ejecutarConsulta()" style="background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); cursor: pointer; border-radius: 3px; padding: 3px 8px; font-family: inherit; transition: all 0.2s;">[EXE]</button>
+        </div>
+    </div>
 
-        const loadingId = 'loading-' + Date.now();
-        chatBox.innerHTML += `<div id="${loadingId}"><span style="color: var(--neon-yellow);">> Procesando...</span></div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
+    <script>
+        // ⚠️ TU API KEY BLINDADA
+        // Divide tu NUEVA llave en dos partes aquí:
+        const keyPart1 = 'AIzaSyBhLC6rXws73C'; // Pon la primera mitad de tu nueva llave
+        const keyPart2 = '2WSUWY-BarBo-J_Yc6knY'; // Pon la segunda mitad de tu nueva llave
+        const GEMINI_API_KEY = keyPart1 + keyPart2; 
 
-        try {
-            // MOTOR ACTUALIZADO A GEMINI 2.5 FLASH
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: texto }] }]
-                })
-            });
-
-            const data = await response.json();
+        function toggleGemini() {
+            const chatBox = document.getElementById('gemini-chat-box');
+            const inputArea = document.getElementById('gemini-input-area');
+            const icon = document.getElementById('gemini-toggle-icon');
             
-            const loadingElement = document.getElementById(loadingId);
-            if (loadingElement) loadingElement.remove();
+            if (chatBox.style.display === 'none') {
+                chatBox.style.display = 'flex';
+                inputArea.style.display = 'flex';
+                icon.textContent = '▼';
+            } else {
+                chatBox.style.display = 'none';
+                inputArea.style.display = 'none';
+                icon.textContent = '▲';
+            }
+        }
 
-            if (data.error) throw new Error(data.error.message);
+        async function ejecutarConsulta() {
+            const input = document.getElementById('gemini-input');
+            const chatBox = document.getElementById('gemini-chat-box');
+            const texto = input.value.trim();
+            
+            if (!texto) return;
 
-            let respuestaGemini = data.candidates[0].content.parts[0].text;
-            respuestaGemini = respuestaGemini.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b style="color:white;">$1</b>');
-
-            chatBox.innerHTML += `<div><span style="color: var(--neon-blue);">gemini_sys:</span> ${respuestaGemini}</div>`;
+            chatBox.innerHTML += `<div><span style="color: var(--neon-pink);">usr@host:</span> ${texto}</div>`;
+            input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-        } catch (error) {
-            const loadingElement = document.getElementById(loadingId);
-            if (loadingElement) loadingElement.remove();
-            
-            chatBox.innerHTML += `<div><span style="color: var(--neon-red);">[ERROR_DE_ENLACE]:</span> ${error.message || 'Fallo en la conexión. Revisa que el dominio esté bien configurado en Google Cloud.'}</div>`;
+            const loadingId = 'loading-' + Date.now();
+            chatBox.innerHTML += `<div id="${loadingId}"><span style="color: var(--neon-yellow);">> Procesando...</span></div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
-        }
-    }
 
-    document.getElementById('gemini-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') ejecutarConsulta();
-    });
-</script>
+            try {
+                // MOTOR ACTUALIZADO A GEMINI 2.5 FLASH
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: texto }] }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                const loadingElement = document.getElementById(loadingId);
+                if (loadingElement) loadingElement.remove();
+
+                if (data.error) throw new Error(data.error.message);
+
+                let respuestaGemini = data.candidates[0].content.parts[0].text;
+                respuestaGemini = respuestaGemini.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b style="color:white;">$1</b>');
+
+                chatBox.innerHTML += `<div><span style="color: var(--neon-blue);">gemini_sys:</span> ${respuestaGemini}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+            } catch (error) {
+                const loadingElement = document.getElementById(loadingId);
+                if (loadingElement) loadingElement.remove();
+                
+                chatBox.innerHTML += `<div><span style="color: var(--neon-red);">[ERROR_DE_ENLACE]:</span> ${error.message || 'Fallo en la conexión. Revisa que el dominio esté bien configurado en Google Cloud.'}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        document.getElementById('gemini-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') ejecutarConsulta();
+        });
+    </script>
 </body>
-</html>
-
+    </html>
