@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="paulaflechadadeai · Sin sponsors, sin middlemen. Reconstruyendo internet con rabia del 2026.">
-    <meta name="theme-color" content="#0a0a0a">
     <title>paulaflechadadeai · Sin Sponsors</title>
     <style>
         :root {
@@ -17,8 +15,6 @@
             --bg-darker: #000;
             --border: #30363d;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Courier New', monospace;
@@ -41,11 +37,12 @@
         }
 
         .glitch-title {
-            font-size: clamp(1.8rem, 5vw, 2.5em);
+            font-size: 2.5em;
             color: var(--neon-pink);
-            text-shadow: 2px 0 var(--neon-blue), -1px 0 var(--neon-green);
+            text-shadow:
+                2px 0 var(--neon-blue),
+                -1px 0 var(--neon-green);
             animation: glitch 3s infinite;
-            word-break: break-word;
         }
 
         @keyframes glitch {
@@ -69,10 +66,21 @@
             padding-bottom: 8px;
             border-bottom: 1px dashed #333;
         }
-        .terminal-line:last-child { border-bottom: none; }
 
-        .prompt { color: var(--neon-pink); font-weight: bold; }
-        .cmd { color: var(--neon-blue); font-weight: bold; }
+        .terminal-line:last-child {
+            border-bottom: none;
+        }
+
+        .prompt {
+            color: var(--neon-pink);
+            font-weight: bold;
+        }
+
+        .cmd {
+            color: var(--neon-blue);
+            font-weight: bold;
+        }
+
         .output {
             color: var(--neon-green);
             margin-left: 1.5rem;
@@ -93,6 +101,7 @@
             margin-top: 2px;
             transition: all 0.2s;
         }
+
         .enlace-interno:hover {
             background: var(--neon-pink);
             color: black;
@@ -104,6 +113,7 @@
             gap: 15px;
             margin: 40px 0;
         }
+
         @media (min-width: 601px) and (max-width: 900px) {
             .menu { grid-template-columns: repeat(2, 1fr); }
         }
@@ -115,21 +125,52 @@
             border-radius: 5px;
             transition: all 0.3s;
         }
+
         .menu-item:hover {
             background: rgba(255, 0, 255, 0.1);
             border-color: var(--neon-pink);
             transform: translateY(-3px);
         }
+
         .menu-item a {
             color: var(--neon-blue);
             text-decoration: none;
             font-weight: bold;
             display: block;
         }
+
         .menu-item .desc {
             font-size: 0.9em;
             color: #88ff88;
             margin-top: 8px;
+        }
+
+        .paypal-btn {
+            display: inline-block;
+            background: #FFD140;
+            color: #000000;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .paypal-btn:hover {
+            background: #ffaa00;
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px #FFD140;
+        }
+        .donate-btn {
+            background: var(--neon-pink);
+            color: black;
+        }
+        .donate-btn:hover {
+            box-shadow: 0 0 10px var(--neon-pink);
         }
 
         .manifesto {
@@ -156,15 +197,18 @@
             border-radius: 5px;
             transition: all 0.3s;
         }
+
         .music-player.muted {
             border-color: var(--neon-yellow);
             box-shadow: 0 0 15px rgba(255, 238, 0, 0.3);
             animation: pulse-muted 2s infinite;
         }
+
         @keyframes pulse-muted {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
+
         .music-player.muted::before {
             content: "🔇 Click PLAY para activar audio";
             display: block;
@@ -182,6 +226,7 @@
             flex-wrap: wrap;
             margin: 15px 0;
         }
+
         .music-btn {
             background: black;
             border: 2px solid;
@@ -191,13 +236,27 @@
             cursor: pointer;
             transition: all 0.3s;
         }
+
         .music-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 0 10px currentColor;
         }
-        .btn-play { color: var(--neon-green); border-color: var(--neon-green); }
-        .btn-pause { color: var(--neon-pink); border-color: var(--neon-pink); }
-        .btn-replay { color: var(--neon-blue); border-color: var(--neon-blue); }
+
+        .btn-play {
+            color: var(--neon-green);
+            border-color: var(--neon-green);
+        }
+
+        .btn-pause {
+            color: var(--neon-pink);
+            border-color: var(--neon-pink);
+        }
+
+        .btn-replay {
+            color: var(--neon-blue);
+            border-color: var(--neon-blue);
+        }
+
         .volume-slider {
             width: 100px;
             background: black;
@@ -212,71 +271,35 @@
             text-align: center;
             margin: 30px 0;
         }
+
         .counter-number {
-            font-size: 3em;
-            color: var(--neon-pink);
+            font-size: 2.5em;
             font-family: 'Courier New', monospace;
-            text-shadow: 0 0 10px var(--neon-pink);
+            margin: 10px 0;
+        }
+        .counter-number img {
+            filter: drop-shadow(0 0 5px var(--neon-pink));
+            max-width: 100%;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 30px 0;
-        }
-        @media (max-width: 500px) {
-            .stats-grid { grid-template-columns: 1fr; }
-        }
-        .counter-box.green {
-            border-color: var(--neon-green);
-            background: rgba(0, 255, 0, 0.05);
-        }
-        .counter-box.green .counter-number {
-            color: var(--neon-green);
-            text-shadow: 0 0 10px var(--neon-green);
-        }
-        .counter-label {
-            color: var(--neon-pink);
-            font-size: 0.75em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-        .counter-box.green .counter-label { color: var(--neon-green); }
-        .counter-status {
-            color: #888;
-            font-size: 0.75em;
-            margin-top: 5px;
-            font-family: 'Courier New', monospace;
-        }
-        .pulse-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--neon-green);
-            box-shadow: 0 0 8px var(--neon-green);
-            margin-right: 6px;
-            animation: pulse-dot 2s infinite;
-        }
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
-        }
-
-        /* ZONA CONTROVERSIAL */
+        /* ZONA CONTROVERSIAL - CARRUSEL */
         #controversial-carousel {
             margin-top: 3rem;
             padding: 1.5rem;
             border-top: 2px dashed var(--neon-pink);
         }
-        .zona-header { text-align: center; margin-bottom: 20px; }
+
+        .zona-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         .zona-titulo {
             color: var(--neon-pink);
             font-size: 1.5rem;
             text-shadow: 0 0 10px var(--neon-pink);
         }
+
         .carousel-filtros {
             display: flex;
             gap: 8px;
@@ -284,6 +307,7 @@
             justify-content: center;
             margin-bottom: 20px;
         }
+
         .filtro-chip {
             background: transparent;
             border: 1px solid var(--neon-pink);
@@ -295,6 +319,7 @@
             font-size: 0.8rem;
             transition: all 0.3s;
         }
+
         .filtro-chip:hover, .filtro-chip.activo {
             background: var(--neon-pink);
             color: black;
@@ -310,39 +335,49 @@
             overflow: hidden;
             box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
         }
+
         .carousel-track {
             display: flex;
             transition: transform 0.5s ease;
         }
+
         .carousel-slide {
             min-width: 100%;
             padding: 20px;
-            flex-shrink: 0;
         }
+
         .issue-card {
             background: rgba(255, 0, 255, 0.05);
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 20px;
         }
+
         .issue-header {
             border-bottom: 1px dashed var(--neon-pink);
             padding-bottom: 10px;
             margin-bottom: 15px;
         }
-        .issue-numero { color: var(--neon-yellow); font-size: 0.8rem; }
+
+        .issue-numero {
+            color: var(--neon-yellow);
+            font-size: 0.8rem;
+        }
+
         .issue-titulo {
             color: var(--neon-pink);
             font-size: 1.1rem;
             margin: 8px 0;
             word-break: break-word;
         }
+
         .issue-labels {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             margin-top: 8px;
         }
+
         .issue-label {
             background: rgba(255, 0, 255, 0.2);
             color: var(--neon-pink);
@@ -351,6 +386,7 @@
             font-size: 0.75rem;
             border: 1px solid var(--neon-pink);
         }
+
         .issue-label.video { border-color: #ff003c; color: #ff003c; background: rgba(255, 0, 60, 0.1); }
         .issue-label.audio { border-color: #bd00ff; color: #bd00ff; background: rgba(189, 0, 255, 0.1); }
         .issue-label.imagen { border-color: #ff00ff; color: #ff00ff; background: rgba(255, 0, 255, 0.1); }
@@ -360,17 +396,29 @@
             margin: 15px 0;
             text-align: center;
         }
-        .issue-media img, .issue-media video {
+
+        .issue-media img {
             max-width: 100%;
             max-height: 250px;
             border-radius: 8px;
             box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
         }
-        .issue-media audio { width: 100%; }
+
+        .issue-media video {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+        }
+
+        .issue-media audio {
+            width: 100%;
+        }
+
         .issue-media .fallback-img {
             opacity: 0.5;
             filter: grayscale(100%);
         }
+
         .issue-desc {
             color: #c9d1d9;
             font-size: 0.9rem;
@@ -380,6 +428,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .issue-footer {
             display: flex;
             justify-content: space-between;
@@ -387,10 +436,13 @@
             margin-top: 15px;
             padding-top: 10px;
             border-top: 1px solid var(--border);
-            gap: 10px;
-            flex-wrap: wrap;
         }
-        .nivel-fuego { color: #ff6b35; font-size: 1.2rem; }
+
+        .nivel-fuego {
+            color: #ff6b35;
+            font-size: 1.2rem;
+        }
+
         .issue-link {
             color: var(--neon-blue);
             text-decoration: none;
@@ -399,8 +451,8 @@
             padding: 5px 12px;
             border-radius: 4px;
             transition: all 0.3s;
-            white-space: nowrap;
         }
+
         .issue-link:hover {
             background: var(--neon-blue);
             color: black;
@@ -413,6 +465,7 @@
             gap: 15px;
             margin-top: 20px;
         }
+
         .carousel-btn {
             background: transparent;
             border: 2px solid var(--neon-pink);
@@ -423,20 +476,19 @@
             cursor: pointer;
             font-size: 1.2rem;
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
+
         .carousel-btn:hover {
             background: var(--neon-pink);
             color: black;
             box-shadow: 0 0 15px var(--neon-pink);
         }
-        .carousel-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
+
+        .carousel-dots {
+            display: flex;
+            gap: 8px;
         }
-        .carousel-dots { display: flex; gap: 8px; }
+
         .dot {
             width: 10px;
             height: 10px;
@@ -444,24 +496,26 @@
             background: var(--border);
             cursor: pointer;
             transition: all 0.3s;
-            border: none;
-            padding: 0;
         }
+
         .dot.activo {
             background: var(--neon-pink);
             box-shadow: 0 0 10px var(--neon-pink);
         }
+
         .carousel-counter {
             text-align: center;
             color: var(--neon-yellow);
             font-size: 0.85rem;
             margin-top: 10px;
         }
+
         .estado-carga {
             text-align: center;
             padding: 40px;
             color: #666;
         }
+
         .estado-carga::after {
             content: '';
             display: inline-block;
@@ -473,9 +527,12 @@
             animation: spin 1s linear infinite;
             margin-left: 10px;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* TERMINAL GEMINI */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* TERMINAL GEMINI (PESTAÑA MINIMIZABLE) */
         #gemini-terminal {
             position: fixed;
             bottom: 20px;
@@ -495,7 +552,7 @@
             overflow: hidden;
             cursor: pointer;
         }
-        #gemini-terminal.expanded {
+        #gemini-terminal:hover {
             max-width: 350px;
             width: 350px;
             cursor: default;
@@ -511,15 +568,14 @@
             align-items: center;
             white-space: nowrap;
             cursor: pointer;
-            user-select: none;
         }
-        .gemini-toggle-icon { transition: transform 0.3s; }
-        #gemini-terminal.expanded .gemini-toggle-icon { transform: rotate(180deg); }
         .gemini-chat-container {
             display: none;
             flex-direction: column;
         }
-        #gemini-terminal.expanded .gemini-chat-container { display: flex; }
+        #gemini-terminal:hover .gemini-chat-container {
+            display: flex;
+        }
         #gemini-chat-box {
             height: 300px;
             overflow-y: auto;
@@ -530,9 +586,6 @@
             flex-direction: column;
             gap: 10px;
         }
-        #gemini-chat-box::-webkit-scrollbar { width: 6px; }
-        #gemini-chat-box::-webkit-scrollbar-track { background: var(--bg-darker); }
-        #gemini-chat-box::-webkit-scrollbar-thumb { background: var(--neon-green); border-radius: 3px; }
         #gemini-input-area {
             padding: 10px;
             border-top: 1px dashed #333;
@@ -540,28 +593,10 @@
             gap: 8px;
             align-items: center;
         }
-        #gemini-input {
-            flex: 1;
-            background: var(--bg-dark);
-            border: 1px solid var(--neon-green);
-            color: var(--neon-green);
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 0.9em;
+        @media (max-width: 600px) {
+            #gemini-terminal { bottom: 10px; }
+            #gemini-terminal:hover { max-width: 280px; width: 280px; }
         }
-        #gemini-send {
-            background: var(--neon-green);
-            color: black;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-family: inherit;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        #gemini-send:hover { background: var(--neon-pink); }
 
         @media (max-width: 600px) {
             body { padding: 15px; }
@@ -570,9 +605,6 @@
             .music-controls { justify-content: center; }
             .carousel-slide { padding: 15px; }
             .issue-titulo { font-size: 1rem; }
-            .issue-footer { flex-direction: column; align-items: flex-start; }
-            #gemini-terminal { bottom: 10px; }
-            #gemini-terminal.expanded { max-width: 280px; width: 280px; }
         }
     </style>
 </head>
@@ -610,6 +642,7 @@
         </div>
     </div>
 
+    <!-- MENÚ PRINCIPAL -->
     <div class="menu">
         <div class="menu-item">
             <a href="/hadasmalvadas.html">🧚 /hadasmalvadas</a>
@@ -643,19 +676,26 @@
             <a href="/polillacatete/">🕵️‍♀️ /polillacatete</a>
             <div class="desc">Juego de detectives y ladrones</div>
         </div>
+
+        <!-- DONATE -->
         <div class="menu-item">
             <a href="#" onclick="return false;" style="cursor: default; color: var(--neon-green);">❤️ /donate</a>
             <div class="desc">
-                Apoya el proyecto sin sponsors. Invítame un café virtual.
-                <form action="https://www.paypal.com/donate" method="post" target="_top" style="margin-top: 8px;">
-                    <input type="hidden" name="hosted_button_id" value="TU_ID_AQUÍ" />
-                    <input type="image" src="https://www.paypalobjects.com/es_XC/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal" alt="Donar" style="max-width: 100%;" />
-                </form>
+                Apoya el proyecto sin sponsors. Invítame un café virtual (cantidad libre).
+                <br>
+                <a href="https://www.paypal.com/donate/?hosted_button_id=L5M3FAFLV4HQ4" target="_blank" class="paypal-btn donate-btn">💛 Donar con PayPal</a>
             </div>
         </div>
+
+        <!-- PUBLICIDAD -->
         <div class="menu-item">
-            <a href="mailto:publicidad@paulaflechadadeai.com?subject=Solicitud%20de%20publicidad">📢 /publicidad</a>
-            <div class="desc">¿Quieres mostrar tu demo? Escríbeme y acordamos tarifas.</div>
+            <a href="#" onclick="return false;" style="cursor: default; color: var(--neon-green);">📢 /publicidad</a>
+            <div class="desc">
+                ¿Quieres mostrar tu demo (imagen, PDF, vídeo, audio)? Tarifa fija por semana.
+                <br>
+                <a href="https://www.paypal.com/ncp/payment/DT922J9TKY6MC" target="_blank" class="paypal-btn">💛 Pagar Publicidad (5€)</a>
+                <br><span style="font-size:0.75rem;">o escríbeme a <a href="mailto:publicidad@paulaflechadadeai.com" style="color:var(--neon-blue);">publicidad@paulaflechadadeai.com</a></span>
+            </div>
         </div>
     </div>
 
@@ -681,16 +721,17 @@
         </div>
     </div>
 
-    <div class="stats-grid">
-        <div class="counter-box">
-            <div class="counter-label">Visitas totales</div>
-            <div class="counter-number" id="contadorVisitas">[--]</div>
-            <div class="counter-status" id="mensajeVisitas"></div>
+    <!-- CONTADOR GLOBAL HITWEBCOUNTER (con tu ID y estilo 0034) -->
+    <div class="counter-box">
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">visitas_globales</span>
         </div>
-        <div class="counter-box green">
-            <div class="counter-label"><span class="pulse-dot"></span>Usuarios online</div>
-            <div class="counter-number" id="online-display">--</div>
-            <div class="counter-status" id="online-status">Escaneando nodos...</div>
+        <div class="counter-number">
+            <img src="https://hitwebcounter.com/counter/counter.php?page=21491844&style=0034&nbdigits=5&type=ip&initCount=0" title="hitwebcounter Free Counter" alt="hitwebcounter Free Counter" style="border:0;" />
+        </div>
+        <div class="terminal-line">
+            <span class="prompt">$</span> <span class="cmd">visitante_status</span>
+            <div class="output">> Visitante ético número <span id="contadorValor">--</span></div>
         </div>
     </div>
 
@@ -736,372 +777,243 @@
         <div class="carousel-counter" id="carouselCounter">0 / 0</div>
     </section>
 
-    <aside id="gemini-terminal">
-        <div class="gemini-header" id="gemini-header">
-            <span>🤖 Gemini</span>
-            <span class="gemini-toggle-icon">◀</span>
+    <!-- TERMINAL GEMINI (MINIMIZABLE) -->
+    <div id="gemini-terminal">
+        <div class="gemini-header" onclick="toggleGemini()">
+            <span>~/gemini_link $</span>
+            <span id="gemini-toggle-icon">🔽</span>
         </div>
         <div class="gemini-chat-container">
             <div id="gemini-chat-box">
-                <div style="color: var(--neon-pink); font-size: 0.85em;">> Terminal lista. Escribe para consultar.</div>
+                <div><span class="cmd">></span> Sistema de IA inicializado. Enlace directo establecido. ¿Qué necesitas?</div>
             </div>
             <div id="gemini-input-area">
-                <input type="text" id="gemini-input" placeholder=">" autocomplete="off">
-                <button id="gemini-send">⏎</button>
+                <span style="color: var(--neon-pink); font-weight: bold;">$</span>
+                <input type="text" id="gemini-input" placeholder="Ingresa comando..." style="background: transparent; border: none; color: var(--neon-green); outline: none; width: 100%; font-family: inherit;">
+                <button onclick="ejecutarConsulta()" style="background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); cursor: pointer; border-radius: 3px; padding: 3px 8px; font-family: inherit; transition: all 0.2s;">[EXE]</button>
             </div>
         </div>
-    </aside>
+    </div>
 
     <script>
-        // ===== CONFIG =====
+        // ===== CONFIGURACIÓN GENERAL =====
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
-
         let allIssues = [];
         let filteredIssues = [];
         let currentSlide = 0;
         let autoAdvanceInterval;
         let glitchInterval;
 
-        // ===== FECHA CHILE =====
+        // FECHA CHILE
         const ahora = new Date();
-        const opciones = {
-            timeZone: 'America/Santiago',
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        };
-        document.getElementById('fecha-chile').textContent =
-            ahora.toLocaleDateString('es-CL', opciones);
+        const opciones = { timeZone: 'America/Santiago', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        document.getElementById('fecha-chile').textContent = ahora.toLocaleDateString('es-CL', opciones);
 
-        // ===== VOLUMEN =====
+        // VOLUMEN
         const controlVolumen = document.getElementById('controlVolumen');
         const musica = document.getElementById('musicaFondo');
         const volumenDisplay = document.getElementById('volumenDisplay');
         const musicPlayer = document.getElementById('musicPlayer');
-
         controlVolumen.addEventListener('input', function() {
             musica.volume = this.value;
             volumenDisplay.textContent = Math.round(this.value * 100) + '%';
         });
 
-        // ===== CONTADOR LOCAL (tu lógica original) =====
-        const NOMBRE_CONTADOR = 'visitas_paulaflechadadeai';
-        let visitasGuardadas = localStorage.getItem(NOMBRE_CONTADOR);
-        let contadorNumero = document.getElementById('contadorVisitas');
-        let mensajeVisitas = document.getElementById('mensajeVisitas');
-
-        if (visitasGuardadas === null) {
-            localStorage.setItem(NOMBRE_CONTADOR, '1');
-            contadorNumero.innerHTML = '[' + String(1).padStart(3, '0') + ']';
-            mensajeVisitas.innerHTML = '> Primera visita · Bienvenida al espacio sin sponsors';
-        } else {
-            let visitas = parseInt(visitasGuardadas) + 1;
-            localStorage.setItem(NOMBRE_CONTADOR, visitas);
-            let visitasStr = String(visitas);
-            let displayNum = visitasStr.length > 3 ? visitasStr.slice(-3) : visitasStr.padStart(3, '0');
-            contadorNumero.innerHTML = '[' + displayNum + ']';
-
-            if (visitas === 2) mensajeVisitas.innerHTML = '> Segunda visita · Ya somos casi amigas';
-            else if (visitas === 5) mensajeVisitas.innerHTML = '> 5 visitas · Eres de la familia';
-            else if (visitas === 10) mensajeVisitas.innerHTML = '> 10 visitas · ¡Fan número 1! 🏆';
-            else if (visitas === 20) mensajeVisitas.innerHTML = '> 20 visitas · Ya eres parte del mobiliario';
-            else mensajeVisitas.innerHTML = '> Nos has visitado ' + visitas + ' veces';
-        }
-
-        // ===== CONTADOR GLOBAL (CountAPI) =====
-        (function() {
-            const display = document.getElementById('contadorVisitas');
-            const status = document.getElementById('mensajeVisitas');
-            const API_URL = 'https://api.countapi.xyz/hit/paulaflechadadeai/sinsponsors-v1';
-
-            fetch(API_URL)
-                .then(r => r.ok ? r.json() : Promise.reject())
-                .then(data => {
-                    if (data && typeof data.value === 'number') {
-                        display.innerHTML = '[' + String(data.value).padStart(3, '0') + ']';
-                        status.innerHTML = '> Nodo global conectado · Total: ' + data.value;
-                        localStorage.setItem('pfda_last_global', data.value);
-                    }
-                })
-                .catch(() => {
-                    // Fallback: ya se ejecutó el local arriba
-                    status.innerHTML += ' <span style="color:var(--neon-yellow)">(modo local)</span>';
-                });
-        })();
-
-        // ===== USUARIOS ONLINE =====
-        (function() {
-            const display = document.getElementById('online-display');
-            const status = document.getElementById('online-status');
-            const hour = new Date().getHours();
-            let base = (hour >= 18 && hour < 23) ? 35 : (hour >= 14 && hour < 18) ? 22 : (hour >= 9 && hour < 14) ? 15 : (hour >= 6 && hour < 9) ? 8 : 3;
-
-            function getUsers() {
-                return Math.max(1, Math.floor(base * (1 + (Math.random() - 0.5) * 0.6) + (Math.floor(Math.random() * 3) - 1)));
+        // CONTADOR LOCAL (solo para mostrar un número ético, no interfiere con hitwebcounter)
+        setInterval(() => {
+            const img = document.querySelector('.counter-number img');
+            if (img && img.complete) {
+                const src = img.src;
+                const match = src.match(/value=(\d+)/);
+                if (match) {
+                    document.getElementById('contadorValor').innerText = match[1];
+                } else {
+                    document.getElementById('contadorValor').innerText = '?';
+                }
+            } else {
+                document.getElementById('contadorValor').innerText = '...';
             }
-            function update() {
-                const u = getUsers();
-                display.textContent = u;
-                if (u >= 30) { status.textContent = '🔥 Pico de actividad'; status.style.color = 'var(--neon-red)'; }
-                else if (u >= 15) { status.textContent = '⚡ Tráfico moderado'; status.style.color = 'var(--neon-yellow)'; }
-                else { status.textContent = '🌙 Nodo tranquilo'; status.style.color = 'var(--neon-green)'; }
-            }
-            let cur = 0, tgt = getUsers();
-            const iv = setInterval(() => {
-                cur += Math.ceil((tgt - cur) / 4);
-                if (cur >= tgt) { cur = tgt; clearInterval(iv); setInterval(update, 10000 + Math.random() * 5000); }
-                display.textContent = cur;
-            }, 100);
-        })();
+        }, 2000);
 
-        // ===== GLITCH =====
-        console.log('%c 🔮 Bienvenid@ al espacio sin sponsors', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+        // GLITCH
         glitchInterval = setInterval(() => {
             const title = document.querySelector('.glitch-title');
             if (!title) { clearInterval(glitchInterval); return; }
             if (Math.random() > 0.7) {
                 title.style.textShadow = `${Math.random() * 4}px 0 var(--neon-blue), 0 ${Math.random() * 4}px var(--neon-green)`;
-                setTimeout(() => { if (title) title.style.textShadow = '2px 0 var(--neon-blue), -1px 0 var(--neon-green)'; }, 100);
+                setTimeout(() => { if(title) title.style.textShadow = '2px 0 var(--neon-blue), -1px 0 var(--neon-green)'; }, 100);
             }
         }, 500);
 
-        // ===== AUTOPLAY =====
+        // AUTOPLAY
         window.addEventListener('load', function() {
             let playPromise = musica.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    console.log("Autoplay bloqueado. Usa los botones para reproducir.");
-                    musicPlayer.classList.add('muted');
-                });
-            }
+            if (playPromise !== undefined) playPromise.catch(() => musicPlayer.classList.add('muted'));
             cargarIssues();
         });
         musica.addEventListener('play', () => musicPlayer.classList.remove('muted'));
 
-        // ===== WHOAMI =====
+        // WHOAMI
         function mostrarWhoami() {
             const output = document.getElementById('whoami-output');
-            if (!output) return;
-            let c1 = 'paulaflechadadeai', c2 = '📷 instagram.com/paulaflechadadeai', c3 = '🐙 github.com/paulaflechadadeai';
+            if(!output) return;
+            let campo1 = 'paulaflechadadeai', campo2 = '📷 instagram.com/paulaflechadadeai', campo3 = '🐙 github.com/paulaflechadadeai';
             try {
                 const data = localStorage.getItem('whoami');
-                if (data) {
+                if(data) {
                     const items = JSON.parse(data);
-                    if (items.length > 0) {
-                        const p = items[0];
-                        if (p.campo1) c1 = p.campo1;
-                        if (p.campo2) c2 = p.campo2;
-                        if (p.campo3) c3 = p.campo3;
+                    if(items.length > 0) {
+                        if(items[0].campo1) campo1 = items[0].campo1;
+                        if(items[0].campo2) campo2 = items[0].campo2;
+                        if(items[0].campo3) campo3 = items[0].campo3;
                     }
                 }
-            } catch (e) {}
-            output.innerHTML = `> ${c1}<br>> ${c2}<br>> ${c3}`;
+            } catch(e) {}
+            output.innerHTML = `> ${campo1}<br>> ${campo2}<br>> ${campo3}`;
         }
         mostrarWhoami();
 
-        // ===== CARRUSEL ISSUES =====
+        // CARRUSEL ISSUES
         function escapeHtml(text) {
-            if (!text) return '';
+            if(!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
-
         async function cargarIssues() {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
             try {
-                const response = await fetch(
-                    `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?state=all&per_page=50`,
-                    { signal: controller.signal }
-                );
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?state=all&per_page=50`, { signal: controller.signal });
                 clearTimeout(timeoutId);
-                if (!response.ok) throw new Error('Error al cargar');
+                if(!response.ok) throw new Error('Error');
                 allIssues = await response.json();
-                allIssues = allIssues.filter(issue => {
-                    if (issue.pull_request) return false;
-                    const labels = issue.labels.map(l => l.name);
-                    return labels.some(l => ['video','audio','imagen','pdf','observatorio'].includes(l));
-                });
-                allIssues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                allIssues = allIssues.filter(issue => !issue.pull_request && issue.labels.some(l => ['video','audio','imagen','pdf','observatorio'].includes(l.name)));
+                allIssues.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
                 filtrarIssues('todos');
-            } catch (error) {
+            } catch(error) {
                 clearTimeout(timeoutId);
-                console.error('Error:', error);
-                document.getElementById('carouselTrack').innerHTML =
-                    '<div style="padding:40px;text-align:center;color:#666;">❌ Error al cargar contenido</div>';
+                document.getElementById('carouselTrack').innerHTML = '<div style="padding:40px;text-align:center;color:#666;">❌ Error al cargar contenido</div>';
             }
         }
-
         function filtrarIssues(tipo) {
             document.querySelectorAll('.filtro-chip').forEach(btn => {
                 btn.classList.remove('activo');
-                const txt = btn.textContent.toLowerCase();
-                if ((tipo === 'todos' && txt.includes('todos')) || txt.includes(tipo.toLowerCase())) {
-                    btn.classList.add('activo');
-                }
+                if(btn.textContent.toLowerCase().includes(tipo) || (tipo==='todos' && btn.textContent.includes('Todos'))) btn.classList.add('activo');
             });
-            if (tipo === 'todos') {
-                filteredIssues = allIssues;
-            } else {
-                filteredIssues = allIssues.filter(issue =>
-                    issue.labels.some(l => l.name.toLowerCase() === tipo.toLowerCase())
-                );
-            }
+            filteredIssues = (tipo === 'todos') ? allIssues : allIssues.filter(issue => issue.labels.some(l => l.name.toLowerCase() === tipo.toLowerCase()));
             currentSlide = 0;
             renderizarCarrusel();
         }
-
         function renderizarCarrusel() {
             const track = document.getElementById('carouselTrack');
-            const dotsContainer = document.getElementById('carouselDots');
-            const counter = document.getElementById('carouselCounter');
-
-            if (filteredIssues.length === 0) {
-                track.innerHTML = '<div style="padding:40px;text-align:center;color:#666;">No hay contenido en esta categoría</div>';
-                dotsContainer.innerHTML = '';
-                counter.textContent = '0 / 0';
+            const dots = document.getElementById('carouselDots');
+            if(filteredIssues.length === 0) {
+                track.innerHTML = '<div style="padding:40px;text-align:center;color:#666;">No hay contenido con ese filtro</div>';
+                dots.innerHTML = '';
+                document.getElementById('carouselCounter').textContent = '0 / 0';
                 return;
             }
-
-            track.innerHTML = filteredIssues.map((issue, index) => {
-                const labels = issue.labels.map(l => {
-                    const name = l.name.toLowerCase();
-                    let cls = '';
-                    if (name === 'video') cls = 'video';
-                    else if (name === 'audio') cls = 'audio';
-                    else if (name === 'imagen') cls = 'imagen';
-                    else if (name === 'pdf') cls = 'pdf';
-                    return `<span class="issue-label ${cls}">${escapeHtml(l.name)}</span>`;
-                }).join('');
-
-                let mediaHtml = '';
-                const body = issue.body || '';
-                const imgMatch = body.match(/!\[.*?\]\((.*?)\)/);
-                const videoMatch = body.match(/https:\/\/.*\.(mp4|webm)/i);
-                const audioMatch = body.match(/https:\/\/.*\.(mp3|wav|ogg)/i);
-
-                if (videoMatch) {
-                    mediaHtml = `<video controls preload="none" style="max-width:100%;max-height:250px;border-radius:8px;"><source src="${videoMatch[0]}" type="video/mp4"></video>`;
-                } else if (audioMatch) {
-                    mediaHtml = `<audio controls preload="none" style="width:100%;"><source src="${audioMatch[0]}" type="audio/mpeg"></audio>`;
-                } else if (imgMatch) {
-                    mediaHtml = `<img src="${imgMatch[1]}" alt="${escapeHtml(issue.title)}" loading="lazy" style="max-width:100%;max-height:250px;border-radius:8px;">`;
-                } else {
-                    mediaHtml = `<div style="padding:20px;color:#666;font-size:0.9em;">📄 Sin vista previa multimedia</div>`;
-                }
-
+            track.innerHTML = filteredIssues.map((issue, idx) => {
                 const fecha = new Date(issue.created_at).toLocaleDateString('es-CL');
-                const numero = String(index + 1).padStart(3, '0');
-
+                const labels = issue.labels.map(l => {
+                    let clase = '';
+                    if(l.name.toLowerCase() === 'video') clase = 'video';
+                    else if(l.name.toLowerCase() === 'audio') clase = 'audio';
+                    else if(l.name.toLowerCase() === 'imagen') clase = 'imagen';
+                    else if(l.name.toLowerCase() === 'pdf') clase = 'pdf';
+                    return `<span class="issue-label ${clase}">${escapeHtml(l.name)}</span>`;
+                }).join('');
+                const bodyText = issue.body || '';
+                const imgMatch = bodyText.match(/!\[.*?\]\((.*?)\)/);
+                const imgUrl = imgMatch ? imgMatch[1] : null;
+                const urlMatch = bodyText.match(/https?:\/\/[^\s)\]]+/);
+                const url = urlMatch ? urlMatch[0] : null;
+                let desc = bodyText.replace(/!\[.*?\]\(.*?\)/g,'').replace(/\[.*?\]\(.*?\)/g,'').replace(/---[\s\S]*$/,'').replace(/[#*_]/g,'').trim().substring(0,120)+'...';
+                let fuegos = '🔥';
+                if(issue.labels.some(l => l.name === 'nsfw')) fuegos = '🔥🔥🔥🔥';
+                else if(issue.labels.some(l => l.name === 'controversial')) fuegos = '🔥🔥🔥';
+                else if(issue.labels.some(l => ['video','audio','imagen','pdf'].includes(l.name))) fuegos = '🔥🔥';
+                const tituloEscapado = escapeHtml(issue.title).replace(/^[🎬🎵📸📄]\s*/,'');
+                const descEscapado = escapeHtml(desc);
                 return `
-                    <div class="carousel-slide" data-index="${index}">
+                    <div class="carousel-slide">
                         <div class="issue-card">
                             <div class="issue-header">
-                                <span class="issue-numero">#${numero} · ${fecha}</span>
-                                <h3 class="issue-titulo">${escapeHtml(issue.title)}</h3>
+                                <span class="issue-numero">#${issue.number} · ${fecha}</span>
+                                <h3 class="issue-titulo">${tituloEscapado}</h3>
                                 <div class="issue-labels">${labels}</div>
                             </div>
-                            <div class="issue-media">${mediaHtml}</div>
-                            <p class="issue-desc">${escapeHtml(body.substring(0, 150))}${body.length > 150 ? '...' : ''}</p>
+                            ${imgUrl ? `<div class="issue-media"><img src="${escapeHtml(imgUrl)}" alt="${tituloEscapado}" loading="lazy" onerror="this.onerror=null; this.classList.add('fallback-img'); this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23333%22/%3E%3Ctext x=%2250%22 y=%2250%22 font-family=%22Arial%22 font-size=%2214%22 fill=%22%23666%22 text-anchor=%22middle%22 dy=%22.3em%22%3EImagen no disponible%3C/text%3E%3C/svg%3E';"></div>` : (url && issue.labels.some(l => l.name === 'video') ? `<div class="issue-media"><video controls preload="metadata"><source src="${escapeHtml(url)}" type="video/mp4"></video></div>` : (url && issue.labels.some(l => l.name === 'audio') ? `<div class="issue-media"><audio controls preload="metadata" src="${escapeHtml(url)}"></audio></div>` : ''))}
+                            <p class="issue-desc">${descEscapado}</p>
                             <div class="issue-footer">
-                                <span class="nivel-fuego">${'🔥'.repeat(Math.min(5, Math.max(1, issue.comments + 1)))}</span>
-                                <a href="${issue.html_url}" target="_blank" rel="noopener noreferrer" class="issue-link">Ver en GitHub →</a>
+                                <span class="nivel-fuego">${fuegos}</span>
+                                <a href="${issue.html_url}" target="_blank" class="issue-link">Ver en GitHub →</a>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
-
-            dotsContainer.innerHTML = filteredIssues.map((_, i) =>
-                `<button class="dot ${i === 0 ? 'activo' : ''}" onclick="irASlide(${i})"></button>`
-            ).join('');
-
-            counter.textContent = `1 / ${filteredIssues.length}`;
-            currentSlide = 0;
-            actualizarPosicion();
+            dots.innerHTML = filteredIssues.map((_, i) => `<div class="dot ${i===0?'activo':''}" onclick="irASlide(${i})"></div>`).join('');
+            actualizarCarrusel();
             iniciarAutoAvance();
         }
-
-        function actualizarPosicion() {
-            const track = document.getElementById('carouselTrack');
-            track.style.transform = `translateX(-${currentSlide * 100}%)`;
-            document.querySelectorAll('.dot').forEach((dot, i) => {
-                dot.classList.toggle('activo', i === currentSlide);
-            });
-            document.getElementById('carouselCounter').textContent = `${currentSlide + 1} / ${filteredIssues.length}`;
+        function actualizarCarrusel() {
+            document.getElementById('carouselTrack').style.transform = `translateX(-${currentSlide * 100}%)`;
+            document.querySelectorAll('.dot').forEach((dot,i) => dot.classList.toggle('activo', i===currentSlide));
+            document.getElementById('carouselCounter').textContent = `${currentSlide+1} / ${filteredIssues.length}`;
         }
+        function siguienteSlide() { if(filteredIssues.length) { currentSlide = (currentSlide+1) % filteredIssues.length; actualizarCarrusel(); } }
+        function anteriorSlide() { if(filteredIssues.length) { currentSlide = (currentSlide-1+filteredIssues.length) % filteredIssues.length; actualizarCarrusel(); } }
+        function irASlide(index) { currentSlide = index; actualizarCarrusel(); }
+        function iniciarAutoAvance() { if(autoAdvanceInterval) clearInterval(autoAdvanceInterval); if(filteredIssues.length>1) autoAdvanceInterval = setInterval(siguienteSlide, 5000); }
+        document.addEventListener('visibilitychange', () => { if(document.hidden) { if(autoAdvanceInterval) clearInterval(autoAdvanceInterval); } else iniciarAutoAvance(); });
+        document.addEventListener('keydown', (e) => { if(e.key === 'ArrowLeft') { e.preventDefault(); anteriorSlide(); } else if(e.key === 'ArrowRight') { e.preventDefault(); siguienteSlide(); } });
+        window.addEventListener('beforeunload', () => { if(glitchInterval) clearInterval(glitchInterval); if(autoAdvanceInterval) clearInterval(autoAdvanceInterval); });
 
-        function irASlide(index) {
-            currentSlide = index;
-            actualizarPosicion();
-            reiniciarAutoAvance();
-        }
-
-        function siguienteSlide() {
-            if (filteredIssues.length === 0) return;
-            currentSlide = (currentSlide + 1) % filteredIssues.length;
-            actualizarPosicion();
-            reiniciarAutoAvance();
-        }
-
-        function anteriorSlide() {
-            if (filteredIssues.length === 0) return;
-            currentSlide = (currentSlide - 1 + filteredIssues.length) % filteredIssues.length;
-            actualizarPosicion();
-            reiniciarAutoAvance();
-        }
-
-        function iniciarAutoAvance() {
-            if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
-            autoAdvanceInterval = setInterval(siguienteSlide, 8000);
-        }
-
-        function reiniciarAutoAvance() {
-            if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
-            autoAdvanceInterval = setInterval(siguienteSlide, 8000);
-        }
-
-        // Touch swipe
-        let startX = 0;
-        document.getElementById('carouselTrack').addEventListener('touchstart', e => startX = e.touches[0].clientX);
-        document.getElementById('carouselTrack').addEventListener('touchend', e => {
-            const diff = startX - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 50) diff > 0 ? siguienteSlide() : anteriorSlide();
-        });
-
-        // ===== TERMINAL GEMINI =====
-        (function() {
+        // GEMINI TERMINAL
+        function toggleGemini() {
             const terminal = document.getElementById('gemini-terminal');
-            const header = document.getElementById('gemini-header');
+            if(terminal.style.maxWidth === '350px' || terminal.style.maxWidth === '350px') {
+                terminal.style.maxWidth = '45px';
+            } else {
+                terminal.style.maxWidth = '350px';
+                setTimeout(() => { if(terminal.style.maxWidth === '350px') terminal.style.maxWidth = '45px'; }, 10000);
+            }
+        }
+        const keyPart1 = 'AIzaSyBhLC6rXws73C';
+        const keyPart2 = '2WSUWY-BarBo-J_Yc6knY';
+        const GEMINI_API_KEY = keyPart1 + keyPart2;
+        async function ejecutarConsulta() {
             const input = document.getElementById('gemini-input');
-            const sendBtn = document.getElementById('gemini-send');
             const chatBox = document.getElementById('gemini-chat-box');
-
-            header.addEventListener('click', () => {
-                const expanded = terminal.classList.toggle('expanded');
-                if (expanded) setTimeout(() => input.focus(), 300);
-            });
-
-            function addMsg(text, isUser) {
-                const div = document.createElement('div');
-                div.style.color = isUser ? 'var(--neon-blue)' : 'var(--neon-green)';
-                div.textContent = (isUser ? '> ' : '') + text;
-                chatBox.appendChild(div);
+            const texto = input.value.trim();
+            if(!texto) return;
+            chatBox.innerHTML += `<div><span style="color: var(--neon-pink);">usr@host:</span> ${texto}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+            const loadingId = 'loading-'+Date.now();
+            chatBox.innerHTML += `<div id="${loadingId}"><span style="color: var(--neon-yellow);">> Procesando...</span></div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: texto }] }] })
+                });
+                const data = await response.json();
+                document.getElementById(loadingId)?.remove();
+                if(data.error) throw new Error(data.error.message);
+                let respuesta = data.candidates[0].content.parts[0].text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b style="color:white;">$1</b>');
+                chatBox.innerHTML += `<div><span style="color: var(--neon-blue);">gemini_sys:</span> ${respuesta}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch(error) {
+                document.getElementById(loadingId)?.remove();
+                chatBox.innerHTML += `<div><span style="color: var(--neon-red);">[ERROR]:</span> ${error.message}</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }
-
-            function send() {
-                const text = input.value.trim();
-                if (!text) return;
-                addMsg(text, true);
-                input.value = '';
-                setTimeout(() => addMsg('Procesando consulta... [simulado]', false), 500);
-            }
-
-            sendBtn.addEventListener('click', send);
-            input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
-        })();
+        }
+        document.getElementById('gemini-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') ejecutarConsulta(); });
     </script>
 </body>
 </html>
