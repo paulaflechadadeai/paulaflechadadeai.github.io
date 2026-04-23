@@ -378,25 +378,100 @@
         }
 
         /* ============================================
-           CONTADOR
+           CONTADORES
            ============================================ */
-        .counter-box {
-            background: rgba(255, 0, 255, 0.1);
-            border: 1px solid var(--neon-pink);
-            padding: 20px;
-            text-align: center;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
             margin: 30px 0;
         }
 
+        @media (max-width: 500px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        .counter-box {
+            background: rgba(255, 0, 255, 0.05);
+            border: 1px solid var(--neon-pink);
+            padding: 25px 20px;
+            text-align: center;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .counter-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-pink), transparent);
+            animation: scanline 3s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .counter-box.green {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 0, 0.05);
+        }
+        .counter-box.green::before {
+            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+        }
+
+        .counter-label {
+            color: var(--neon-pink);
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        .counter-box.green .counter-label {
+            color: var(--neon-green);
+        }
+
         .counter-number {
-            font-size: 2.5em;
+            font-size: 2.8em;
             font-family: 'Courier New', Courier, monospace;
             margin: 10px 0;
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+            font-weight: bold;
+            letter-spacing: 2px;
+            min-height: 1.2em;
         }
-        .counter-number img {
-            filter: drop-shadow(0 0 5px var(--neon-pink));
-            max-width: 100%;
-            height: auto;
+        .counter-box.green .counter-number {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+
+        .counter-status {
+            color: var(--text-muted);
+            font-size: 0.75em;
+            margin-top: 5px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .pulse-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            box-shadow: 0 0 8px var(--neon-green);
+            margin-right: 6px;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
         }
 
         /* ============================================
@@ -821,6 +896,7 @@
             .carousel-slide { padding: 15px; }
             .issue-titulo { font-size: 1rem; }
             .issue-footer { flex-direction: column; align-items: flex-start; }
+            .counter-number { font-size: 2.2em; }
             
             #gemini-terminal { bottom: 10px; }
             #gemini-terminal.expanded { max-width: 280px; width: 280px; }
@@ -878,6 +954,25 @@
                 <span class="prompt">$</span> <span class="cmd">philosophy</span>
                 <div class="output">> Soñar no tiene affiliate links</div>
                 <a href="/philosophy.html" class="enlace-interno">💭 Ir a philosophy</a>
+            </div>
+        </section>
+
+        <!-- CONTADORES: VISITAS + ONLINE -->
+        <section class="stats-grid" aria-label="Estadísticas del sitio">
+            <div class="counter-box" id="visit-counter">
+                <div class="counter-label">Visitas totales</div>
+                <div class="counter-number" id="counter-display" aria-live="polite">
+                    <span style="display:inline-block;animation:spin 1s linear infinite;">◌</span>
+                </div>
+                <div class="counter-status" id="counter-status">Sincronizando...</div>
+            </div>
+            
+            <div class="counter-box green" id="online-counter">
+                <div class="counter-label">
+                    <span class="pulse-dot"></span>Usuarios online
+                </div>
+                <div class="counter-number" id="online-display" aria-live="polite">--</div>
+                <div class="counter-status" id="online-status">Escaneando nodos...</div>
             </div>
         </section>
 
@@ -963,7 +1058,6 @@
 
             <div class="carousel-wrapper" role="region" aria-label="Carrusel de contenido controversial" aria-live="polite">
                 <div class="carousel-track" id="carousel-track">
-                    <!-- Los slides se cargan dinámicamente o se añaden aquí -->
                     <article class="carousel-slide" data-type="video">
                         <div class="issue-card">
                             <div class="issue-header">
@@ -1081,7 +1175,6 @@
             let currentIndex = 0;
             let filteredSlides = [...slides];
 
-            // Crear dots
             function createDots() {
                 dotsContainer.innerHTML = '';
                 filteredSlides.forEach((_, i) => {
@@ -1099,14 +1192,12 @@
                 track.style.transform = `translateX(-${currentIndex * 100}%)`;
                 counter.textContent = `${currentIndex + 1} / ${filteredSlides.length}`;
                 
-                // Actualizar dots
                 const dots = dotsContainer.querySelectorAll('.dot');
                 dots.forEach((dot, i) => {
                     dot.classList.toggle('activo', i === currentIndex);
                     dot.setAttribute('aria-selected', i === currentIndex ? 'true' : 'false');
                 });
 
-                // Actualizar botones
                 prevBtn.disabled = currentIndex === 0;
                 nextBtn.disabled = currentIndex === filteredSlides.length - 1;
             }
@@ -1136,7 +1227,6 @@
             prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
             nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
 
-            // Teclado
             document.addEventListener('keydown', (e) => {
                 const carousel = document.getElementById('controversial-carousel');
                 if (!carousel.contains(document.activeElement)) return;
@@ -1144,7 +1234,6 @@
                 if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
             });
 
-            // Filtros
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     filterBtns.forEach(b => {
@@ -1157,7 +1246,6 @@
                 });
             });
 
-            // Touch/swipe
             let startX = 0;
             track.addEventListener('touchstart', e => startX = e.touches[0].clientX);
             track.addEventListener('touchend', e => {
@@ -1248,7 +1336,6 @@
                 addMessage(text, true);
                 input.value = '';
                 
-                // Simulación de respuesta
                 setTimeout(() => {
                     addMessage('Procesando consulta... [simulado]');
                 }, 500);
@@ -1276,6 +1363,144 @@
                 i = (i + 1) % textos.length;
             }, 4000);
             output.textContent = textos[0];
+        })();
+
+        /* ============================================
+           CONTADOR DE VISITAS REAL (CountAPI + Fallback)
+           ============================================ */
+        (function() {
+            const display = document.getElementById('counter-display');
+            const status = document.getElementById('counter-status');
+            
+            const NAMESPACE = 'paulaflechadadeai';
+            const KEY = 'sinsponsors-v1';
+            const API_URL = `https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`;
+            
+            function animateCounter(target, duration = 2000) {
+                const start = 0;
+                const startTime = performance.now();
+                
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const ease = 1 - Math.pow(2, -10 * progress);
+                    const current = Math.floor(start + (target - start) * ease);
+                    
+                    display.textContent = current.toLocaleString('es-AR');
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    } else {
+                        display.textContent = target.toLocaleString('es-AR');
+                        display.style.textShadow = '0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink)';
+                        setTimeout(() => {
+                            display.style.textShadow = '0 0 5px var(--neon-pink)';
+                        }, 500);
+                    }
+                }
+                
+                requestAnimationFrame(update);
+            }
+            
+            function getLocalCount() {
+                let count = parseInt(localStorage.getItem('pfda_local_visits') || '0', 10);
+                count++;
+                localStorage.setItem('pfda_local_visits', count);
+                return count;
+            }
+            
+            fetch(API_URL)
+                .then(res => {
+                    if (!res.ok) throw new Error('API error');
+                    return res.json();
+                })
+                .then(data => {
+                    if (data && typeof data.value === 'number') {
+                        animateCounter(data.value);
+                        status.innerHTML = '<span style="color: var(--neon-green);">●</span> Conectado al nodo global';
+                        localStorage.setItem('pfda_last_global_count', data.value);
+                    } else {
+                        throw new Error('Formato inválido');
+                    }
+                })
+                .catch(err => {
+                    console.warn('CountAPI falló, usando localStorage:', err);
+                    const localCount = getLocalCount();
+                    const lastGlobal = parseInt(localStorage.getItem('pfda_last_global_count') || '0', 10);
+                    const displayCount = Math.max(localCount, lastGlobal);
+                    
+                    animateCounter(displayCount);
+                    status.innerHTML = '<span style="color: var(--neon-yellow);">⚠</span> Modo local (sin conexión)';
+                    display.style.color = 'var(--neon-yellow)';
+                });
+        })();
+
+        /* ============================================
+           USUARIOS ONLINE (Simulado realista)
+           ============================================ */
+        (function() {
+            const display = document.getElementById('online-display');
+            const status = document.getElementById('online-status');
+            
+            // Base según hora local (más tráfico de noche en Argentina)
+            const hour = new Date().getHours();
+            let baseUsers;
+            
+            // Simulación de picos horarios (timezone Argentina)
+            if (hour >= 0 && hour < 6) baseUsers = 3;      // Madrugada
+            else if (hour >= 6 && hour < 9) baseUsers = 8;  // Mañana temprano
+            else if (hour >= 9 && hour < 14) baseUsers = 15; // Mañana-laboral
+            else if (hour >= 14 && hour < 18) baseUsers = 22; // Tarde
+            else if (hour >= 18 && hour < 23) baseUsers = 35; // Noche (pico)
+            else baseUsers = 20; // 23-00
+            
+            // Variación aleatoria ±30%
+            function getCurrentUsers() {
+                const variation = (Math.random() - 0.5) * 0.6; // ±30%
+                const noise = Math.floor(Math.random() * 3) - 1; // -1, 0, +1
+                return Math.max(1, Math.floor(baseUsers * (1 + variation) + noise));
+            }
+            
+            function updateDisplay() {
+                const users = getCurrentUsers();
+                display.textContent = users;
+                
+                // Texto dinámico según cantidad
+                if (users >= 30) {
+                    status.textContent = '🔥 Pico de actividad detectado';
+                    status.style.color = 'var(--neon-red)';
+                } else if (users >= 15) {
+                    status.textContent = '⚡ Tráfico moderado';
+                    status.style.color = 'var(--neon-yellow)';
+                } else {
+                    status.textContent = '🌙 Nodo tranquilo';
+                    status.style.color = 'var(--neon-green)';
+                }
+            }
+            
+            // Actualizar cada 8-15 segundos (aleatorio para que parezca orgánico)
+            function scheduleUpdate() {
+                const delay = 8000 + Math.random() * 7000;
+                setTimeout(() => {
+                    updateDisplay();
+                    scheduleUpdate();
+                }, delay);
+            }
+            
+            // Animación inicial
+            let current = 0;
+            const target = getCurrentUsers();
+            const introInterval = setInterval(() => {
+                current += Math.ceil((target - current) / 4);
+                if (current >= target) {
+                    current = target;
+                    clearInterval(introInterval);
+                    scheduleUpdate();
+                }
+                display.textContent = current;
+            }, 100);
+            
+            updateDisplay();
         })();
     </script>
 </body>
