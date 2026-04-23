@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>paulaflechadadeai · Sin Sponsors</title>
     <style>
-        /* TODO TU CSS ACTUAL (EXACTAMENTE IGUAL QUE ANTES) */
         :root {
             --neon-green: #00ff00;
             --neon-pink: #ff00ff;
@@ -17,6 +16,7 @@
             --border: #30363d;
             --text-muted: #888;
         }
+
         body {
             font-family: 'Courier New', monospace;
             max-width: 700px;
@@ -60,17 +60,9 @@
             padding-bottom: 8px;
             border-bottom: 1px dashed #333;
         }
-        .terminal-line:last-child {
-            border-bottom: none;
-        }
-        .prompt {
-            color: var(--neon-pink);
-            font-weight: bold;
-        }
-        .cmd {
-            color: var(--neon-blue);
-            font-weight: bold;
-        }
+        .terminal-line:last-child { border-bottom: none; }
+        .prompt { color: var(--neon-pink); font-weight: bold; }
+        .cmd { color: var(--neon-blue); font-weight: bold; }
         .output {
             color: var(--neon-green);
             margin-left: 1.5rem;
@@ -90,19 +82,14 @@
             margin-top: 2px;
             transition: all 0.2s;
         }
-        .enlace-interno:hover {
-            background: var(--neon-pink);
-            color: black;
-        }
+        .enlace-interno:hover { background: var(--neon-pink); color: black; }
         .menu {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin: 40px 0;
         }
-        @media (min-width: 601px) and (max-width: 900px) {
-            .menu { grid-template-columns: repeat(2, 1fr); }
-        }
+        @media (min-width: 601px) and (max-width: 900px) { .menu { grid-template-columns: repeat(2, 1fr); } }
         .menu-item {
             background: rgba(0, 255, 0, 0.05);
             border: 1px solid rgba(0, 255, 0, 0.3);
@@ -115,17 +102,8 @@
             border-color: var(--neon-pink);
             transform: translateY(-3px);
         }
-        .menu-item a {
-            color: var(--neon-blue);
-            text-decoration: none;
-            font-weight: bold;
-            display: block;
-        }
-        .menu-item .desc {
-            font-size: 0.9em;
-            color: #88ff88;
-            margin-top: 8px;
-        }
+        .menu-item a { color: var(--neon-blue); text-decoration: none; font-weight: bold; display: block; }
+        .menu-item .desc { font-size: 0.9em; color: #88ff88; margin-top: 8px; }
         .paypal-btn {
             display: inline-block;
             background: #FFD140;
@@ -141,18 +119,9 @@
             cursor: pointer;
             font-size: 0.85rem;
         }
-        .paypal-btn:hover {
-            background: #ffaa00;
-            transform: translateY(-2px);
-            box-shadow: 0 0 10px #FFD140;
-        }
-        .donate-btn {
-            background: var(--neon-pink);
-            color: black;
-        }
-        .donate-btn:hover {
-            box-shadow: 0 0 10px var(--neon-pink);
-        }
+        .paypal-btn:hover { background: #ffaa00; transform: translateY(-2px); box-shadow: 0 0 10px #FFD140; }
+        .donate-btn { background: var(--neon-pink); color: black; }
+        .donate-btn:hover { box-shadow: 0 0 10px var(--neon-pink); }
         .manifesto {
             background: rgba(0, 170, 255, 0.05);
             border-left: 4px solid var(--neon-blue);
@@ -209,20 +178,13 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        .music-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 10px currentColor;
-        }
+        .music-btn:hover { transform: translateY(-2px); box-shadow: 0 0 10px currentColor; }
         .btn-play { color: var(--neon-green); border-color: var(--neon-green); }
         .btn-pause { color: var(--neon-pink); border-color: var(--neon-pink); }
         .btn-replay { color: var(--neon-blue); border-color: var(--neon-blue); }
-        .volume-slider {
-            width: 100px;
-            background: black;
-            accent-color: var(--neon-pink);
-            cursor: pointer;
-        }
-        /* CONTADOR */
+        .volume-slider { width: 100px; background: black; accent-color: var(--neon-pink); cursor: pointer; }
+
+        /* CONTADOR GLOBAL IMAGEN */
         .counter-box {
             background: rgba(255, 0, 255, 0.05);
             border: 1px solid var(--neon-pink);
@@ -243,216 +205,70 @@
             background: linear-gradient(90deg, transparent, var(--neon-pink), transparent);
             animation: scanline 3s linear infinite;
         }
-        @keyframes scanline {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
+        @keyframes scanline { 0% { left: -100%; } 100% { left: 100%; } }
         .counter-number {
-            font-size: 3em;
-            font-family: 'Courier New', Courier, monospace;
-            margin: 15px 0;
-            color: var(--neon-pink);
-            text-shadow: 0 0 5px var(--neon-pink);
-            font-weight: bold;
-            letter-spacing: 2px;
-            min-height: 1.2em;
+            font-size: 2em;
+            background: #000000aa;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 12px;
+            margin: 10px 0;
         }
-        #counter-status {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.75em;
-            color: var(--text-muted);
+        .counter-number img {
+            filter: drop-shadow(0 0 5px var(--neon-pink));
+            max-width: 100%;
+            background: white;
+            padding: 5px;
+            border-radius: 8px;
         }
-        /* CARRUSEL */
+        #counter-status { font-family: 'Courier New', monospace; font-size: 0.75em; color: var(--text-muted); }
+
+        /* CARRUSEL (igual que antes) */
         #controversial-carousel {
             margin-top: 3rem;
             padding: 1.5rem;
             border-top: 2px dashed var(--neon-pink);
         }
-        .zona-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .zona-titulo {
-            color: var(--neon-pink);
-            font-size: 1.5rem;
-            text-shadow: 0 0 10px var(--neon-pink);
-        }
-        .carousel-filtros {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
+        .zona-header { text-align: center; margin-bottom: 20px; }
+        .zona-titulo { color: var(--neon-pink); font-size: 1.5rem; text-shadow: 0 0 10px var(--neon-pink); }
+        .carousel-filtros { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
         .filtro-chip {
-            background: transparent;
-            border: 1px solid var(--neon-pink);
-            color: var(--neon-pink);
-            padding: 5px 12px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.8rem;
-            transition: all 0.3s;
+            background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink); padding: 5px 12px; border-radius: 15px; cursor: pointer; font-family: inherit; font-size: 0.8rem; transition: all 0.3s;
         }
-        .filtro-chip:hover, .filtro-chip.activo {
-            background: var(--neon-pink);
-            color: black;
-            box-shadow: 0 0 10px var(--neon-pink);
-        }
-        .carousel-wrapper {
-            max-width: 600px;
-            margin: 0 auto;
-            border: 2px solid var(--neon-pink);
-            border-radius: 15px;
-            background: var(--bg-darker);
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
-        }
-        .carousel-track {
-            display: flex;
-            transition: transform 0.5s ease;
-        }
-        .carousel-slide {
-            min-width: 100%;
-            padding: 20px;
-        }
-        .issue-card {
-            background: rgba(255, 0, 255, 0.05);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 20px;
-        }
-        .issue-header {
-            border-bottom: 1px dashed var(--neon-pink);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        .issue-numero {
-            color: var(--neon-yellow);
-            font-size: 0.8rem;
-        }
-        .issue-titulo {
-            color: var(--neon-pink);
-            font-size: 1.1rem;
-            margin: 8px 0;
-        }
-        .issue-labels {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 8px;
-        }
-        .issue-label {
-            background: rgba(255, 0, 255, 0.2);
-            color: var(--neon-pink);
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            border: 1px solid var(--neon-pink);
-        }
-        .issue-label.video { border-color: #ff003c; color: #ff003c; background: rgba(255,0,60,0.1); }
-        .issue-label.audio { border-color: #bd00ff; color: #bd00ff; background: rgba(189,0,255,0.1); }
-        .issue-label.imagen { border-color: #ff00ff; color: #ff00ff; background: rgba(255,0,255,0.1); }
-        .issue-label.pdf { border-color: #ff6b35; color: #ff6b35; background: rgba(255,107,53,0.1); }
-        .issue-media {
-            margin: 15px 0;
-            text-align: center;
-        }
-        .issue-media img, .issue-media video { max-width: 100%; max-height: 250px; border-radius: 8px; box-shadow: 0 0 15px rgba(255,0,255,0.3); }
+        .filtro-chip:hover, .filtro-chip.activo { background: var(--neon-pink); color: black; box-shadow: 0 0 10px var(--neon-pink); }
+        .carousel-wrapper { max-width: 600px; margin: 0 auto; border: 2px solid var(--neon-pink); border-radius: 15px; background: var(--bg-darker); overflow: hidden; }
+        .carousel-track { display: flex; transition: transform 0.5s ease; }
+        .carousel-slide { min-width: 100%; padding: 20px; }
+        .issue-card { background: rgba(255, 0, 255, 0.05); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+        .issue-header { border-bottom: 1px dashed var(--neon-pink); padding-bottom: 10px; margin-bottom: 15px; }
+        .issue-numero { color: var(--neon-yellow); font-size: 0.8rem; }
+        .issue-titulo { color: var(--neon-pink); font-size: 1.1rem; margin: 8px 0; }
+        .issue-labels { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+        .issue-label { background: rgba(255, 0, 255, 0.2); color: var(--neon-pink); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; border: 1px solid var(--neon-pink); }
+        .issue-label.video { border-color: #ff003c; background: rgba(255,0,60,0.1); }
+        .issue-label.audio { border-color: #bd00ff; background: rgba(189,0,255,0.1); }
+        .issue-label.imagen { border-color: #ff00ff; background: rgba(255,0,255,0.1); }
+        .issue-label.pdf { border-color: #ff6b35; background: rgba(255,107,53,0.1); }
+        .issue-media { margin: 15px 0; text-align: center; }
+        .issue-media img, .issue-media video { max-width: 100%; max-height: 250px; border-radius: 8px; }
         .issue-media audio { width: 100%; }
-        .issue-desc {
-            color: #c9d1d9;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin: 10px 0;
-            max-height: 80px;
-            overflow: hidden;
-        }
-        .issue-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            padding-top: 10px;
-            border-top: 1px solid var(--border);
-        }
+        .issue-desc { color: #c9d1d9; font-size: 0.9rem; line-height: 1.6; max-height: 80px; overflow: hidden; }
+        .issue-footer { display: flex; justify-content: space-between; margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border); }
         .nivel-fuego { color: #ff6b35; font-size: 1.2rem; }
-        .issue-link {
-            color: var(--neon-blue);
-            text-decoration: none;
-            font-size: 0.85rem;
-            border: 1px solid var(--neon-blue);
-            padding: 5px 12px;
-            border-radius: 4px;
-        }
-        .issue-link:hover {
-            background: var(--neon-blue);
-            color: black;
-        }
-        .carousel-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .carousel-btn {
-            background: transparent;
-            border: 2px solid var(--neon-pink);
-            color: var(--neon-pink);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-        .carousel-btn:hover {
-            background: var(--neon-pink);
-            color: black;
-            box-shadow: 0 0 15px var(--neon-pink);
-        }
-        .carousel-dots {
-            display: flex;
-            gap: 8px;
-        }
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--border);
-            cursor: pointer;
-        }
-        .dot.activo {
-            background: var(--neon-pink);
-            box-shadow: 0 0 10px var(--neon-pink);
-        }
-        .carousel-counter {
-            text-align: center;
-            color: var(--neon-yellow);
-            font-size: 0.85rem;
-            margin-top: 10px;
-        }
-        .estado-carga {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        .estado-carga::after {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--neon-pink);
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        /* GEMINI TERMINAL */
+        .issue-link { color: var(--neon-blue); text-decoration: none; font-size: 0.85rem; border: 1px solid var(--neon-blue); padding: 5px 12px; border-radius: 4px; }
+        .issue-link:hover { background: var(--neon-blue); color: black; }
+        .carousel-controls { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .carousel-btn { background: transparent; border: 2px solid var(--neon-pink); color: var(--neon-pink); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
+        .carousel-btn:hover { background: var(--neon-pink); color: black; }
+        .carousel-dots { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; }
+        .dot.activo { background: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+        .carousel-counter { text-align: center; color: var(--neon-yellow); margin-top: 10px; font-size: 0.85rem; }
+        .estado-carga { text-align: center; padding: 40px; color: #666; }
+        .estado-carga::after { content: ''; display: inline-block; width: 20px; height: 20px; border: 2px solid var(--neon-pink); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-left: 10px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* GEMINI TERMINAL MINIMIZABLE */
         #gemini-terminal {
             position: fixed;
             bottom: 20px;
@@ -472,54 +288,18 @@
             overflow: hidden;
             cursor: pointer;
         }
-        #gemini-terminal:hover {
-            max-width: 350px;
-            width: 350px;
-            cursor: default;
-        }
-        .gemini-header {
-            background: rgba(0, 255, 0, 0.05);
-            padding: 10px;
-            border-bottom: 1px dashed var(--neon-green);
-            color: var(--neon-pink);
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            white-space: nowrap;
-            cursor: pointer;
-        }
-        .gemini-chat-container {
-            display: none;
-            flex-direction: column;
-        }
-        #gemini-terminal:hover .gemini-chat-container {
-            display: flex;
-        }
-        #gemini-chat-box {
-            height: 300px;
-            overflow-y: auto;
-            padding: 15px;
-            color: var(--neon-green);
-            font-size: 0.9em;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        #gemini-input-area {
-            padding: 10px;
-            border-top: 1px dashed #333;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
+        #gemini-terminal:hover { max-width: 350px; width: 350px; cursor: default; }
+        .gemini-header { background: rgba(0, 255, 0, 0.05); padding: 10px; border-bottom: 1px dashed var(--neon-green); color: var(--neon-pink); font-weight: bold; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; cursor: pointer; }
+        .gemini-chat-container { display: none; flex-direction: column; }
+        #gemini-terminal:hover .gemini-chat-container { display: flex; }
+        #gemini-chat-box { height: 300px; overflow-y: auto; padding: 15px; color: var(--neon-green); font-size: 0.9em; display: flex; flex-direction: column; gap: 10px; }
+        #gemini-input-area { padding: 10px; border-top: 1px dashed #333; display: flex; gap: 8px; align-items: center; }
         @media (max-width: 600px) {
             body { padding: 15px; }
             .glitch-title { font-size: 1.8em; }
             .menu { grid-template-columns: 1fr; }
             .music-controls { justify-content: center; }
-            .carousel-slide { padding: 15px; }
-            .counter-number { font-size: 2.2em; }
+            .counter-number img { max-width: 200px; }
             #gemini-terminal { bottom: 10px; }
             #gemini-terminal:hover { max-width: 280px; width: 280px; }
         }
@@ -581,7 +361,7 @@
         <div class="music-controls">
             <button onclick="document.getElementById('musicaFondo').play()" class="music-btn btn-play">▶ PLAY</button>
             <button onclick="document.getElementById('musicaFondo').pause()" class="music-btn btn-pause">⏸ PAUSE</button>
-            <button onclick="document.getElementById('musicaFondo').currentTime=0; document.getElementById('musicaFondo').play()" class="music-btn btn-replay">↺ REPLAY</button>
+            <button onclick="document.getElementById('musicaFondo').currentTime = 0; document.getElementById('musicaFondo').play()" class="music-btn btn-replay">↺ REPLAY</button>
             <span style="color: var(--neon-green);">🔊</span>
             <input type="range" id="controlVolumen" class="volume-slider" min="0" max="1" step="0.1" value="0.3">
             <span id="volumenDisplay" style="color: var(--neon-blue);">30%</span>
@@ -589,20 +369,20 @@
         <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">track_info</span><div class="output">> Reproduciendo: himno sin sponsors · Loop infinito</div></div>
     </div>
 
-    <!-- CONTADOR GLOBAL HITWEBCOUNTER (real por IP) -->
-<div class="counter-box" id="visit-counter">
-    <div style="color: var(--neon-pink); font-size: 0.85em; text-transform: uppercase; letter-spacing: 2px;">$ visitas_globales</div>
-    <div class="counter-number">
-        <img src="https://hitwebcounter.com/counter/counter.php?page=21491844&style=0034&nbdigits=5&type=ip&initCount=0" title="visitas únicas" alt="Contador de visitas" style="border:0; filter: drop-shadow(0 0 5px var(--neon-pink));" />
+    <!-- CONTADOR GLOBAL HITWEBCOUNTER REAL POR IP -->
+    <div class="counter-box" id="visit-counter">
+        <div style="color: var(--neon-pink); font-size: 0.85em; text-transform: uppercase; letter-spacing: 2px;">$ visitas_globales</div>
+        <div class="counter-number">
+            <img src="https://hitwebcounter.com/counter/counter.php?page=21491844&style=0034&nbdigits=5&type=ip&initCount=0" title="Visitas únicas por IP" alt="Contador de visitas" style="border:0; border-radius: 8px;" />
+        </div>
+        <div style="color: var(--text-muted); font-size: 0.75em; margin-top: 5px;">
+            <span style="color: var(--neon-green);">●</span> Contador global por IP (cada visitante único suma 1)
+        </div>
+        <div class="terminal-line" style="margin-top: 15px;">
+            <span class="prompt">$</span> <span class="cmd">visitante_status</span>
+            <div class="output">&gt; Visitante ético #<span id="contador-valor">---</span></div>
+        </div>
     </div>
-    <div style="color: var(--text-muted); font-size: 0.75em; margin-top: 5px;">
-        <span style="color: var(--neon-green);">●</span> Contador global por IP
-    </div>
-    <div class="terminal-line" style="margin-top: 15px;">
-        <span class="prompt">$</span> <span class="cmd">visitante_status</span>
-        <div class="output">&gt; Visitante ético #<span id="contador-valor">---</span></div>
-    </div>
-</div>
 
     <div class="manifesto">
         <h2>📜 Manifiesto del espacio sin sponsors:</h2>
@@ -645,7 +425,7 @@
     </div>
 
     <script>
-        // FECHA
+        // FECHA CHILE
         const ahora = new Date();
         const opciones = { timeZone: 'America/Santiago', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
         document.getElementById('fecha-chile').textContent = ahora.toLocaleDateString('es-CL', opciones);
@@ -653,7 +433,7 @@
         // VOLUMEN
         const controlVolumen = document.getElementById('controlVolumen');
         const musica = document.getElementById('musicaFondo');
-        const volumenDisplay = document.getElementById('volumenDisplay');
+        const volumenDisplay = document.getElementById('vencimientoDisplay');
         const musicPlayer = document.getElementById('musicPlayer');
         controlVolumen.addEventListener('input', function() { musica.volume = this.value; volumenDisplay.textContent = Math.round(this.value * 100) + '%'; });
         window.addEventListener('load', function() { let playPromise = musica.play(); if (playPromise !== undefined) playPromise.catch(() => musicPlayer.classList.add('muted')); cargarIssues(); });
@@ -669,55 +449,26 @@
         }
         mostrarWhoami();
 
-        // CONTADOR REAL CON PLINGOT (alternativa a countapi)
-        (function() {
-            const display = document.getElementById('counter-display');
-            const statusSpan = document.getElementById('counter-status');
-            const KEY = 'paulaflechadadeai_visits';
-            const API_URL = `https://plingot.com/api/v1/counter/${KEY}`;
-            
-            function animateCounter(target, duration = 2000) {
-                const start = 0;
-                const startTime = performance.now();
-                function update(currentTime) {
-                    const elapsed = currentTime - startTime;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const ease = 1 - Math.pow(2, -10 * progress);
-                    const current = Math.floor(start + (target - start) * ease);
-                    display.textContent = current.toLocaleString('es-ES');
-                    if (progress < 1) requestAnimationFrame(update);
-                    else {
-                        display.textContent = target.toLocaleString('es-ES');
-                        display.style.textShadow = '0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink)';
-                        setTimeout(() => { display.style.textShadow = '0 0 5px var(--neon-pink)'; }, 500);
-                    }
+        // EXTRAER NÚMERO DEL CONTADOR DE IMAGEN (solo estético)
+        function actualizarTextoContador() {
+            const img = document.querySelector('.counter-number img');
+            if (img && img.complete && img.src) {
+                const match = img.src.match(/value=(\d+)/);
+                if (match && match[1]) {
+                    document.getElementById('contador-valor').innerText = match[1];
+                } else {
+                    // Intento alternativo: la imagen puede tener el número en su carga
+                    setTimeout(() => {
+                        const match2 = img.src.match(/value=(\d+)/);
+                        if (match2) document.getElementById('contador-valor').innerText = match2[1];
+                    }, 500);
                 }
-                requestAnimationFrame(update);
             }
-            
-            fetch(API_URL, { method: 'POST' })
-                .then(res => { if (!res.ok) throw new Error('API error'); return res.json(); })
-                .then(data => {
-                    if (data && typeof data.count === 'number') {
-                        animateCounter(data.count);
-                        statusSpan.innerHTML = '<span style="color: var(--neon-green);">●</span> Conectado al nodo global';
-                        localStorage.setItem('pfda_last_global_count', data.count);
-                    } else throw new Error('Respuesta inválida');
-                })
-                .catch(err => {
-                    console.warn('Plingot falló, usando localStorage:', err);
-                    let localCount = parseInt(localStorage.getItem('pfda_local_visits') || '0', 10);
-                    localCount++;
-                    localStorage.setItem('pfda_local_visits', localCount);
-                    const lastGlobal = parseInt(localStorage.getItem('pfda_last_global_count') || '0', 10);
-                    const displayCount = Math.max(localCount, lastGlobal);
-                    animateCounter(displayCount);
-                    statusSpan.innerHTML = '<span style="color: var(--neon-yellow);">⚠</span> Modo local (sin conexión)';
-                    display.style.color = 'var(--neon-yellow)';
-                });
-        })();
+        }
+        setTimeout(actualizarTextoContador, 1500);
+        setInterval(actualizarTextoContador, 5000);
 
-        // CARRUSEL
+        // CARRUSEL ISSUES (simplificado pero funcional)
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
         let allIssues = [], filteredIssues = [], currentSlide = 0, autoAdvanceInterval;
@@ -789,7 +540,7 @@
         function iniciarAutoAvance() { if(autoAdvanceInterval) clearInterval(autoAdvanceInterval); if(filteredIssues.length>1) autoAdvanceInterval = setInterval(() => siguienteSlide(), 5000); }
         document.addEventListener('visibilitychange', () => { if(document.hidden) clearInterval(autoAdvanceInterval); else iniciarAutoAvance(); });
 
-        // GEMINI
+        // GEMINI TERMINAL
         function toggleGemini() { const t = document.getElementById('gemini-terminal'); t.style.maxWidth = (t.style.maxWidth === '350px') ? '45px' : '350px'; setTimeout(()=>{ if(t.style.maxWidth === '350px') t.style.maxWidth='45px'; },10000); }
         const keyPart1 = 'AIzaSyBhLC6rXws73C', keyPart2 = '2WSUWY-BarBo-J_Yc6knY', GEMINI_API_KEY = keyPart1+keyPart2;
         async function ejecutarConsulta() {
@@ -812,28 +563,6 @@
             } catch(e) { document.getElementById(loadingId)?.remove(); chatBox.innerHTML += `<div><span style="color: var(--neon-red);">[ERROR]:</span> ${e.message}</div>`; }
         }
         document.getElementById('gemini-input').addEventListener('keypress', e => { if(e.key === 'Enter') ejecutarConsulta(); });
-    </script>
-    <script>
-    // Mostrar el número del contador de hitwebcounter en el texto ético
-    setTimeout(() => {
-        const img = document.querySelector('.counter-number img');
-        if (img && img.complete) {
-            const src = img.src;
-            const match = src.match(/value=(\d+)/);
-            if (match) {
-                document.getElementById('contador-valor').innerText = match[1];
-            }
-        }
-        // También intentar leer la imagen cada 3 segundos (por si cambia)
-        setInterval(() => {
-            const img2 = document.querySelector('.counter-number img');
-            if (img2) {
-                const src2 = img2.src;
-                const match2 = src2.match(/value=(\d+)/);
-                if (match2) document.getElementById('contador-valor').innerText = match2[1];
-            }
-        }, 3000);
-    }, 1000);
     </script>
 </body>
 </html>
