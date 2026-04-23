@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>paulaflechadadeai · Sin Sponsors</title>
     <style>
+        /* TODO TU CSS ACTUAL (EXACTAMENTE IGUAL QUE ANTES) */
         :root {
             --neon-green: #00ff00;
             --neon-pink: #ff00ff;
@@ -16,7 +17,6 @@
             --border: #30363d;
             --text-muted: #888;
         }
-
         body {
             font-family: 'Courier New', monospace;
             max-width: 700px;
@@ -29,28 +29,24 @@
                 radial-gradient(circle at 10% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 20%),
                 radial-gradient(circle at 90% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 20%);
         }
-
         .header {
             border-bottom: 2px dashed var(--neon-green);
             padding-bottom: 20px;
             margin-bottom: 40px;
             position: relative;
         }
-
         .glitch-title {
             font-size: 2.5em;
             color: var(--neon-pink);
             text-shadow: 2px 0 var(--neon-blue), -1px 0 var(--neon-green);
             animation: glitch 3s infinite;
         }
-
         @keyframes glitch {
             0%, 100% { transform: translate(0); }
             10% { transform: translate(-2px, 1px); }
             20% { transform: translate(1px, -1px); }
             30% { transform: translate(-1px, 2px); }
         }
-
         .terminal {
             background: var(--bg-darker);
             border: 1px solid var(--neon-green);
@@ -59,7 +55,6 @@
             border-radius: 5px;
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
         }
-
         .terminal-line {
             margin: 12px 0;
             padding-bottom: 8px;
@@ -68,7 +63,6 @@
         .terminal-line:last-child {
             border-bottom: none;
         }
-
         .prompt {
             color: var(--neon-pink);
             font-weight: bold;
@@ -84,7 +78,6 @@
             margin-bottom: 6px;
             white-space: pre-line;
         }
-
         .enlace-interno {
             color: var(--neon-pink);
             text-decoration: none;
@@ -101,7 +94,6 @@
             background: var(--neon-pink);
             color: black;
         }
-
         .menu {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -111,7 +103,6 @@
         @media (min-width: 601px) and (max-width: 900px) {
             .menu { grid-template-columns: repeat(2, 1fr); }
         }
-
         .menu-item {
             background: rgba(0, 255, 0, 0.05);
             border: 1px solid rgba(0, 255, 0, 0.3);
@@ -135,7 +126,6 @@
             color: #88ff88;
             margin-top: 8px;
         }
-
         .paypal-btn {
             display: inline-block;
             background: #FFD140;
@@ -163,14 +153,12 @@
         .donate-btn:hover {
             box-shadow: 0 0 10px var(--neon-pink);
         }
-
         .manifesto {
             background: rgba(0, 170, 255, 0.05);
             border-left: 4px solid var(--neon-blue);
             padding: 20px;
             margin: 40px 0;
         }
-
         .footer {
             margin-top: 60px;
             padding-top: 20px;
@@ -179,7 +167,6 @@
             font-size: 0.9em;
             text-align: center;
         }
-
         .music-player {
             background: var(--bg-darker);
             border: 1px solid var(--neon-pink);
@@ -206,7 +193,6 @@
             margin-bottom: 10px;
             font-weight: bold;
         }
-
         .music-controls {
             display: flex;
             gap: 10px;
@@ -230,15 +216,13 @@
         .btn-play { color: var(--neon-green); border-color: var(--neon-green); }
         .btn-pause { color: var(--neon-pink); border-color: var(--neon-pink); }
         .btn-replay { color: var(--neon-blue); border-color: var(--neon-blue); }
-
         .volume-slider {
             width: 100px;
             background: black;
             accent-color: var(--neon-pink);
             cursor: pointer;
         }
-
-        /* CONTADOR REAL COUNTAPI */
+        /* CONTADOR */
         .counter-box {
             background: rgba(255, 0, 255, 0.05);
             border: 1px solid var(--neon-pink);
@@ -278,7 +262,6 @@
             font-size: 0.75em;
             color: var(--text-muted);
         }
-
         /* CARRUSEL */
         #controversial-carousel {
             margin-top: 3rem;
@@ -469,8 +452,7 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        /* GEMINI TERMINAL MINIMIZABLE */
+        /* GEMINI TERMINAL */
         #gemini-terminal {
             position: fixed;
             bottom: 20px;
@@ -607,11 +589,11 @@
         <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">track_info</span><div class="output">> Reproduciendo: himno sin sponsors · Loop infinito</div></div>
     </div>
 
-    <!-- CONTADOR REAL COUNTAPI -->
+    <!-- CONTADOR REAL CON PLINGOT (más fiable) -->
     <div class="counter-box" id="visit-counter">
         <div style="color: var(--neon-pink); font-size: 0.85em; text-transform: uppercase; letter-spacing: 2px;">$ visitas_globales</div>
         <div class="counter-number" id="counter-display" aria-live="polite"><span class="estado-carga" style="display: inline-block; padding: 0; border: none; animation: spin 1s linear infinite;">◌</span></div>
-        <div style="color: var(--text-muted); font-size: 0.75em; margin-top: 5px;"><span id="counter-status">Sincronizando con el servidor...</span></div>
+        <div style="color: var(--text-muted); font-size: 0.75em; margin-top: 5px;"><span id="counter-status">Conectando al servidor global...</span></div>
         <div class="terminal-line" style="margin-top: 15px;"><span class="prompt">$</span> <span class="cmd">visitante_status</span><div class="output">&gt; Visitante ético contado globalmente</div></div>
     </div>
 
@@ -647,7 +629,6 @@
         <div class="carousel-counter" id="carouselCounter">0 / 0</div>
     </section>
 
-    <!-- TERMINAL GEMINI MINIMIZABLE -->
     <div id="gemini-terminal">
         <div class="gemini-header" onclick="toggleGemini()"><span>~/gemini_link $</span><span id="gemini-toggle-icon">🔽</span></div>
         <div class="gemini-chat-container">
@@ -657,7 +638,7 @@
     </div>
 
     <script>
-        // FECHA CHILE
+        // FECHA
         const ahora = new Date();
         const opciones = { timeZone: 'America/Santiago', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
         document.getElementById('fecha-chile').textContent = ahora.toLocaleDateString('es-CL', opciones);
@@ -681,13 +662,12 @@
         }
         mostrarWhoami();
 
-        // CONTADOR REAL COUNTAPI (CON FALLBACK Y ANIMACIÓN)
+        // CONTADOR REAL CON PLINGOT (alternativa a countapi)
         (function() {
             const display = document.getElementById('counter-display');
             const statusSpan = document.getElementById('counter-status');
-            const NAMESPACE = 'paulaflechadadeai';
-            const KEY = 'sinsponsors-v1';
-            const API_URL = `https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`;
+            const KEY = 'paulaflechadadeai_visits';
+            const API_URL = `https://plingot.com/api/v1/counter/${KEY}`;
             
             function animateCounter(target, duration = 2000) {
                 const start = 0;
@@ -708,17 +688,17 @@
                 requestAnimationFrame(update);
             }
             
-            fetch(API_URL)
+            fetch(API_URL, { method: 'POST' })
                 .then(res => { if (!res.ok) throw new Error('API error'); return res.json(); })
                 .then(data => {
-                    if (data && typeof data.value === 'number') {
-                        animateCounter(data.value);
+                    if (data && typeof data.count === 'number') {
+                        animateCounter(data.count);
                         statusSpan.innerHTML = '<span style="color: var(--neon-green);">●</span> Conectado al nodo global';
-                        localStorage.setItem('pfda_last_global_count', data.value);
-                    } else throw new Error('Formato inválido');
+                        localStorage.setItem('pfda_last_global_count', data.count);
+                    } else throw new Error('Respuesta inválida');
                 })
                 .catch(err => {
-                    console.warn('CountAPI falló, usando localStorage:', err);
+                    console.warn('Plingot falló, usando localStorage:', err);
                     let localCount = parseInt(localStorage.getItem('pfda_local_visits') || '0', 10);
                     localCount++;
                     localStorage.setItem('pfda_local_visits', localCount);
@@ -730,13 +710,11 @@
                 });
         })();
 
-        // CARRUSEL DE ISSUES CON SOPORTE PARA AUDIO/VIDEO/IMAGEN/PDF
+        // CARRUSEL
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
         let allIssues = [], filteredIssues = [], currentSlide = 0, autoAdvanceInterval;
-        
         function escapeHtml(text) { if(!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
-        
         async function cargarIssues() {
             try {
                 const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?state=all&per_page=50`);
@@ -747,7 +725,6 @@
                 filtrarIssues('todos');
             } catch(error) { document.getElementById('carouselTrack').innerHTML = '<div class="estado-carga">Error al cargar issues</div>'; }
         }
-        
         function filtrarIssues(tipo) {
             document.querySelectorAll('.filtro-chip').forEach(btn => btn.classList.remove('activo'));
             const btn = Array.from(document.querySelectorAll('.filtro-chip')).find(b => b.textContent.toLowerCase().includes(tipo) || (tipo==='todos' && b.textContent.includes('Todos')));
@@ -757,7 +734,6 @@
             currentSlide = 0;
             renderizarCarrusel();
         }
-        
         function renderizarCarrusel() {
             const track = document.getElementById('carouselTrack');
             const dots = document.getElementById('carouselDots');
@@ -771,7 +747,6 @@
                 const fecha = new Date(issue.created_at).toLocaleDateString('es-CL');
                 const labels = issue.labels.map(l => `<span class="issue-label ${l.name.toLowerCase()}">${escapeHtml(l.name)}</span>`).join('');
                 const body = issue.body || '';
-                // Extraer primera URL (para audio/video) o primera imagen
                 const urlMatch = body.match(/https?:\/\/[^\s)\]]+/);
                 const imgMatch = body.match(/!\[.*?\]\((.*?)\)/);
                 const mediaUrl = urlMatch ? urlMatch[0] : (imgMatch ? imgMatch[1] : null);
@@ -796,10 +771,8 @@
             actualizarCarrusel();
             iniciarAutoAvance();
         }
-        
         function actualizarCarrusel() {
-            const track = document.getElementById('carouselTrack');
-            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            document.getElementById('carouselTrack').style.transform = `translateX(-${currentSlide * 100}%)`;
             document.querySelectorAll('.dot').forEach((dot,i) => dot.classList.toggle('activo', i===currentSlide));
             document.getElementById('carouselCounter').textContent = `${currentSlide+1} / ${filteredIssues.length}`;
         }
@@ -808,7 +781,7 @@
         function irASlide(i) { currentSlide = i; actualizarCarrusel(); }
         function iniciarAutoAvance() { if(autoAdvanceInterval) clearInterval(autoAdvanceInterval); if(filteredIssues.length>1) autoAdvanceInterval = setInterval(() => siguienteSlide(), 5000); }
         document.addEventListener('visibilitychange', () => { if(document.hidden) clearInterval(autoAdvanceInterval); else iniciarAutoAvance(); });
-        
+
         // GEMINI
         function toggleGemini() { const t = document.getElementById('gemini-terminal'); t.style.maxWidth = (t.style.maxWidth === '350px') ? '45px' : '350px'; setTimeout(()=>{ if(t.style.maxWidth === '350px') t.style.maxWidth='45px'; },10000); }
         const keyPart1 = 'AIzaSyBhLC6rXws73C', keyPart2 = '2WSUWY-BarBo-J_Yc6knY', GEMINI_API_KEY = keyPart1+keyPart2;
