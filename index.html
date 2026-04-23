@@ -14,6 +14,7 @@
             --bg-dark: #0a0a0a;
             --bg-darker: #000;
             --border: #30363d;
+            --text-muted: #888;
         }
 
         body {
@@ -264,22 +265,49 @@
             cursor: pointer;
         }
 
+        /* ========== CONTADOR REAL CON COUNTAPI ========== */
         .counter-box {
-            background: rgba(255, 0, 255, 0.1);
+            background: rgba(255, 0, 255, 0.05);
             border: 1px solid var(--neon-pink);
-            padding: 20px;
+            padding: 25px 20px;
             text-align: center;
             margin: 30px 0;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .counter-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-pink), transparent);
+            animation: scanline 3s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
         .counter-number {
-            font-size: 2.5em;
-            font-family: 'Courier New', monospace;
-            margin: 10px 0;
+            font-size: 3em;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 15px 0;
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+            font-weight: bold;
+            letter-spacing: 2px;
+            min-height: 1.2em;
         }
-        .counter-number img {
-            filter: drop-shadow(0 0 5px var(--neon-pink));
-            max-width: 100%;
+
+        #counter-status {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.75em;
+            color: var(--text-muted);
         }
 
         /* ZONA CONTROVERSIAL - CARRUSEL */
@@ -596,6 +624,7 @@
         @media (max-width: 600px) {
             #gemini-terminal { bottom: 10px; }
             #gemini-terminal:hover { max-width: 280px; width: 280px; }
+            .counter-number { font-size: 2.2em; }
         }
 
         @media (max-width: 600px) {
@@ -642,7 +671,7 @@
         </div>
     </div>
 
-    <!-- MENÚ PRINCIPAL -->
+    <!-- ===== MENÚ PRINCIPAL ===== -->
     <div class="menu">
         <div class="menu-item">
             <a href="/hadasmalvadas.html">🧚 /hadasmalvadas</a>
@@ -721,17 +750,20 @@
         </div>
     </div>
 
-    <!-- CONTADOR GLOBAL HITWEBCOUNTER (con tu ID y estilo 0034) -->
-    <div class="counter-box">
-        <div class="terminal-line">
-            <span class="prompt">$</span> <span class="cmd">visitas_globales</span>
+    <!-- ===== CONTADOR REAL CON COUNTAPI ===== -->
+    <div class="counter-box" id="visit-counter">
+        <div style="color: var(--neon-pink); font-size: 0.85em; text-transform: uppercase; letter-spacing: 2px;">
+            $ visitas_globales
         </div>
-        <div class="counter-number">
-            <img src="https://hitwebcounter.com/counter/counter.php?page=21491844&style=0034&nbdigits=5&type=ip&initCount=0" title="hitwebcounter Free Counter" alt="hitwebcounter Free Counter" style="border:0;" />
+        <div class="counter-number" id="counter-display" aria-live="polite">
+            <span class="estado-carga" style="display: inline-block; padding: 0; border: none; animation: spin 1s linear infinite;">◌</span>
         </div>
-        <div class="terminal-line">
+        <div style="color: var(--text-muted); font-size: 0.75em; margin-top: 5px;">
+            <span id="counter-status">Sincronizando con el servidor...</span>
+        </div>
+        <div class="terminal-line" style="margin-top: 15px;">
             <span class="prompt">$</span> <span class="cmd">visitante_status</span>
-            <div class="output">> Visitante ético número <span id="contadorValor">--</span></div>
+            <div class="output" id="visitante-msg">> Visitante ético contado globalmente</div>
         </div>
     </div>
 
@@ -777,7 +809,7 @@
         <div class="carousel-counter" id="carouselCounter">0 / 0</div>
     </section>
 
-    <!-- TERMINAL GEMINI (MINIMIZABLE) -->
+    <!-- TERMINAL GEMINI MINIMIZABLE -->
     <div id="gemini-terminal">
         <div class="gemini-header" onclick="toggleGemini()">
             <span>~/gemini_link $</span>
@@ -820,22 +852,6 @@
             volumenDisplay.textContent = Math.round(this.value * 100) + '%';
         });
 
-        // CONTADOR LOCAL (solo para mostrar un número ético, no interfiere con hitwebcounter)
-        setInterval(() => {
-            const img = document.querySelector('.counter-number img');
-            if (img && img.complete) {
-                const src = img.src;
-                const match = src.match(/value=(\d+)/);
-                if (match) {
-                    document.getElementById('contadorValor').innerText = match[1];
-                } else {
-                    document.getElementById('contadorValor').innerText = '?';
-                }
-            } else {
-                document.getElementById('contadorValor').innerText = '...';
-            }
-        }, 2000);
-
         // GLITCH
         glitchInterval = setInterval(() => {
             const title = document.querySelector('.glitch-title');
@@ -874,7 +890,72 @@
         }
         mostrarWhoami();
 
-        // CARRUSEL ISSUES
+        // ===== CONTADOR REAL CON COUNTAPI =====
+        (function() {
+            const display = document.getElementById('counter-display');
+            const statusSpan = document.getElementById('counter-status');
+            
+            const NAMESPACE = 'paulaflechadadeai';
+            const KEY = 'sinsponsors-v1';
+            const API_URL = `https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`;
+            
+            function animateCounter(target, duration = 2000) {
+                const start = 0;
+                const startTime = performance.now();
+                
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const ease = 1 - Math.pow(2, -10 * progress);
+                    const current = Math.floor(start + (target - start) * ease);
+                    display.textContent = current.toLocaleString('es-ES');
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    } else {
+                        display.textContent = target.toLocaleString('es-ES');
+                        display.style.textShadow = '0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink)';
+                        setTimeout(() => {
+                            display.style.textShadow = '0 0 5px var(--neon-pink)';
+                        }, 500);
+                    }
+                }
+                requestAnimationFrame(update);
+            }
+            
+            function getLocalCount() {
+                let count = parseInt(localStorage.getItem('pfda_local_visits') || '0', 10);
+                count++;
+                localStorage.setItem('pfda_local_visits', count);
+                return count;
+            }
+            
+            fetch(API_URL)
+                .then(res => {
+                    if (!res.ok) throw new Error('API error');
+                    return res.json();
+                })
+                .then(data => {
+                    if (data && typeof data.value === 'number') {
+                        animateCounter(data.value);
+                        statusSpan.innerHTML = '<span style="color: var(--neon-green);">●</span> Conectado al nodo global';
+                        localStorage.setItem('pfda_last_global_count', data.value);
+                    } else {
+                        throw new Error('Formato inválido');
+                    }
+                })
+                .catch(err => {
+                    console.warn('CountAPI falló, usando localStorage:', err);
+                    const localCount = getLocalCount();
+                    const lastGlobal = parseInt(localStorage.getItem('pfda_last_global_count') || '0', 10);
+                    const displayCount = Math.max(localCount, lastGlobal);
+                    animateCounter(displayCount);
+                    statusSpan.innerHTML = '<span style="color: var(--neon-yellow);">⚠</span> Modo local (sin conexión)';
+                    display.style.color = 'var(--neon-yellow)';
+                });
+        })();
+
+        // ===== CARRUSEL ISSUES =====
         function escapeHtml(text) {
             if(!text) return '';
             const div = document.createElement('div');
@@ -972,10 +1053,10 @@
         document.addEventListener('keydown', (e) => { if(e.key === 'ArrowLeft') { e.preventDefault(); anteriorSlide(); } else if(e.key === 'ArrowRight') { e.preventDefault(); siguienteSlide(); } });
         window.addEventListener('beforeunload', () => { if(glitchInterval) clearInterval(glitchInterval); if(autoAdvanceInterval) clearInterval(autoAdvanceInterval); });
 
-        // GEMINI TERMINAL
+        // ===== GEMINI TERMINAL =====
         function toggleGemini() {
             const terminal = document.getElementById('gemini-terminal');
-            if(terminal.style.maxWidth === '350px' || terminal.style.maxWidth === '350px') {
+            if(terminal.style.maxWidth === '350px') {
                 terminal.style.maxWidth = '45px';
             } else {
                 terminal.style.maxWidth = '350px';
@@ -990,7 +1071,7 @@
             const chatBox = document.getElementById('gemini-chat-box');
             const texto = input.value.trim();
             if(!texto) return;
-            chatBox.innerHTML += `<div><span style="color: var(--neon-pink);">usr@host:</span> ${texto}</div>`;
+            chatBox.innerHTML += `<div><span style="color: var(--neon-pink);">usr@host:</span> ${escapeHtml(texto)}</div>`;
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
             const loadingId = 'loading-'+Date.now();
