@@ -589,13 +589,20 @@
         <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">track_info</span><div class="output">> Reproduciendo: himno sin sponsors · Loop infinito</div></div>
     </div>
 
-    <!-- CONTADOR REAL CON PLINGOT (más fiable) -->
-    <div class="counter-box" id="visit-counter">
-        <div style="color: var(--neon-pink); font-size: 0.85em; text-transform: uppercase; letter-spacing: 2px;">$ visitas_globales</div>
-        <div class="counter-number" id="counter-display" aria-live="polite"><span class="estado-carga" style="display: inline-block; padding: 0; border: none; animation: spin 1s linear infinite;">◌</span></div>
-        <div style="color: var(--text-muted); font-size: 0.75em; margin-top: 5px;"><span id="counter-status">Conectando al servidor global...</span></div>
-        <div class="terminal-line" style="margin-top: 15px;"><span class="prompt">$</span> <span class="cmd">visitante_status</span><div class="output">&gt; Visitante ético contado globalmente</div></div>
+    <!-- CONTADOR GLOBAL HITWEBCOUNTER (real por IP) -->
+<div class="counter-box" id="visit-counter">
+    <div style="color: var(--neon-pink); font-size: 0.85em; text-transform: uppercase; letter-spacing: 2px;">$ visitas_globales</div>
+    <div class="counter-number">
+        <img src="https://hitwebcounter.com/counter/counter.php?page=21491844&style=0034&nbdigits=5&type=ip&initCount=0" title="visitas únicas" alt="Contador de visitas" style="border:0; filter: drop-shadow(0 0 5px var(--neon-pink));" />
     </div>
+    <div style="color: var(--text-muted); font-size: 0.75em; margin-top: 5px;">
+        <span style="color: var(--neon-green);">●</span> Contador global por IP
+    </div>
+    <div class="terminal-line" style="margin-top: 15px;">
+        <span class="prompt">$</span> <span class="cmd">visitante_status</span>
+        <div class="output">&gt; Visitante ético #<span id="contador-valor">---</span></div>
+    </div>
+</div>
 
     <div class="manifesto">
         <h2>📜 Manifiesto del espacio sin sponsors:</h2>
@@ -805,6 +812,28 @@
             } catch(e) { document.getElementById(loadingId)?.remove(); chatBox.innerHTML += `<div><span style="color: var(--neon-red);">[ERROR]:</span> ${e.message}</div>`; }
         }
         document.getElementById('gemini-input').addEventListener('keypress', e => { if(e.key === 'Enter') ejecutarConsulta(); });
+    </script>
+    <script>
+    // Mostrar el número del contador de hitwebcounter en el texto ético
+    setTimeout(() => {
+        const img = document.querySelector('.counter-number img');
+        if (img && img.complete) {
+            const src = img.src;
+            const match = src.match(/value=(\d+)/);
+            if (match) {
+                document.getElementById('contador-valor').innerText = match[1];
+            }
+        }
+        // También intentar leer la imagen cada 3 segundos (por si cambia)
+        setInterval(() => {
+            const img2 = document.querySelector('.counter-number img');
+            if (img2) {
+                const src2 = img2.src;
+                const match2 = src2.match(/value=(\d+)/);
+                if (match2) document.getElementById('contador-valor').innerText = match2[1];
+            }
+        }, 3000);
+    }, 1000);
     </script>
 </body>
 </html>
