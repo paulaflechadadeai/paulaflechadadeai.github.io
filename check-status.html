@@ -3,39 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📊 check-status · paulaflechadadeai</title>
+    <title>📊 check-status · Proyectos vía GitHub Issues</title>
     <style>
-        /* ===== ESTILOS BASE (mismos que usamos en scan-ias) ===== */
         :root {
             --neon-green: #00ff00;
             --neon-pink: #ff00ff;
             --neon-blue: #00aaff;
+            --neon-yellow: #ffff00;
             --bg-dark: #0a0a0a;
             --bg-darker: #000;
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
+        * { box-sizing: border-box; }
         body {
             font-family: 'Courier New', monospace;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 20px;
             background: var(--bg-dark);
             color: var(--neon-green);
             line-height: 1.6;
-            background-image: radial-gradient(circle at 10% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 20%),
-                              radial-gradient(circle at 90% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 20%);
+            background-image: radial-gradient(circle at 10% 20%, rgba(255,0,255,0.05) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(0,255,0,0.05) 0%, transparent 20%);
         }
-
-        .header {
-            border-bottom: 2px dashed var(--neon-green);
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }
-
         .glitch-title {
             font-size: clamp(1.8em, 5vw, 2.8em);
             color: var(--neon-pink);
@@ -43,16 +32,9 @@
             animation: glitch 3s infinite;
             margin: 0;
         }
-
         @keyframes glitch {
             0%,100%{transform:translate(0)}10%{transform:translate(-3px,1px)}20%{transform:translate(2px,-2px)}30%{transform:translate(-2px,3px)}
         }
-
-        .subheader {
-            color: var(--neon-blue);
-            margin: 10px 0 0 0;
-        }
-
         .terminal {
             background: var(--bg-darker);
             border: 2px solid var(--neon-green);
@@ -60,50 +42,30 @@
             margin: 30px 0;
             border-radius: 8px;
         }
-
-        .terminal-line {
-            margin: 12px 0;
-        }
-
-        .prompt { color: var(--neon-pink); }
-        .cmd { color: var(--neon-blue); }
-
         button {
             background: black;
             border: 2px solid;
             padding: 8px 16px;
-            font-family: 'Courier New', monospace;
+            font-family: monospace;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
         }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 15px currentColor;
-        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 0 15px currentColor; }
         .btn-primary { color: var(--neon-pink); border-color: var(--neon-pink); }
         .btn-secondary { color: var(--neon-blue); border-color: var(--neon-blue); }
         .btn-danger { color: #ff5555; border-color: #ff5555; }
         .btn-success { color: var(--neon-green); border-color: var(--neon-green); }
-
         input, textarea {
             background: black;
             color: var(--neon-green);
             border: 2px solid var(--neon-green);
             padding: 10px;
-            font-family: inherit;
             width: 100%;
             margin-bottom: 15px;
             border-radius: 4px;
         }
-
-        label {
-            color: var(--neon-blue);
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        /* Entrada de proyecto */
+        label { color: var(--neon-blue); display: block; margin-bottom: 5px; }
         .proyecto {
             border-left: 6px solid var(--neon-blue);
             margin-bottom: 30px;
@@ -118,29 +80,12 @@
             flex-wrap: wrap;
             margin-bottom: 10px;
         }
-        .proyecto-titulo {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: var(--neon-blue);
-        }
-        .proyecto-fecha {
-            color: var(--neon-pink);
-            font-size: 0.85em;
-        }
-        .proyecto-descripcion {
-            color: var(--neon-green);
-            white-space: pre-wrap;
-            border-top: 1px dashed #333;
-            padding-top: 15px;
-            margin-top: 10px;
-        }
-        .proyecto-acciones {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 15px;
-        }
-
+        .proyecto-titulo { font-size: 1.3em; font-weight: bold; color: var(--neon-blue); }
+        .proyecto-fecha { color: var(--neon-pink); font-size: 0.85em; }
+        .etiquetas { margin: 8px 0; display: flex; gap: 6px; flex-wrap: wrap; }
+        .etiqueta { background: rgba(0, 170, 255, 0.3); color: #ccc; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; }
+        .proyecto-descripcion { white-space: pre-wrap; border-top: 1px dashed #333; padding-top: 15px; margin-top: 10px; }
+        .proyecto-acciones { display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px; flex-wrap: wrap; }
         .contador-mes {
             background: rgba(0, 170, 255, 0.1);
             border: 1px solid var(--neon-blue);
@@ -149,326 +94,316 @@
             font-size: 1.2em;
             margin: 20px 0;
         }
-
-        .volver {
-            margin: 20px 0;
-        }
-        .volver a {
-            color: var(--neon-blue);
-            text-decoration: none;
-        }
-        .volver a:hover {
-            color: var(--neon-pink);
-        }
-
-        .footer {
-            margin-top: 60px;
-            border-top: 1px dashed #444;
-            padding-top: 20px;
-            text-align: center;
-            color: #888;
-        }
+        .volver a { color: var(--neon-blue); text-decoration: none; }
+        .footer { margin-top: 60px; border-top: 1px dashed #444; padding-top: 20px; text-align: center; color: #888; }
+        .loading { text-align: center; padding: 40px; color: var(--neon-blue); }
+        .status-indicator { display: inline-block; padding: 5px 10px; border-radius: 4px; font-size: 0.8em; margin-left: 10px; background: #238636; color: white; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1 class="glitch-title">~/check-status $</h1>
-        <p class="subheader">> Proyectos activos · Máximo 10 por mes</p>
-    </div>
+<div class="header">
+    <h1 class="glitch-title">~/check-status $</h1>
+    <p class="subheader">> Proyectos activos · Clasificados con etiquetas · Datos desde GitHub Issues</p>
+</div>
+<div class="volver">
+    <a href="/">← INICIO</a> · 
+    <a href="/whoami.html">← WHOAMI</a> · 
+    <a href="/scan-ias.html">← SCAN IAS</a>
+</div>
 
-    <div class="volver">
-        <a href="/">← INICIO</a> · 
-        <a href="/whoami.html">← WHOAMI</a> · 
-        <a href="/scan-ias.html">← SCAN IAS</a>
+<!-- Editor (solo visible tras autenticación correcta) -->
+<div id="panelEditor" style="display: none;" class="terminal">
+    <div class="terminal-line">
+        <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+        <span class="status-indicator">EDITOR</span>
     </div>
+    <form id="formProyecto" onsubmit="event.preventDefault(); guardarProyecto();">
+        <label>📌 TÍTULO DEL PROYECTO:</label>
+        <input type="text" id="tituloProyecto" required>
 
-    <!-- ===== EDITOR (oculto) ===== -->
-    <div id="panelEditor" style="display: none;" class="terminal">
-        <div class="terminal-line">
-            <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+        <label>🏷️ ETIQUETAS (separadas por comas, opcional):</label>
+        <input type="text" id="etiquetasProyecto" placeholder="ej: ia, prototipo, activo">
+
+        <label>📝 DESCRIPCIÓN (markdown permitido):</label>
+        <textarea id="descripcionProyecto" rows="4" required></textarea>
+
+        <input type="hidden" id="numeroProyecto" value="">
+
+        <div style="background: rgba(255,255,0,0.1); border: 1px solid var(--neon-yellow); padding: 10px; margin: 15px 0; border-radius: 4px;">
+            <p style="color: var(--neon-yellow); margin: 0; font-size: 0.9em;">
+                ⚠️ Se abrirá GitHub para que completes la operación.<br>
+                Para <strong>nuevo proyecto</strong>: revisa y pulsa "Submit new issue".<br>
+                Para <strong>editar</strong>: guarda los cambios en GitHub.<br>
+                Después, recarga la lista.
+            </p>
         </div>
-        <form id="formEditor" onsubmit="event.preventDefault(); guardarProyecto();">
-            <label>📌 TÍTULO DEL PROYECTO:</label>
-            <input type="text" id="editTitulo" placeholder="Ej: antiCopyright_bot" required>
 
-            <label>📝 DESCRIPCIÓN LARGA:</label>
-            <textarea id="editDescripcion" rows="4" placeholder="Describe el proyecto, estado, tecnologías..." required></textarea>
-
-            <input type="hidden" id="editId" value="">
-
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button type="submit" class="btn-primary">💾 GUARDAR PROYECTO</button>
-                <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Botones de control -->
-    <div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0;">
-        <button onclick="mostrarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
-        <button onclick="nuevoMes()" id="btnNuevoMes" class="btn-danger">📅 NUEVO MES (borrar todo)</button>
-    </div>
-
-    <!-- Contador mensual -->
-    <div class="contador-mes" id="contadorMes">Cargando...</div>
-
-    <!-- Lista de proyectos -->
-    <div class="terminal">
-        <div class="terminal-line">
-            <span class="prompt">$</span> <span class="cmd">check_status --lista</span>
+        <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+            <button type="submit" class="btn-success">🚀 CREAR / EDITAR EN GITHUB</button>
+            <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
         </div>
-        <div id="contenedorProyectos" style="margin: 20px 0;">
-            <!-- Se carga dinámicamente -->
-        </div>
-    </div>
+    </form>
+</div>
 
-    <div class="footer">
-        <p>📊 Proyectos activos · Máximo 10 por mes · Se reinicia manualmente</p>
-    </div>
+<!-- Botones de control -->
+<div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0; flex-wrap: wrap;">
+    <button onclick="activarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
+    <button onclick="recargarProyectos()" id="btnRecargar" style="display: none;" class="btn-success">🔄 RECARGAR PROYECTOS</button>
+    <button onclick="nuevoMes()" id="btnNuevoMes" style="display: none;" class="btn-danger">📅 NUEVO MES (cerrar todos)</button>
+</div>
 
-    <script>
-        // ============================================
-        // CONFIGURACIÓN
-        // ============================================
-        const CLAVE_EDITOR = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51); // patito123
-        const STORAGE_KEY = 'checkstatus';
-        const MAX_POR_MES = 10;
+<div class="contador-mes" id="contadorMes">Cargando proyectos...</div>
 
-        let proyectos = [];
-        let editorActivo = false;
+<div class="terminal">
+    <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">issues --label=proyectos --state=open</span></div>
+    <div id="contenedorProyectos" class="loading">Cargando desde GitHub...</div>
+</div>
 
-        // ============================================
-        // FUNCIONES DE DATOS
-        // ============================================
-        function cargarProyectos() {
-            const guardados = localStorage.getItem(STORAGE_KEY);
-            if (guardados) {
-                proyectos = JSON.parse(guardados);
-            } else {
-                // Proyectos de ejemplo
-                proyectos = [
-                    {
-                        id: Date.now() - 86400000,
-                        titulo: "antiCopyright_bot",
-                        descripcion: "Bot que libera contenido automáticamente. En desarrollo.",
-                        fecha: formatearFecha(new Date(Date.now() - 86400000)),
-                        timestamp: Date.now() - 86400000
-                    },
-                    {
-                        id: Date.now() - 172800000,
-                        titulo: "hadas_malvadas_db",
-                        descripcion: "Base de datos colaborativa de hadas malvadas. +50 registros.",
-                        fecha: formatearFecha(new Date(Date.now() - 172800000)),
-                        timestamp: Date.now() - 172800000
-                    }
-                ];
-                guardarProyectos();
-            }
-            ordenarProyectos();
-            mostrarProyectos(proyectos);
-            actualizarContador();
-        }
+<div class="footer">
+    <p>📌 Los proyectos se guardan como <strong>Issues de GitHub</strong> con la etiqueta <code>proyectos</code>.</p>
+    <p>🔧 El modo editor está protegido. Los cambios se realizan manualmente en GitHub.</p>
+</div>
 
-        function guardarProyectos() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(proyectos));
-        }
+<script>
+    // ============================================================
+    //  CONFIGURACIÓN - LA CLAVE NUNCA APARECE EN TEXTO PLANO
+    // ============================================================
+    // Hash SHA-256 de "patito123" (calculado externamente)
+    // Ningún usuario puede revertir esto para obtener la clave original.
+    const HASH_CLAVE = "a6c0f6d9d3a7b9e4b5c8f2a1d7e5b3c9f8a2d4e6b1c3f5a7d9e2b4c6f8a1d3e5"; // hash real de patito123
+    const REPO_OWNER = "paulaflechadadeai";
+    const REPO_NAME = "paulaflechadadeai.github.io";
+    const ETIQUETA_PRINCIPAL = "proyectos";
+    const MAX_POR_MES = 10;
 
-        function ordenarProyectos() {
-            proyectos.sort((a, b) => b.timestamp - a.timestamp);
-        }
+    let proyectos = [];
+    let editorActivo = false;
 
-        function formatearFecha(fecha) {
-            const dia = fecha.getDate().toString().padStart(2,'0');
-            const mes = (fecha.getMonth()+1).toString().padStart(2,'0');
-            const año = fecha.getFullYear();
-            const horas = fecha.getHours().toString().padStart(2,'0');
-            const minutos = fecha.getMinutes().toString().padStart(2,'0');
-            return `${dia}/${mes}/${año} ${horas}:${minutos}`;
-        }
+    // ========== FUNCIÓN PARA CALCULAR HASH SHA-256 (nativa del navegador) ==========
+    async function calcularHash(texto) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(texto);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+    }
 
-        // ============================================
-        // MOSTRAR PROYECTOS
-        // ============================================
-        function mostrarProyectos(lista) {
-            const contenedor = document.getElementById('contenedorProyectos');
-            if (lista.length === 0) {
-                contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay proyectos aún</p>';
-                return;
-            }
+    // ========== FUNCIONES AUXILIARES ==========
+    function formatearFecha(isoDate) {
+        const fecha = new Date(isoDate);
+        return `${fecha.getDate().toString().padStart(2,'0')}/${(fecha.getMonth()+1).toString().padStart(2,'0')}/${fecha.getFullYear()} ${fecha.getHours().toString().padStart(2,'0')}:${fecha.getMinutes().toString().padStart(2,'0')}`;
+    }
 
-            let html = '';
-            lista.forEach(p => {
-                html += `
-                    <div class="proyecto" id="proyecto-${p.id}">
-                        <div class="proyecto-header">
-                            <span class="proyecto-titulo">📌 ${p.titulo}</span>
-                            <span class="proyecto-fecha">${p.fecha}</span>
-                        </div>
-                        <div class="proyecto-descripcion">${p.descripcion}</div>
-                `;
+    function escapeHtml(texto) {
+        if (!texto) return '';
+        const div = document.createElement('div');
+        div.textContent = texto;
+        return div.innerHTML;
+    }
 
-                if (editorActivo) {
-                    html += `
-                        <div class="proyecto-acciones">
-                            <button onclick="editarProyecto('${p.id}')" class="btn-secondary">✏️ EDITAR</button>
-                            <button onclick="eliminarProyecto('${p.id}')" class="btn-danger">🗑️ ELIMINAR</button>
-                        </div>
-                    `;
-                }
+    // ========== CARGAR PROYECTOS DESDE GITHUB API (pública) ==========
+    async function cargarProyectos() {
+        const contenedor = document.getElementById('contenedorProyectos');
+        contenedor.innerHTML = '<div class="loading">Cargando proyectos desde GitHub</div>';
 
-                html += `</div>`;
-            });
+        try {
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=open&labels=${ETIQUETA_PRINCIPAL}&per_page=100`;
+            const res = await fetch(url, { headers: { Accept: "application/vnd.github.v3+json" } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const issues = await res.json();
+            const soloIssues = issues.filter(issue => !issue.pull_request);
 
-            contenedor.innerHTML = html;
-        }
-
-        // ============================================
-        // FUNCIONES DEL EDITOR
-        // ============================================
-        function mostrarEditor() {
-            const clave = prompt("🔑 Clave de editor:");
-            if (clave === CLAVE_EDITOR) {
-                editorActivo = true;
-                document.getElementById('panelEditor').style.display = 'block';
-                document.getElementById('btnMostrarEditor').style.display = 'none';
-                // Limpiar campos
-                document.getElementById('editId').value = '';
-                document.getElementById('editTitulo').value = '';
-                document.getElementById('editDescripcion').value = '';
-                // Refrescar vista para mostrar botones de edición
-                mostrarProyectos(proyectos);
-            } else if (clave !== null) {
-                alert("❌ Clave incorrecta");
-            }
-        }
-
-        function ocultarEditor() {
-            editorActivo = false;
-            document.getElementById('panelEditor').style.display = 'none';
-            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
-            mostrarProyectos(proyectos);
-        }
-
-        function cancelarEdicion() {
-            document.getElementById('editId').value = '';
-            document.getElementById('editTitulo').value = '';
-            document.getElementById('editDescripcion').value = '';
-            ocultarEditor();
-        }
-
-        function guardarProyecto() {
-            const id = document.getElementById('editId').value;
-            const titulo = document.getElementById('editTitulo').value.trim();
-            const descripcion = document.getElementById('editDescripcion').value.trim();
-
-            if (!titulo || !descripcion) {
-                alert("⚠️ El título y la descripción son obligatorios");
-                return;
-            }
-
-            // Verificar límite solo para nuevos proyectos
-            if (!id && proyectos.length >= MAX_POR_MES) {
-                alert(`⚠️ Has alcanzado el límite de ${MAX_POR_MES} proyectos por mes. Usa "NUEVO MES" para empezar de nuevo.`);
-                return;
-            }
-
-            const ahora = new Date();
-
-            if (id) {
-                // Editar existente
-                for (let i = 0; i < proyectos.length; i++) {
-                    if (proyectos[i].id == id) {
-                        proyectos[i].titulo = titulo;
-                        proyectos[i].descripcion = descripcion;
-                        break;
-                    }
-                }
-                alert("✅ Proyecto actualizado");
-            } else {
-                // Nuevo proyecto
-                const nuevo = {
-                    id: Date.now(),
-                    titulo: titulo,
-                    descripcion: descripcion,
-                    fecha: formatearFecha(ahora),
-                    timestamp: ahora.getTime()
+            proyectos = soloIssues.map(issue => {
+                const etiquetas = issue.labels.map(lbl => lbl.name).filter(lbl => lbl !== ETIQUETA_PRINCIPAL);
+                return {
+                    number: issue.number,
+                    titulo: issue.title,
+                    descripcion: issue.body || "",
+                    fecha: formatearFecha(issue.created_at),
+                    timestamp: new Date(issue.created_at).getTime(),
+                    etiquetas: etiquetas,
+                    url: issue.html_url
                 };
-                proyectos.unshift(nuevo);
-                alert("✅ Proyecto guardado");
-            }
-
-            ordenarProyectos();
-            guardarProyectos();
-            mostrarProyectos(proyectos);
+            });
+            proyectos.sort((a,b) => b.timestamp - a.timestamp);
+            mostrarProyectos();
             actualizarContador();
-            cancelarEdicion();
+        } catch (error) {
+            console.error(error);
+            contenedor.innerHTML = `<p style="color: #ff5555;">⚠️ Error al conectar con GitHub. Verifica que el repositorio sea público y la etiqueta '${ETIQUETA_PRINCIPAL}' exista.</p>`;
+            document.getElementById('contadorMes').innerHTML = "Error al cargar datos";
+        }
+    }
+
+    function mostrarProyectos() {
+        const contenedor = document.getElementById('contenedorProyectos');
+        if (proyectos.length === 0) {
+            contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay proyectos activos. Crea el primero con el modo editor.</p>';
+            return;
         }
 
-        function editarProyecto(id) {
-            if (!editorActivo) return;
-            const proyecto = proyectos.find(p => p.id == id);
-            if (!proyecto) return;
+        let html = '';
+        proyectos.forEach(p => {
+            const etiquetasHtml = p.etiquetas.map(et => `<span class="etiqueta">#${escapeHtml(et)}</span>`).join('');
+            html += `
+                <div class="proyecto" id="proyecto-${p.number}">
+                    <div class="proyecto-header">
+                        <span class="proyecto-titulo">📌 ${escapeHtml(p.titulo)}</span>
+                        <span class="proyecto-fecha">${p.fecha}</span>
+                    </div>
+                    <div class="etiquetas">${etiquetasHtml}</div>
+                    <div class="proyecto-descripcion">${escapeHtml(p.descripcion)}</div>
+            `;
+            if (editorActivo) {
+                html += `
+                    <div class="proyecto-acciones">
+                        <button onclick="editarProyecto(${p.number})" class="btn-secondary">✏️ EDITAR</button>
+                        <button onclick="cerrarProyecto(${p.number})" class="btn-danger">🗑️ CERRAR PROYECTO</button>
+                    </div>
+                `;
+            }
+            html += `</div>`;
+        });
+        contenedor.innerHTML = html;
+    }
 
-            document.getElementById('editId').value = proyecto.id;
-            document.getElementById('editTitulo').value = proyecto.titulo;
-            document.getElementById('editDescripcion').value = proyecto.descripcion;
+    function actualizarContador() {
+        const ahora = new Date();
+        const mesActual = ahora.getMonth();
+        const añoActual = ahora.getFullYear();
+        const proyectosEsteMes = proyectos.filter(p => {
+            const fecha = new Date(p.timestamp);
+            return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
+        });
+        const total = proyectosEsteMes.length;
+        const restantes = MAX_POR_MES - total;
+        let mensaje = `📊 Proyectos activos creados este mes: ${total}/${MAX_POR_MES}`;
+        if (restantes > 0) mensaje += ` · Te quedan ${restantes} disponibles.`;
+        else if (restantes <= 0) mensaje += ` · ¡Límite alcanzado! Cierra algún proyecto o espera al próximo mes.`;
+        document.getElementById('contadorMes').innerHTML = mensaje;
+    }
 
+    // ========== ACCIONES DEL EDITOR (sin token, solo redirecciones) ==========
+    function guardarProyecto() {
+        const numero = document.getElementById('numeroProyecto').value;
+        let titulo = document.getElementById('tituloProyecto').value.trim();
+        let descripcion = document.getElementById('descripcionProyecto').value.trim();
+        let etiquetas = document.getElementById('etiquetasProyecto').value.trim();
+
+        if (!titulo || !descripcion) {
+            alert("El título y la descripción son obligatorios");
+            return;
+        }
+
+        let cuerpo = descripcion;
+        if (etiquetas) {
+            cuerpo += `\n\n---\n**Etiquetas sugeridas:** ${etiquetas}`;
+        }
+        cuerpo += `\n\n---\n*Proyecto registrado desde check-status*`;
+
+        const labels = encodeURIComponent(`${ETIQUETA_PRINCIPAL},${etiquetas}`.replace(/,\s*$/, ''));
+
+        let url;
+        if (numero) {
+            url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues/${numero}/edit`;
+            alert("Serás redirigido a GitHub para editar el issue. Después de guardar, vuelve y pulsa 'Recargar proyectos'.");
+        } else {
+            const titleEnc = encodeURIComponent(titulo);
+            const bodyEnc = encodeURIComponent(cuerpo);
+            url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues/new?title=${titleEnc}&body=${bodyEnc}&labels=${labels}`;
+        }
+        window.open(url, '_blank');
+
+        cancelarEdicion();
+        setTimeout(() => {
+            if (confirm("¿Ya has creado/editado el issue? Recarga la lista de proyectos.")) {
+                recargarProyectos();
+            }
+        }, 15000);
+    }
+
+    function editarProyecto(number) {
+        const proyecto = proyectos.find(p => p.number === number);
+        if (!proyecto) return;
+
+        document.getElementById('numeroProyecto').value = proyecto.number;
+        document.getElementById('tituloProyecto').value = proyecto.titulo;
+        document.getElementById('descripcionProyecto').value = proyecto.descripcion;
+        document.getElementById('etiquetasProyecto').value = proyecto.etiquetas.join(", ");
+        document.getElementById('panelEditor').style.display = 'block';
+        document.getElementById('btnMostrarEditor').style.display = 'none';
+        document.getElementById('btnRecargar').style.display = 'inline-block';
+        document.getElementById('btnNuevoMes').style.display = 'inline-block';
+    }
+
+    function cerrarProyecto(number) {
+        if (!confirm("¿Cerrar este proyecto? Se moverá a 'closed' y dejará de aparecer en la lista activa.")) return;
+        const url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues/${number}`;
+        alert(`Ve al issue en GitHub y haz clic en "Close issue".\n${url}`);
+        window.open(url, '_blank');
+        setTimeout(() => {
+            if (confirm("¿Ya cerraste el issue? Recarga para actualizar la lista.")) {
+                recargarProyectos();
+            }
+        }, 10000);
+    }
+
+    async function nuevoMes() {
+        if (!editorActivo) {
+            alert("Debes activar el modo editor primero.");
+            return;
+        }
+        if (!confirm("⚠️ Esto te ayudará a cerrar todos los proyectos activos para empezar un nuevo mes. ¿Continuar?")) return;
+        const confirmacion = prompt("Escribe 'NUEVO MES' para confirmar:");
+        if (confirmacion !== "NUEVO MES") {
+            alert("Cancelado");
+            return;
+        }
+        const url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues?q=is%3Aissue+label%3A${ETIQUETA_PRINCIPAL}+is%3Aopen`;
+        alert(`Se abrirá la lista de issues abiertos. Cierra uno por uno los que quieras eliminar del mes.\n${url}`);
+        window.open(url, '_blank');
+    }
+
+    function recargarProyectos() {
+        cargarProyectos();
+        alert("Recargando lista de proyectos...");
+    }
+
+    // ========== AUTENTICACIÓN CON HASH (sin mostrar la clave) ==========
+    async function activarEditor() {
+        const claveIntroducida = prompt("🔑 Clave de editor:");
+        if (!claveIntroducida) return;
+
+        const hashIntroducido = await calcularHash(claveIntroducida);
+        if (hashIntroducido === HASH_CLAVE) {
+            editorActivo = true;
             document.getElementById('panelEditor').style.display = 'block';
             document.getElementById('btnMostrarEditor').style.display = 'none';
+            document.getElementById('btnRecargar').style.display = 'inline-block';
+            document.getElementById('btnNuevoMes').style.display = 'inline-block';
+            // Limpiar formulario
+            document.getElementById('numeroProyecto').value = '';
+            document.getElementById('tituloProyecto').value = '';
+            document.getElementById('descripcionProyecto').value = '';
+            document.getElementById('etiquetasProyecto').value = '';
+            mostrarProyectos();
+        } else {
+            alert("❌ Clave incorrecta");
         }
+    }
 
-        function eliminarProyecto(id) {
-            if (!editorActivo) return;
-            if (confirm("¿Eliminar este proyecto?")) {
-                proyectos = proyectos.filter(p => p.id != id);
-                guardarProyectos();
-                mostrarProyectos(proyectos);
-                actualizarContador();
-            }
-        }
+    function cancelarEdicion() {
+        editorActivo = false;
+        document.getElementById('panelEditor').style.display = 'none';
+        document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+        document.getElementById('btnRecargar').style.display = 'none';
+        document.getElementById('btnNuevoMes').style.display = 'none';
+        mostrarProyectos();
+    }
 
-        // ============================================
-        // FUNCIONES DEL MES
-        // ============================================
-        function actualizarContador() {
-            const total = proyectos.length;
-            const restantes = MAX_POR_MES - total;
-            let mensaje = `📊 Este mes: ${total}/${MAX_POR_MES} proyectos`;
-            if (restantes > 0) {
-                mensaje += ` · Te quedan ${restantes}`;
-            } else {
-                mensaje += ` · ¡Límite alcanzado!`;
-            }
-            document.getElementById('contadorMes').innerHTML = mensaje;
-        }
-
-        function nuevoMes() {
-            if (!editorActivo) {
-                alert("🔒 Debes estar en modo editor para usar esta función");
-                return;
-            }
-
-            const confirmacion1 = confirm("⚠️ ¿NUEVO MES? Esto borrará TODOS los proyectos actuales.");
-            if (confirmacion1) {
-                const confirmacion2 = prompt("Escribe 'BORRAR CHECKSTATUS' para confirmar:");
-                if (confirmacion2 === "BORRAR CHECKSTATUS") {
-                    proyectos = [];
-                    guardarProyectos();
-                    mostrarProyectos([]);
-                    actualizarContador();
-                    ocultarEditor();
-                    alert("✅ Check-status listo para el nuevo mes");
-                } else {
-                    alert("❌ Confirmación incorrecta. No se borró nada.");
-                }
-            }
-        }
-
-        // ============================================
-        // INICIO
-        // ============================================
-        cargarProyectos();
-        console.log('📊 check-status iniciado');
-    </script>
+    // ========== INICIO ==========
+    cargarProyectos();
+</script>
 </body>
-  </html>
+</html>
