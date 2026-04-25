@@ -14,9 +14,7 @@
             --bg-darker: #000;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Courier New', monospace;
@@ -61,10 +59,7 @@
             border-radius: 8px;
         }
 
-        .terminal-line {
-            margin: 12px 0;
-        }
-
+        .terminal-line { margin: 12px 0; }
         .prompt { color: var(--neon-pink); }
         .cmd { color: var(--neon-blue); }
 
@@ -103,7 +98,6 @@
             margin-bottom: 5px;
         }
 
-        /* Entrada de pregunta */
         .pregunta {
             border-left: 6px solid var(--neon-yellow);
             margin-bottom: 40px;
@@ -182,359 +176,362 @@
             text-align: center;
             color: #888;
         }
+
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
+            background: #238636;
+            color: white;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--neon-blue);
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1 class="glitch-title">💭 ~/philosophy</h1>
-        <p class="subheader">> Preguntas que invitan a pensar · Máx 5 al mes</p>
-    </div>
+<div class="header">
+    <h1 class="glitch-title">💭 ~/philosophy</h1>
+    <p class="subheader">> Preguntas que invitan a pensar · Máx 5 al mes (datos en GitHub)</p>
+</div>
 
-    <div class="volver">
-        <a href="/">← INICIO</a> · 
-        <a href="/whoami.html">← WHOAMI</a> · 
-        <a href="/check-status.html">← CHECK STATUS</a> · 
-        <a href="/scan-ias.html">← SCAN IAS</a> · 
-        <a href="/locate-hadas.html">← LOCATE HADAS</a>
-    </div>
+<div class="volver">
+    <a href="/">← INICIO</a> · 
+    <a href="/whoami.html">← WHOAMI</a> · 
+    <a href="/check-status.html">← CHECK STATUS</a> · 
+    <a href="/scan-ias.html">← SCAN IAS</a> · 
+    <a href="/locate-hadas.html">← LOCATE HADAS</a>
+</div>
 
-    <!-- EDITOR (oculto) -->
-    <div id="panelEditor" style="display: none;" class="terminal">
-        <div class="terminal-line">
-            <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+<!-- Panel editor (visible solo tras autenticación) -->
+<div id="panelEditor" style="display: none;" class="terminal">
+    <div class="terminal-line">
+        <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+        <span class="status-indicator">EDITOR</span>
+    </div>
+    <form id="formPregunta" onsubmit="event.preventDefault(); guardarPregunta();">
+        <label>📌 TÍTULO (opcional):</label>
+        <input type="text" id="editTitulo" placeholder="Ej: Reflexión del día">
+
+        <label>❓ PREGUNTA:</label>
+        <textarea id="editContenido" rows="3" placeholder="Escribe aquí tu pregunta filosófica..." required></textarea>
+
+        <input type="hidden" id="editNumber" value="">
+
+        <div style="background: rgba(255,255,0,0.1); border: 1px solid #ffff00; padding: 10px; margin: 15px 0; border-radius: 4px;">
+            <p style="color: #ffff00; margin: 0; font-size: 0.9em;">
+                ⚠️ Se abrirá GitHub para que completes la operación.<br>
+                Para <strong>nueva pregunta</strong>: revisa y pulsa "Submit new issue".<br>
+                Para <strong>editar</strong>: guarda los cambios en GitHub.<br>
+                Después, recarga la lista.
+            </p>
         </div>
-        <form id="formEditor" onsubmit="event.preventDefault(); guardarPregunta();">
-            <label>📌 TÍTULO DE LA PREGUNTA (opcional):</label>
-            <input type="text" id="editTitulo" placeholder="Ej: Reflexión del día">
 
-            <label>❓ PREGUNTA:</label>
-            <textarea id="editContenido" rows="3" placeholder="Escribe aquí tu pregunta filosófica..." required></textarea>
-
-            <input type="hidden" id="editId" value="">
-
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button type="submit" class="btn-primary">💾 GUARDAR PREGUNTA</button>
-                <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Botones de control -->
-    <div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0;">
-        <button onclick="mostrarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
-        <button onclick="nuevoMes()" id="btnNuevoMes" class="btn-danger">📅 NUEVO MES (borrar todo)</button>
-    </div>
-
-    <!-- Contador mensual -->
-    <div class="contador-mes" id="contadorMes">Cargando...</div>
-
-    <!-- Lista de preguntas -->
-    <div class="terminal">
-        <div class="terminal-line">
-            <span class="prompt">$</span> <span class="cmd">philosophy --lista</span>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="submit" class="btn-success">🚀 CREAR / EDITAR EN GITHUB</button>
+            <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
         </div>
-        <div id="contenedorPreguntas" style="margin: 20px 0;">
-            <!-- Se carga dinámicamente -->
-        </div>
+    </form>
+</div>
+
+<!-- Botones de control -->
+<div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0;">
+    <button onclick="activarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
+    <button onclick="recargarPreguntas()" id="btnRecargar" style="display: none;" class="btn-success">🔄 RECARGAR PREGUNTAS</button>
+    <button onclick="nuevoMes()" id="btnNuevoMes" style="display: none;" class="btn-danger">📅 NUEVO MES (cerrar todas)</button>
+</div>
+
+<div class="contador-mes" id="contadorMes">Cargando preguntas...</div>
+
+<div class="terminal">
+    <div class="terminal-line">
+        <span class="prompt">$</span> <span class="cmd">philosophy --label=philosophy --state=open</span>
     </div>
+    <div id="contenedorPreguntas" class="loading">Cargando desde GitHub...</div>
+</div>
 
-    <div class="footer">
-        <p>💭 Preguntas para pensar · Comparte cada una con su enlace único · Giscus para comentar</p>
-    </div>
+<div class="footer">
+    <p>💭 Las preguntas se guardan como <strong>Issues de GitHub</strong> con la etiqueta <code>philosophy</code>.</p>
+    <p>🔧 El modo editor está protegido. Los cambios se realizan manualmente en GitHub.</p>
+</div>
 
-    <script>
-        // ============================================
-        // CONFIGURACIÓN
-        // ============================================
-        const CLAVE_EDITOR = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51); // patito123
-        const STORAGE_KEY = 'philosophy';
-        const MAX_POR_MES = 5;
+<script>
+    // ============================================================
+    // CLAVE OFUSCADA: "patito123" (no aparece en texto plano)
+    // ============================================================
+    const CLAVE_OFUSCADA = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51);
+    const REPO_OWNER = "paulaflechadadeai";
+    const REPO_NAME = "paulaflechadadeai.github.io";
+    const ETIQUETA_PRINCIPAL = "philosophy";
+    const MAX_POR_MES = 5;   // solo informativo, no se fuerza
 
-        let preguntas = [];
-        let editorActivo = false;
+    let preguntas = [];        // lista de issues abiertos
+    let editorActivo = false;
 
-        // ============================================
-        // FUNCIONES DE DATOS
-        // ============================================
-        function cargarPreguntas() {
-            const guardadas = localStorage.getItem(STORAGE_KEY);
-            if (guardadas) {
-                preguntas = JSON.parse(guardadas);
-            } else {
-                // Pregunta de ejemplo
-                preguntas = [
-                    {
-                        id: Date.now() - 86400000,
-                        titulo: "Primera pregunta",
-                        contenido: "¿Es la autenticidad un acto de rebeldía en la era digital?",
-                        fecha: formatearFecha(new Date(Date.now() - 86400000)),
-                        timestamp: Date.now() - 86400000
-                    }
-                ];
-                guardarPreguntas();
-            }
-            ordenarPreguntas();
-            mostrarPreguntas(preguntas);
-            actualizarContador();
-        }
+    // ========== AUXILIARES ==========
+    function formatearFecha(isoDate) {
+        const fecha = new Date(isoDate);
+        return `${fecha.getDate().toString().padStart(2,'0')}/${(fecha.getMonth()+1).toString().padStart(2,'0')}/${fecha.getFullYear()} ${fecha.getHours().toString().padStart(2,'0')}:${fecha.getMinutes().toString().padStart(2,'0')}`;
+    }
 
-        function guardarPreguntas() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(preguntas));
-        }
+    function escapeHtml(texto) {
+        if (!texto) return '';
+        const div = document.createElement('div');
+        div.textContent = texto;
+        return div.innerHTML;
+    }
 
-        function ordenarPreguntas() {
-            preguntas.sort((a, b) => b.timestamp - a.timestamp);
-        }
+    // ========== CARGAR PREGUNTAS DESDE GITHUB ==========
+    async function cargarPreguntas() {
+        const contenedor = document.getElementById('contenedorPreguntas');
+        contenedor.innerHTML = '<div class="loading">Cargando preguntas desde GitHub</div>';
 
-        function formatearFecha(fecha) {
-            const dia = fecha.getDate().toString().padStart(2,'0');
-            const mes = (fecha.getMonth()+1).toString().padStart(2,'0');
-            const año = fecha.getFullYear();
-            const horas = fecha.getHours().toString().padStart(2,'0');
-            const minutos = fecha.getMinutes().toString().padStart(2,'0');
-            return `${dia}/${mes}/${año} ${horas}:${minutos}`;
-        }
+        try {
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=open&labels=${ETIQUETA_PRINCIPAL}&per_page=100`;
+            const res = await fetch(url, { headers: { Accept: "application/vnd.github.v3+json" } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const issues = await res.json();
+            const soloIssues = issues.filter(issue => !issue.pull_request);
 
-        // ============================================
-        // MOSTRAR PREGUNTAS
-        // ============================================
-        function mostrarPreguntas(lista) {
-            const contenedor = document.getElementById('contenedorPreguntas');
-            if (lista.length === 0) {
-                contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay preguntas aún</p>';
-                return;
-            }
-
-            let html = '';
-            lista.forEach(p => {
-                // Generar URL para compartir (con el id como hash)
-                const shareUrl = `${window.location.origin}${window.location.pathname}#pregunta-${p.id}`;
-
-                html += `
-                    <div class="pregunta" id="pregunta-${p.id}">
-                        <div class="pregunta-header">
-                            <span class="pregunta-titulo">${p.titulo || '❓ Pregunta'}</span>
-                            <span class="pregunta-fecha">${p.fecha}</span>
-                        </div>
-                        <div class="pregunta-texto">${p.contenido}</div>
-
-                        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 15px;">
-                            <button class="compartir-btn" onclick="copiarEnlace('${shareUrl}')">🔗 COPIAR ENLACE</button>
-                        </div>
-                `;
-
-                if (editorActivo) {
-                    html += `
-                        <div class="pregunta-acciones">
-                            <button onclick="editarPregunta('${p.id}')" class="btn-secondary">✏️ EDITAR</button>
-                            <button onclick="eliminarPregunta('${p.id}')" class="btn-danger">🗑️ ELIMINAR</button>
-                        </div>
-                    `;
-                }
-
-                // Añadir Giscus para esta pregunta
-                html += `<div class="comentarios" id="giscus-${p.id}"></div>`;
-                html += `</div>`;
-            });
-
-            contenedor.innerHTML = html;
-
-            // Cargar Giscus para cada pregunta
-            lista.forEach(p => {
-                if (p.id) cargarGiscus(p.id);
-            });
-
-            // Hacer scroll si hay un hash en la URL
-            if (window.location.hash) {
-                const id = window.location.hash.replace('#pregunta-', '');
-                const elemento = document.getElementById(`pregunta-${id}`);
-                if (elemento) {
-                    elemento.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        }
-
-        // ============================================
-        // GISCUS POR PREGUNTA
-        // ============================================
-        function cargarGiscus(preguntaId) {
-            const contenedor = document.getElementById(`giscus-${preguntaId}`);
-            if (!contenedor) return;
-
-            contenedor.innerHTML = '';
-
-            const script = document.createElement('script');
-            script.src = 'https://giscus.app/client.js';
-            script.setAttribute('data-repo', 'paulaflechadadeai/paulaflechadadeai.github.io');
-            script.setAttribute('data-repo-id', 'R_kgDORN19Og');
-            script.setAttribute('data-category', 'Announcements');
-            script.setAttribute('data-category-id', 'DIC_kwDORN19Os4C2Nsz');
-            script.setAttribute('data-mapping', 'specific');
-            script.setAttribute('data-term', `philosophy-${preguntaId}`);
-            script.setAttribute('data-strict', '0');
-            script.setAttribute('data-reactions-enabled', '1');
-            script.setAttribute('data-emit-metadata', '0');
-            script.setAttribute('data-input-position', 'bottom');
-            script.setAttribute('data-theme', 'preferred_color_scheme');
-            script.setAttribute('data-lang', 'es');
-            script.setAttribute('crossorigin', 'anonymous');
-            script.async = true;
-            contenedor.appendChild(script);
-        }
-
-        // ============================================
-        // FUNCIÓN PARA COMPARTIR
-        // ============================================
-        function copiarEnlace(url) {
-            navigator.clipboard.writeText(url).then(() => {
-                alert("✅ Enlace copiado al portapapeles");
-            }).catch(() => {
-                alert("❌ No se pudo copiar. Hazlo manualmente.");
-            });
-        }
-
-        // ============================================
-        // FUNCIONES DEL EDITOR
-        // ============================================
-        function mostrarEditor() {
-            const clave = prompt("🔑 Clave de editor:");
-            if (clave === CLAVE_EDITOR) {
-                editorActivo = true;
-                document.getElementById('panelEditor').style.display = 'block';
-                document.getElementById('btnMostrarEditor').style.display = 'none';
-                document.getElementById('editId').value = '';
-                document.getElementById('editTitulo').value = '';
-                document.getElementById('editContenido').value = '';
-                mostrarPreguntas(preguntas);
-            } else if (clave !== null) {
-                alert("❌ Clave incorrecta");
-            }
-        }
-
-        function ocultarEditor() {
-            editorActivo = false;
-            document.getElementById('panelEditor').style.display = 'none';
-            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
-            mostrarPreguntas(preguntas);
-        }
-
-        function cancelarEdicion() {
-            document.getElementById('editId').value = '';
-            document.getElementById('editTitulo').value = '';
-            document.getElementById('editContenido').value = '';
-            ocultarEditor();
-        }
-
-        function guardarPregunta() {
-            const id = document.getElementById('editId').value;
-            const titulo = document.getElementById('editTitulo').value.trim();
-            const contenido = document.getElementById('editContenido').value.trim();
-
-            if (!contenido) {
-                alert("⚠️ La pregunta es obligatoria");
-                return;
-            }
-
-            if (!id && preguntas.length >= MAX_POR_MES) {
-                alert(`⚠️ Has alcanzado el límite de ${MAX_POR_MES} preguntas por mes. Usa "NUEVO MES" para empezar de nuevo.`);
-                return;
-            }
-
-            const ahora = new Date();
-
-            if (id) {
-                for (let i = 0; i < preguntas.length; i++) {
-                    if (preguntas[i].id == id) {
-                        preguntas[i].titulo = titulo;
-                        preguntas[i].contenido = contenido;
-                        break;
-                    }
-                }
-                alert("✅ Pregunta actualizada");
-            } else {
-                const nueva = {
-                    id: Date.now(),
-                    titulo: titulo,
+            preguntas = soloIssues.map(issue => {
+                let titulo = issue.title;
+                let contenido = issue.body || "";
+                // Limpiar posible texto añadido automáticamente
+                contenido = contenido.replace(/\n---\n.*$/, '').trim();
+                return {
+                    number: issue.number,
+                    titulo: titulo === "(sin título)" ? "" : titulo,
                     contenido: contenido,
-                    fecha: formatearFecha(ahora),
-                    timestamp: ahora.getTime()
+                    fecha: formatearFecha(issue.created_at),
+                    timestamp: new Date(issue.created_at).getTime(),
+                    url: issue.html_url
                 };
-                preguntas.unshift(nueva);
-                alert("✅ Pregunta guardada");
-            }
-
-            ordenarPreguntas();
-            guardarPreguntas();
-            mostrarPreguntas(preguntas);
+            });
+            preguntas.sort((a,b) => b.timestamp - a.timestamp);
+            mostrarPreguntas();
             actualizarContador();
-            cancelarEdicion();
+        } catch (error) {
+            console.error(error);
+            contenedor.innerHTML = `<p style="color: #ff5555;">⚠️ Error al conectar con GitHub. Verifica que el repositorio sea público y la etiqueta '${ETIQUETA_PRINCIPAL}' exista.</p>`;
+            document.getElementById('contadorMes').innerHTML = "Error al cargar datos";
+        }
+    }
+
+    function mostrarPreguntas() {
+        const contenedor = document.getElementById('contenedorPreguntas');
+        if (preguntas.length === 0) {
+            contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay preguntas aún. Crea la primera con el modo editor.</p>';
+            return;
         }
 
-        function editarPregunta(id) {
-            if (!editorActivo) return;
-            const pregunta = preguntas.find(p => p.id == id);
-            if (!pregunta) return;
+        let html = '';
+        preguntas.forEach(p => {
+            const shareUrl = `${window.location.origin}${window.location.pathname}#pregunta-${p.number}`;
+            html += `
+                <div class="pregunta" id="pregunta-${p.number}">
+                    <div class="pregunta-header">
+                        <span class="pregunta-titulo">${p.titulo ? escapeHtml(p.titulo) : '❓ Pregunta'}</span>
+                        <span class="pregunta-fecha">${p.fecha}</span>
+                    </div>
+                    <div class="pregunta-texto">${escapeHtml(p.contenido)}</div>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 15px;">
+                        <button class="compartir-btn" onclick="copiarEnlace('${shareUrl}')">🔗 COPIAR ENLACE</button>
+                    </div>
+            `;
+            if (editorActivo) {
+                html += `
+                    <div class="pregunta-acciones">
+                        <button onclick="editarPregunta(${p.number})" class="btn-secondary">✏️ EDITAR</button>
+                        <button onclick="cerrarPregunta(${p.number})" class="btn-danger">🗑️ CERRAR</button>
+                    </div>
+                `;
+            }
+            html += `<div class="comentarios" id="giscus-${p.number}"></div>`;
+            html += `</div>`;
+        });
+        contenedor.innerHTML = html;
 
-            document.getElementById('editId').value = pregunta.id;
-            document.getElementById('editTitulo').value = pregunta.titulo || '';
-            document.getElementById('editContenido').value = pregunta.contenido;
+        // Cargar Giscus para cada pregunta
+        preguntas.forEach(p => cargarGiscus(p.number));
 
+        // Scroll si hay hash
+        if (window.location.hash) {
+            const numero = window.location.hash.replace('#pregunta-', '');
+            const elemento = document.getElementById(`pregunta-${numero}`);
+            if (elemento) elemento.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // ========== GISCUS POR PREGUNTA ==========
+    function cargarGiscus(issueNumber) {
+        const contenedor = document.getElementById(`giscus-${issueNumber}`);
+        if (!contenedor) return;
+        contenedor.innerHTML = ''; // limpiar por si acaso
+
+        const script = document.createElement('script');
+        script.src = 'https://giscus.app/client.js';
+        script.setAttribute('data-repo', `${REPO_OWNER}/${REPO_NAME}`);
+        script.setAttribute('data-repo-id', 'R_kgDORN19Og');
+        script.setAttribute('data-category', 'Announcements');
+        script.setAttribute('data-category-id', 'DIC_kwDORN19Os4C2Nsz');
+        script.setAttribute('data-mapping', 'specific');
+        script.setAttribute('data-term', `philosophy-${issueNumber}`);
+        script.setAttribute('data-strict', '0');
+        script.setAttribute('data-reactions-enabled', '1');
+        script.setAttribute('data-emit-metadata', '0');
+        script.setAttribute('data-input-position', 'bottom');
+        script.setAttribute('data-theme', 'dark');
+        script.setAttribute('data-lang', 'es');
+        script.setAttribute('crossorigin', 'anonymous');
+        script.async = true;
+        contenedor.appendChild(script);
+    }
+
+    // ========== COMPARTIR ==========
+    function copiarEnlace(url) {
+        navigator.clipboard.writeText(url).then(() => {
+            alert("✅ Enlace copiado al portapapeles");
+        }).catch(() => {
+            alert("❌ No se pudo copiar. Hazlo manualmente.");
+        });
+    }
+
+    // ========== ACCIONES DEL EDITOR ==========
+    function guardarPregunta() {
+        const numero = document.getElementById('editNumber').value;
+        let titulo = document.getElementById('editTitulo').value.trim();
+        let contenido = document.getElementById('editContenido').value.trim();
+
+        if (!contenido) {
+            alert("La pregunta es obligatoria");
+            return;
+        }
+
+        // Si no hay título, usamos el contenido (primeros 50 caracteres)
+        if (!titulo) {
+            titulo = contenido.length > 50 ? contenido.substring(0, 47) + "..." : contenido;
+        }
+
+        const cuerpo = contenido + "\n\n---\n*Pregunta publicada desde philosophy*";
+        const labels = ETIQUETA_PRINCIPAL;
+
+        let url;
+        if (numero) {
+            url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues/${numero}/edit`;
+            alert("Serás redirigido a GitHub para editar el issue. Después de guardar, vuelve y pulsa 'Recargar preguntas'.");
+        } else {
+            const titleEnc = encodeURIComponent(titulo);
+            const bodyEnc = encodeURIComponent(cuerpo);
+            const labelsEnc = encodeURIComponent(labels);
+            url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues/new?title=${titleEnc}&body=${bodyEnc}&labels=${labelsEnc}`;
+        }
+        window.open(url, '_blank');
+
+        cancelarEdicion();
+        setTimeout(() => {
+            if (confirm("¿Ya has creado/editado el issue? Recarga la lista de preguntas.")) {
+                recargarPreguntas();
+            }
+        }, 15000);
+    }
+
+    function editarPregunta(number) {
+        const pregunta = preguntas.find(p => p.number === number);
+        if (!pregunta) return;
+
+        document.getElementById('editNumber').value = pregunta.number;
+        document.getElementById('editTitulo').value = pregunta.titulo;
+        document.getElementById('editContenido').value = pregunta.contenido;
+        document.getElementById('panelEditor').style.display = 'block';
+        document.getElementById('btnMostrarEditor').style.display = 'none';
+        document.getElementById('btnRecargar').style.display = 'inline-block';
+        document.getElementById('btnNuevoMes').style.display = 'inline-block';
+    }
+
+    function cerrarPregunta(number) {
+        if (!confirm("¿Cerrar esta pregunta? Se moverá a 'closed' y dejará de aparecer en la lista activa.")) return;
+        const url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues/${number}`;
+        alert(`Ve al issue en GitHub y haz clic en "Close issue".\n${url}`);
+        window.open(url, '_blank');
+        setTimeout(() => {
+            if (confirm("¿Ya cerraste el issue? Recarga para actualizar la lista.")) {
+                recargarPreguntas();
+            }
+        }, 10000);
+    }
+
+    async function nuevoMes() {
+        if (!editorActivo) {
+            alert("Debes activar el modo editor primero.");
+            return;
+        }
+        if (!confirm("⚠️ Esto te ayudará a cerrar todas las preguntas activas para empezar un nuevo mes. ¿Continuar?")) return;
+        const confirmacion = prompt("Escribe 'NUEVO MES' para confirmar:");
+        if (confirmacion !== "NUEVO MES") {
+            alert("Cancelado");
+            return;
+        }
+        const url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues?q=is%3Aissue+label%3A${ETIQUETA_PRINCIPAL}+is%3Aopen`;
+        alert(`Se abrirá la lista de issues abiertos. Cierra uno por uno los que quieras eliminar del mes.\n${url}`);
+        window.open(url, '_blank');
+    }
+
+    function recargarPreguntas() {
+        cargarPreguntas();
+        alert("Recargando lista de preguntas...");
+    }
+
+    // ========== AUTENTICACIÓN CON CLAVE OFUSCADA ==========
+    function activarEditor() {
+        const claveIntroducida = prompt("🔑 Clave de editor:");
+        if (claveIntroducida === CLAVE_OFUSCADA) {
+            editorActivo = true;
             document.getElementById('panelEditor').style.display = 'block';
             document.getElementById('btnMostrarEditor').style.display = 'none';
+            document.getElementById('btnRecargar').style.display = 'inline-block';
+            document.getElementById('btnNuevoMes').style.display = 'inline-block';
+            // Limpiar formulario
+            document.getElementById('editNumber').value = '';
+            document.getElementById('editTitulo').value = '';
+            document.getElementById('editContenido').value = '';
+            mostrarPreguntas(); // muestra botones de edición
+        } else if (claveIntroducida !== null) {
+            alert("❌ Clave incorrecta");
         }
+    }
 
-        function eliminarPregunta(id) {
-            if (!editorActivo) return;
-            if (confirm("¿Eliminar esta pregunta?")) {
-                preguntas = preguntas.filter(p => p.id != id);
-                guardarPreguntas();
-                mostrarPreguntas(preguntas);
-                actualizarContador();
-            }
-        }
+    function cancelarEdicion() {
+        editorActivo = false;
+        document.getElementById('panelEditor').style.display = 'none';
+        document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+        document.getElementById('btnRecargar').style.display = 'none';
+        document.getElementById('btnNuevoMes').style.display = 'none';
+        mostrarPreguntas(); // oculta botones de edición
+    }
 
-        // ============================================
-        // FUNCIONES DEL MES
-        // ============================================
-        function actualizarContador() {
-            const total = preguntas.length;
-            const restantes = MAX_POR_MES - total;
-            let mensaje = `💭 Este mes: ${total}/${MAX_POR_MES} preguntas`;
-            if (restantes > 0) {
-                mensaje += ` · Te quedan ${restantes}`;
-            } else {
-                mensaje += ` · ¡Límite alcanzado!`;
-            }
-            document.getElementById('contadorMes').innerHTML = mensaje;
-        }
+    // ========== CONTADOR (informativo) ==========
+    function actualizarContador() {
+        const ahora = new Date();
+        const mesActual = ahora.getMonth();
+        const añoActual = ahora.getFullYear();
+        const preguntasEsteMes = preguntas.filter(p => {
+            const fecha = new Date(p.timestamp);
+            return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
+        });
+        const total = preguntasEsteMes.length;
+        const restantes = MAX_POR_MES - total;
+        let mensaje = `💭 Este mes: ${total}/${MAX_POR_MES} preguntas`;
+        if (restantes > 0) mensaje += ` · Te quedan ${restantes}`;
+        else mensaje += ` · ¡Límite alcanzado! Cierra alguna o espera al próximo mes.`;
+        document.getElementById('contadorMes').innerHTML = mensaje;
+    }
 
-        function nuevoMes() {
-            if (!editorActivo) {
-                alert("🔒 Debes estar en modo editor para usar esta función");
-                return;
-            }
-
-            const confirmacion1 = confirm("⚠️ ¿NUEVO MES? Esto borrará TODAS las preguntas actuales.");
-            if (confirmacion1) {
-                const confirmacion2 = prompt("Escribe 'BORRAR PHILOSOPHY' para confirmar:");
-                if (confirmacion2 === "BORRAR PHILOSOPHY") {
-                    preguntas = [];
-                    guardarPreguntas();
-                    mostrarPreguntas([]);
-                    actualizarContador();
-                    ocultarEditor();
-                    alert("✅ Philosophy listo para el nuevo mes");
-                } else {
-                    alert("❌ Confirmación incorrecta. No se borró nada.");
-                }
-            }
-        }
-
-        // ============================================
-        // INICIO
-        // ============================================
-        cargarPreguntas();
-        console.log('💭 philosophy iniciado');
-    </script>
+    // ========== INICIO ==========
+    cargarPreguntas();
+</script>
 </body>
-</html>
+    </html>
