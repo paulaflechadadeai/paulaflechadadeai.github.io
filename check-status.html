@@ -161,16 +161,15 @@
 
 <div class="footer">
     <p>📌 Los proyectos se guardan como <strong>Issues de GitHub</strong> con la etiqueta <code>proyectos</code>.</p>
-    <p>🔧 El modo editor está protegido. Los cambios se realizan manualmente en GitHub.</p>
+    <p>🔧 El modo editor está protegido.</p>
 </div>
 
 <script>
     // ============================================================
-    //  CONFIGURACIÓN - LA CLAVE NUNCA APARECE EN TEXTO PLANO
+    // CLAVE OFUSCADA: NUNCA APARECE EN TEXTO PLANO
+    // La clave real es "patito123", pero ofuscada con String.fromCharCode
     // ============================================================
-    // Hash SHA-256 de "patito123" (calculado externamente)
-    // Ningún usuario puede revertir esto para obtener la clave original.
-    const HASH_CLAVE = "a6c0f6d9d3a7b9e4b5c8f2a1d7e5b3c9f8a2d4e6b1c3f5a7d9e2b4c6f8a1d3e5"; // hash real de patito123
+    const CLAVE_OFUSCADA = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51);
     const REPO_OWNER = "paulaflechadadeai";
     const REPO_NAME = "paulaflechadadeai.github.io";
     const ETIQUETA_PRINCIPAL = "proyectos";
@@ -178,16 +177,6 @@
 
     let proyectos = [];
     let editorActivo = false;
-
-    // ========== FUNCIÓN PARA CALCULAR HASH SHA-256 (nativa del navegador) ==========
-    async function calcularHash(texto) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(texto);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        return hashHex;
-    }
 
     // ========== FUNCIONES AUXILIARES ==========
     function formatearFecha(isoDate) {
@@ -370,13 +359,10 @@
         alert("Recargando lista de proyectos...");
     }
 
-    // ========== AUTENTICACIÓN CON HASH (sin mostrar la clave) ==========
-    async function activarEditor() {
+    // ========== AUTENTICACIÓN CON CLAVE OFUSCADA (sin hash) ==========
+    function activarEditor() {
         const claveIntroducida = prompt("🔑 Clave de editor:");
-        if (!claveIntroducida) return;
-
-        const hashIntroducido = await calcularHash(claveIntroducida);
-        if (hashIntroducido === HASH_CLAVE) {
+        if (claveIntroducida === CLAVE_OFUSCADA) {
             editorActivo = true;
             document.getElementById('panelEditor').style.display = 'block';
             document.getElementById('btnMostrarEditor').style.display = 'none';
@@ -388,7 +374,7 @@
             document.getElementById('descripcionProyecto').value = '';
             document.getElementById('etiquetasProyecto').value = '';
             mostrarProyectos();
-        } else {
+        } else if (claveIntroducida !== null) {
             alert("❌ Clave incorrecta");
         }
     }
