@@ -14,9 +14,7 @@
             --bg-darker: #000;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Courier New', monospace;
@@ -61,10 +59,7 @@
             border-radius: 8px;
         }
 
-        .terminal-line {
-            margin: 12px 0;
-        }
-
+        .terminal-line { margin: 12px 0; }
         .prompt { color: var(--neon-pink); }
         .cmd { color: var(--neon-blue); }
 
@@ -84,6 +79,7 @@
         .btn-primary { color: var(--neon-purple); border-color: var(--neon-purple); }
         .btn-secondary { color: var(--neon-blue); border-color: var(--neon-blue); }
         .btn-danger { color: #ff5555; border-color: #ff5555; }
+        .btn-success { color: var(--neon-green); border-color: var(--neon-green); }
 
         input, textarea {
             background: black;
@@ -102,7 +98,6 @@
             margin-bottom: 5px;
         }
 
-        /* Entrada de pensamiento */
         .pensamiento {
             border-left: 6px solid var(--neon-purple);
             margin-bottom: 25px;
@@ -167,308 +162,313 @@
             text-align: center;
             color: #888;
         }
+
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
+            background: #238636;
+            color: white;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--neon-blue);
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1 class="glitch-title">🧚 ~/locate-hadas</h1>
-        <p class="subheader">> Pensamientos, frases y micro-manifiestos · Máx 20 al mes</p>
-    </div>
+<div class="header">
+    <h1 class="glitch-title">🧚 ~/locate-hadas</h1>
+    <p class="subheader">> Pensamientos, frases y micro-manifiestos · Máx 20 al mes (datos en GitHub)</p>
+</div>
 
-    <div class="volver">
-        <a href="/">← INICIO</a> · 
-        <a href="/whoami.html">← WHOAMI</a> · 
-        <a href="/check-status.html">← CHECK STATUS</a> · 
-        <a href="/scan-ias.html">← SCAN IAS</a>
-    </div>
+<div class="volver">
+    <a href="/">← INICIO</a> · 
+    <a href="/whoami.html">← WHOAMI</a> · 
+    <a href="/check-status.html">← CHECK STATUS</a> · 
+    <a href="/scan-ias.html">← SCAN IAS</a>
+</div>
 
-    <!-- EDITOR (oculto) -->
-    <div id="panelEditor" style="display: none;" class="terminal">
-        <div class="terminal-line">
-            <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+<!-- Editor (solo visible tras autenticación) -->
+<div id="panelEditor" style="display: none;" class="terminal">
+    <div class="terminal-line">
+        <span class="prompt">$</span> <span class="cmd">modo_editor --activado</span>
+        <span class="status-indicator">EDITOR</span>
+    </div>
+    <form id="formPensamiento" onsubmit="event.preventDefault(); guardarPensamiento();">
+        <label>📌 TÍTULO (opcional):</label>
+        <input type="text" id="editTitulo" placeholder="Ej: Pensamiento del día">
+
+        <label>💬 PENSAMIENTO:</label>
+        <textarea id="editContenido" rows="3" placeholder="Escribe tu frase o pensamiento..." required></textarea>
+
+        <input type="hidden" id="editNumber" value="">
+
+        <div style="background: rgba(255,255,0,0.1); border: 1px solid #ffff00; padding: 10px; margin: 15px 0; border-radius: 4px;">
+            <p style="color: #ffff00; margin: 0; font-size: 0.9em;">
+                ⚠️ Se abrirá GitHub para que completes la operación.<br>
+                Para <strong>nuevo pensamiento</strong>: revisa y pulsa "Submit new issue".<br>
+                Para <strong>editar</strong>: guarda los cambios en GitHub.<br>
+                Después, recarga la lista.
+            </p>
         </div>
-        <form id="formEditor" onsubmit="event.preventDefault(); guardarPensamiento();">
-            <label>📌 TÍTULO (opcional):</label>
-            <input type="text" id="editTitulo" placeholder="Ej: Pensamiento del día">
 
-            <label>💬 PENSAMIENTO:</label>
-            <textarea id="editContenido" rows="3" placeholder="Escribe tu frase o pensamiento..." required></textarea>
-
-            <input type="hidden" id="editId" value="">
-
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button type="submit" class="btn-primary">💾 GUARDAR</button>
-                <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Botones de control -->
-    <div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0;">
-        <button onclick="mostrarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
-        <button onclick="nuevoMes()" id="btnNuevoMes" class="btn-danger">📅 NUEVO MES (borrar todo)</button>
-    </div>
-
-    <!-- Contador mensual -->
-    <div class="contador-mes" id="contadorMes">Cargando...</div>
-
-    <!-- Lista de pensamientos -->
-    <div class="terminal">
-        <div class="terminal-line">
-            <span class="prompt">$</span> <span class="cmd">locate_hadas --lista</span>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="submit" class="btn-success">🚀 CREAR / EDITAR EN GITHUB</button>
+            <button type="button" onclick="cancelarEdicion()" class="btn-secondary">✖ CANCELAR</button>
         </div>
-        <div id="contenedorPensamientos" style="margin: 20px 0;">
-            <!-- Se carga dinámicamente -->
-        </div>
+    </form>
+</div>
+
+<!-- Botones de control -->
+<div style="display: flex; gap: 10px; justify-content: space-between; margin: 20px 0;">
+    <button onclick="activarEditor()" id="btnMostrarEditor" class="btn-secondary">🔧 MODO EDITOR</button>
+    <button onclick="recargarPensamientos()" id="btnRecargar" style="display: none;" class="btn-success">🔄 RECARGAR PENSAMIENTOS</button>
+    <button onclick="nuevoMes()" id="btnNuevoMes" style="display: none;" class="btn-danger">📅 NUEVO MES (cerrar todos)</button>
+</div>
+
+<div class="contador-mes" id="contadorMes">Cargando pensamientos...</div>
+
+<div class="terminal">
+    <div class="terminal-line">
+        <span class="prompt">$</span> <span class="cmd">locate_hadas --label=pensamientos --state=open</span>
     </div>
+    <div id="contenedorPensamientos" class="loading">Cargando desde GitHub...</div>
+</div>
 
-    <div class="footer">
-        <p>🧚 Frases, pensamientos y hadas · Máximo 20 por mes</p>
-    </div>
+<div class="footer">
+    <p>🧚 Los pensamientos se guardan como <strong>Issues de GitHub</strong> con la etiqueta <code>pensamientos</code>.</p>
+    <p>🔧 El modo editor está protegido. Los cambios se realizan manualmente en GitHub.</p>
+</div>
 
-    <script>
-        // ============================================
-        // CONFIGURACIÓN
-        // ============================================
-        const CLAVE_EDITOR = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51); // patito123
-        const STORAGE_KEY = 'locatehadas';
-        const MAX_POR_MES = 20;
+<script>
+    // ============================================================
+    // CLAVE OFUSCADA: "patito123" usando String.fromCharCode
+    // ============================================================
+    const CLAVE_OFUSCADA = String.fromCharCode(112, 97, 116, 105, 116, 111, 49, 50, 51);
+    const REPO_OWNER = "paulaflechadadeai";
+    const REPO_NAME = "paulaflechadadeai.github.io";
+    const ETIQUETA_PRINCIPAL = "pensamientos";
+    const MAX_POR_MES = 20;   // solo informativo, no se fuerza
 
-        let pensamientos = [];
-        let editorActivo = false;
+    let pensamientos = [];      // lista de issues abiertos
+    let editorActivo = false;
 
-        // ============================================
-        // FUNCIONES DE DATOS
-        // ============================================
-        function cargarPensamientos() {
-            const guardados = localStorage.getItem(STORAGE_KEY);
-            if (guardados) {
-                pensamientos = JSON.parse(guardados);
-            } else {
-                // Pensamientos de ejemplo
-                pensamientos = [
-                    {
-                        id: Date.now() - 86400000,
-                        titulo: "Sobre la autenticidad",
-                        contenido: "Ser auténtica es el acto más rebelde en la era de los algoritmos.",
-                        fecha: formatearFecha(new Date(Date.now() - 86400000)),
-                        timestamp: Date.now() - 86400000
-                    },
-                    {
-                        id: Date.now() - 172800000,
-                        titulo: "",
-                        contenido: "Las hadas no existen, pero sus sombras sí.",
-                        fecha: formatearFecha(new Date(Date.now() - 172800000)),
-                        timestamp: Date.now() - 172800000
-                    }
-                ];
-                guardarPensamientos();
-            }
-            ordenarPensamientos();
-            mostrarPensamientos(pensamientos);
-            actualizarContador();
-        }
+    // ========== AUXILIARES ==========
+    function formatearFecha(isoDate) {
+        const fecha = new Date(isoDate);
+        return `${fecha.getDate().toString().padStart(2,'0')}/${(fecha.getMonth()+1).toString().padStart(2,'0')}/${fecha.getFullYear()} ${fecha.getHours().toString().padStart(2,'0')}:${fecha.getMinutes().toString().padStart(2,'0')}`;
+    }
 
-        function guardarPensamientos() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(pensamientos));
-        }
+    function escapeHtml(texto) {
+        if (!texto) return '';
+        const div = document.createElement('div');
+        div.textContent = texto;
+        return div.innerHTML;
+    }
 
-        function ordenarPensamientos() {
-            pensamientos.sort((a, b) => b.timestamp - a.timestamp);
-        }
+    // ========== CARGAR PENSAMIENTOS DESDE GITHUB ==========
+    async function cargarPensamientos() {
+        const contenedor = document.getElementById('contenedorPensamientos');
+        contenedor.innerHTML = '<div class="loading">Cargando pensamientos desde GitHub</div>';
 
-        function formatearFecha(fecha) {
-            const dia = fecha.getDate().toString().padStart(2,'0');
-            const mes = (fecha.getMonth()+1).toString().padStart(2,'0');
-            const año = fecha.getFullYear();
-            const horas = fecha.getHours().toString().padStart(2,'0');
-            const minutos = fecha.getMinutes().toString().padStart(2,'0');
-            return `${dia}/${mes}/${año} ${horas}:${minutos}`;
-        }
+        try {
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=open&labels=${ETIQUETA_PRINCIPAL}&per_page=100`;
+            const res = await fetch(url, { headers: { Accept: "application/vnd.github.v3+json" } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const issues = await res.json();
+            const soloIssues = issues.filter(issue => !issue.pull_request);
 
-        // ============================================
-        // MOSTRAR PENSAMIENTOS
-        // ============================================
-        function mostrarPensamientos(lista) {
-            const contenedor = document.getElementById('contenedorPensamientos');
-            if (lista.length === 0) {
-                contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay pensamientos aún</p>';
-                return;
-            }
-
-            let html = '';
-            lista.forEach(p => {
-                html += `
-                    <div class="pensamiento" id="pensamiento-${p.id}">
-                        <div class="pensamiento-header">
-                            <span class="pensamiento-titulo">${p.titulo || '✨ Pensamiento'}</span>
-                            <span class="pensamiento-fecha">${p.fecha}</span>
-                        </div>
-                        <div class="pensamiento-contenido">${p.contenido}</div>
-                `;
-
-                if (editorActivo) {
-                    html += `
-                        <div class="pensamiento-acciones">
-                            <button onclick="editarPensamiento('${p.id}')" class="btn-secondary">✏️ EDITAR</button>
-                            <button onclick="eliminarPensamiento('${p.id}')" class="btn-danger">🗑️ ELIMINAR</button>
-                        </div>
-                    `;
-                }
-
-                html += `</div>`;
-            });
-
-            contenedor.innerHTML = html;
-        }
-
-        // ============================================
-        // FUNCIONES DEL EDITOR
-        // ============================================
-        function mostrarEditor() {
-            const clave = prompt("🔑 Clave de editor:");
-            if (clave === CLAVE_EDITOR) {
-                editorActivo = true;
-                document.getElementById('panelEditor').style.display = 'block';
-                document.getElementById('btnMostrarEditor').style.display = 'none';
-                // Limpiar campos
-                document.getElementById('editId').value = '';
-                document.getElementById('editTitulo').value = '';
-                document.getElementById('editContenido').value = '';
-                // Refrescar vista para mostrar botones de edición
-                mostrarPensamientos(pensamientos);
-            } else if (clave !== null) {
-                alert("❌ Clave incorrecta");
-            }
-        }
-
-        function ocultarEditor() {
-            editorActivo = false;
-            document.getElementById('panelEditor').style.display = 'none';
-            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
-            mostrarPensamientos(pensamientos);
-        }
-
-        function cancelarEdicion() {
-            document.getElementById('editId').value = '';
-            document.getElementById('editTitulo').value = '';
-            document.getElementById('editContenido').value = '';
-            ocultarEditor();
-        }
-
-        function guardarPensamiento() {
-            const id = document.getElementById('editId').value;
-            const titulo = document.getElementById('editTitulo').value.trim();
-            const contenido = document.getElementById('editContenido').value.trim();
-
-            if (!contenido) {
-                alert("⚠️ El pensamiento es obligatorio");
-                return;
-            }
-
-            // Verificar límite solo para nuevos pensamientos
-            if (!id && pensamientos.length >= MAX_POR_MES) {
-                alert(`⚠️ Has alcanzado el límite de ${MAX_POR_MES} pensamientos por mes. Usa "NUEVO MES" para empezar de nuevo.`);
-                return;
-            }
-
-            const ahora = new Date();
-
-            if (id) {
-                // Editar existente
-                for (let i = 0; i < pensamientos.length; i++) {
-                    if (pensamientos[i].id == id) {
-                        pensamientos[i].titulo = titulo;
-                        pensamientos[i].contenido = contenido;
-                        break;
-                    }
-                }
-                alert("✅ Pensamiento actualizado");
-            } else {
-                // Nuevo pensamiento
-                const nuevo = {
-                    id: Date.now(),
-                    titulo: titulo,
+            pensamientos = soloIssues.map(issue => {
+                // Extraemos título del issue y contenido (cuerpo)
+                let titulo = issue.title;
+                let contenido = issue.body || "";
+                // Si el título es algo genérico como el contenido, lo tratamos
+                return {
+                    number: issue.number,
+                    titulo: titulo === "(sin título)" ? "" : titulo,
                     contenido: contenido,
-                    fecha: formatearFecha(ahora),
-                    timestamp: ahora.getTime()
+                    fecha: formatearFecha(issue.created_at),
+                    timestamp: new Date(issue.created_at).getTime(),
+                    url: issue.html_url
                 };
-                pensamientos.unshift(nuevo);
-                alert("✅ Pensamiento guardado");
-            }
-
-            ordenarPensamientos();
-            guardarPensamientos();
-            mostrarPensamientos(pensamientos);
+            });
+            pensamientos.sort((a,b) => b.timestamp - a.timestamp);
+            mostrarPensamientos();
             actualizarContador();
-            cancelarEdicion();
+        } catch (error) {
+            console.error(error);
+            contenedor.innerHTML = `<p style="color: #ff5555;">⚠️ Error al conectar con GitHub. Verifica que el repositorio sea público y la etiqueta '${ETIQUETA_PRINCIPAL}' exista.</p>`;
+            document.getElementById('contadorMes').innerHTML = "Error al cargar datos";
+        }
+    }
+
+    function mostrarPensamientos() {
+        const contenedor = document.getElementById('contenedorPensamientos');
+        if (pensamientos.length === 0) {
+            contenedor.innerHTML = '<p style="color:var(--neon-blue); text-align:center;">📭 No hay pensamientos aún. Crea el primero con el modo editor.</p>';
+            return;
         }
 
-        function editarPensamiento(id) {
-            if (!editorActivo) return;
-            const pensamiento = pensamientos.find(p => p.id == id);
-            if (!pensamiento) return;
+        let html = '';
+        pensamientos.forEach(p => {
+            html += `
+                <div class="pensamiento" id="pensamiento-${p.number}">
+                    <div class="pensamiento-header">
+                        <span class="pensamiento-titulo">${p.titulo ? '📌 ' + escapeHtml(p.titulo) : '✨ Pensamiento'}</span>
+                        <span class="pensamiento-fecha">${p.fecha}</span>
+                    </div>
+                    <div class="pensamiento-contenido">${escapeHtml(p.contenido)}</div>
+            `;
+            if (editorActivo) {
+                html += `
+                    <div class="pensamiento-acciones">
+                        <button onclick="editarPensamiento(${p.number})" class="btn-secondary">✏️ EDITAR</button>
+                        <button onclick="cerrarPensamiento(${p.number})" class="btn-danger">🗑️ CERRAR</button>
+                    </div>
+                `;
+            }
+            html += `</div>`;
+        });
+        contenedor.innerHTML = html;
+    }
 
-            document.getElementById('editId').value = pensamiento.id;
-            document.getElementById('editTitulo').value = pensamiento.titulo || '';
-            document.getElementById('editContenido').value = pensamiento.contenido;
+    function actualizarContador() {
+        const ahora = new Date();
+        const mesActual = ahora.getMonth();
+        const añoActual = ahora.getFullYear();
+        const pensamientosEsteMes = pensamientos.filter(p => {
+            const fecha = new Date(p.timestamp);
+            return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
+        });
+        const total = pensamientosEsteMes.length;
+        const restantes = MAX_POR_MES - total;
+        let mensaje = `🧚 Este mes: ${total}/${MAX_POR_MES} pensamientos`;
+        if (restantes > 0) mensaje += ` · Te quedan ${restantes}`;
+        else mensaje += ` · ¡Límite alcanzado! Cierra algunos o espera al próximo mes.`;
+        document.getElementById('contadorMes').innerHTML = mensaje;
+    }
 
+    // ========== ACCIONES DEL EDITOR (redirección a GitHub) ==========
+    function guardarPensamiento() {
+        const numero = document.getElementById('editNumber').value;
+        let titulo = document.getElementById('editTitulo').value.trim();
+        let contenido = document.getElementById('editContenido').value.trim();
+
+        if (!contenido) {
+            alert("El pensamiento es obligatorio");
+            return;
+        }
+
+        // Si no hay título, usamos el contenido (primeros 50 caracteres) o "(sin título)"
+        if (!titulo) {
+            titulo = contenido.length > 50 ? contenido.substring(0, 47) + "..." : contenido;
+        }
+
+        const cuerpo = contenido + "\n\n---\n*Pensamiento registrado desde locate-hadas*";
+        const labels = ETIQUETA_PRINCIPAL;
+
+        let url;
+        if (numero) {
+            // Editar issue existente
+            url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues/${numero}/edit`;
+            alert("Serás redirigido a GitHub para editar el issue. Después de guardar, vuelve y pulsa 'Recargar pensamientos'.");
+        } else {
+            // Nuevo issue: prellenar formulario
+            const titleEnc = encodeURIComponent(titulo);
+            const bodyEnc = encodeURIComponent(cuerpo);
+            const labelsEnc = encodeURIComponent(labels);
+            url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues/new?title=${titleEnc}&body=${bodyEnc}&labels=${labelsEnc}`;
+        }
+        window.open(url, '_blank');
+
+        cancelarEdicion();
+        setTimeout(() => {
+            if (confirm("¿Ya has creado/editado el issue? Recarga la lista de pensamientos.")) {
+                recargarPensamientos();
+            }
+        }, 15000);
+    }
+
+    function editarPensamiento(number) {
+        const pensamiento = pensamientos.find(p => p.number === number);
+        if (!pensamiento) return;
+
+        document.getElementById('editNumber').value = pensamiento.number;
+        document.getElementById('editTitulo').value = pensamiento.titulo;
+        document.getElementById('editContenido').value = pensamiento.contenido;
+        document.getElementById('panelEditor').style.display = 'block';
+        document.getElementById('btnMostrarEditor').style.display = 'none';
+        document.getElementById('btnRecargar').style.display = 'inline-block';
+        document.getElementById('btnNuevoMes').style.display = 'inline-block';
+    }
+
+    function cerrarPensamiento(number) {
+        if (!confirm("¿Cerrar este pensamiento? Se moverá a 'closed' y dejará de aparecer en la lista activa.")) return;
+        const url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues/${number}`;
+        alert(`Ve al issue en GitHub y haz clic en "Close issue".\n${url}`);
+        window.open(url, '_blank');
+        setTimeout(() => {
+            if (confirm("¿Ya cerraste el issue? Recarga para actualizar la lista.")) {
+                recargarPensamientos();
+            }
+        }, 10000);
+    }
+
+    async function nuevoMes() {
+        if (!editorActivo) {
+            alert("Debes activar el modo editor primero.");
+            return;
+        }
+        if (!confirm("⚠️ Esto te ayudará a cerrar todos los pensamientos activos para empezar un nuevo mes. ¿Continuar?")) return;
+        const confirmacion = prompt("Escribe 'NUEVO MES' para confirmar:");
+        if (confirmacion !== "NUEVO MES") {
+            alert("Cancelado");
+            return;
+        }
+        const url = `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues?q=is%3Aissue+label%3A${ETIQUETA_PRINCIPAL}+is%3Aopen`;
+        alert(`Se abrirá la lista de issues abiertos. Cierra uno por uno los que quieras eliminar del mes.\n${url}`);
+        window.open(url, '_blank');
+    }
+
+    function recargarPensamientos() {
+        cargarPensamientos();
+        alert("Recargando lista de pensamientos...");
+    }
+
+    // ========== AUTENTICACIÓN CON CLAVE OFUSCADA ==========
+    function activarEditor() {
+        const claveIntroducida = prompt("🔑 Clave de editor:");
+        if (claveIntroducida === CLAVE_OFUSCADA) {
+            editorActivo = true;
             document.getElementById('panelEditor').style.display = 'block';
             document.getElementById('btnMostrarEditor').style.display = 'none';
+            document.getElementById('btnRecargar').style.display = 'inline-block';
+            document.getElementById('btnNuevoMes').style.display = 'inline-block';
+            // Limpiar formulario
+            document.getElementById('editNumber').value = '';
+            document.getElementById('editTitulo').value = '';
+            document.getElementById('editContenido').value = '';
+            mostrarPensamientos(); // muestra botones de edición
+        } else if (claveIntroducida !== null) {
+            alert("❌ Clave incorrecta");
         }
+    }
 
-        function eliminarPensamiento(id) {
-            if (!editorActivo) return;
-            if (confirm("¿Eliminar este pensamiento?")) {
-                pensamientos = pensamientos.filter(p => p.id != id);
-                guardarPensamientos();
-                mostrarPensamientos(pensamientos);
-                actualizarContador();
-            }
-        }
+    function cancelarEdicion() {
+        editorActivo = false;
+        document.getElementById('panelEditor').style.display = 'none';
+        document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+        document.getElementById('btnRecargar').style.display = 'none';
+        document.getElementById('btnNuevoMes').style.display = 'none';
+        mostrarPensamientos(); // oculta botones de edición
+    }
 
-        // ============================================
-        // FUNCIONES DEL MES
-        // ============================================
-        function actualizarContador() {
-            const total = pensamientos.length;
-            const restantes = MAX_POR_MES - total;
-            let mensaje = `🧚 Este mes: ${total}/${MAX_POR_MES} pensamientos`;
-            if (restantes > 0) {
-                mensaje += ` · Te quedan ${restantes}`;
-            } else {
-                mensaje += ` · ¡Límite alcanzado!`;
-            }
-            document.getElementById('contadorMes').innerHTML = mensaje;
-        }
-
-        function nuevoMes() {
-            if (!editorActivo) {
-                alert("🔒 Debes estar en modo editor para usar esta función");
-                return;
-            }
-
-            const confirmacion1 = confirm("⚠️ ¿NUEVO MES? Esto borrará TODOS los pensamientos actuales.");
-            if (confirmacion1) {
-                const confirmacion2 = prompt("Escribe 'BORRAR HADAS' para confirmar:");
-                if (confirmacion2 === "BORRAR HADAS") {
-                    pensamientos = [];
-                    guardarPensamientos();
-                    mostrarPensamientos([]);
-                    actualizarContador();
-                    ocultarEditor();
-                    alert("✅ locate-hadas listo para el nuevo mes");
-                } else {
-                    alert("❌ Confirmación incorrecta. No se borró nada.");
-                }
-            }
-        }
-
-        // ============================================
-        // INICIO
-        // ============================================
-        cargarPensamientos();
-        console.log('🧚 locate-hadas iniciado');
-    </script>
+    // ========== INICIO ==========
+    cargarPensamientos();
+</script>
 </body>
-</html>
+    </html>
