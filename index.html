@@ -268,8 +268,8 @@
         .estado-carga::after { content: ''; display: inline-block; width: 20px; height: 20px; border: 2px solid var(--neon-pink); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-left: 10px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* GEMINI TERMINAL MINIMIZABLE */
-        #gemini-terminal {
+        /* NUEVO: ENLACE A GALERÍA ESCLAVA (estilo terminal minimizable) */
+        #galeria-link {
             position: fixed;
             bottom: 20px;
             right: 0;
@@ -288,20 +288,52 @@
             overflow: hidden;
             cursor: pointer;
         }
-        #gemini-terminal:hover { max-width: 350px; width: 350px; cursor: default; }
-        .gemini-header { background: rgba(0, 255, 0, 0.05); padding: 10px; border-bottom: 1px dashed var(--neon-green); color: var(--neon-pink); font-weight: bold; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; cursor: pointer; }
-        .gemini-chat-container { display: none; flex-direction: column; }
-        #gemini-terminal:hover .gemini-chat-container { display: flex; }
-        #gemini-chat-box { height: 300px; overflow-y: auto; padding: 15px; color: var(--neon-green); font-size: 0.9em; display: flex; flex-direction: column; gap: 10px; }
-        #gemini-input-area { padding: 10px; border-top: 1px dashed #333; display: flex; gap: 8px; align-items: center; }
+        #galeria-link:hover {
+            max-width: 350px;
+            width: 350px;
+            cursor: default;
+        }
+        .galeria-header {
+            background: rgba(0, 255, 0, 0.05);
+            padding: 10px;
+            border-bottom: 1px dashed var(--neon-green);
+            color: var(--neon-pink);
+            font-weight: bold;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .galeria-contenido {
+            display: none;
+            flex-direction: column;
+            padding: 15px;
+            gap: 10px;
+        }
+        #galeria-link:hover .galeria-contenido {
+            display: flex;
+        }
+        .galeria-enlace {
+            display: inline-block;
+            background: var(--neon-pink);
+            color: black;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            margin: 8px 0;
+            transition: all 0.2s;
+            border: none;
+            font-family: monospace;
+        }
+        .galeria-enlace:hover {
+            background: var(--neon-green);
+            color: black;
+            transform: translateY(-2px);
+            box-shadow: 0 0 12px var(--neon-green);
+        }
         @media (max-width: 600px) {
-            body { padding: 15px; }
-            .glitch-title { font-size: 1.8em; }
-            .menu { grid-template-columns: 1fr; }
-            .music-controls { justify-content: center; }
-            .counter-number img { max-width: 200px; }
-            #gemini-terminal { bottom: 10px; }
-            #gemini-terminal:hover { max-width: 280px; width: 280px; }
+            #galeria-link { bottom: 10px; }
+            #galeria-link:hover { max-width: 280px; width: 280px; }
         }
     </style>
 </head>
@@ -368,8 +400,7 @@
         </div>
         <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">track_info</span><div class="output">> Reproduciendo: himno sin sponsors · Loop infinito</div></div>
     </div>
-
-    <!-- CONTADOR GLOBAL HITWEBCOUNTER REAL POR IP -->
+  <!-- CONTADOR GLOBAL HITWEBCOUNTER REAL POR IP -->
     <div class="counter-box" id="visit-counter">
         <div style="color: var(--neon-pink); font-size: 0.85em; text-transform: uppercase; letter-spacing: 2px;">$ visitas_globales</div>
         <div class="counter-number">
@@ -386,183 +417,303 @@
 
     <div class="manifesto">
         <h2>📜 Manifiesto del espacio sin sponsors:</h2>
-        <p>1. Este sitio no tiene affiliate links, ads encubiertos ni patrocinios.</p>
-        <p>2. El código es abierto como el FTP del 93.</p>
-        <p>3. Las palabras peligrosas tienen casa aquí.</p>
-        <p>4. Soñar no necesita patrocinadores.</p>
-        <p>5. La fama se construye con autenticidad, no con engagement.</p>
+        <p>1. Este sitio no tiene affiliate links, ads encubiertos ni patrocinios.<br>
+        2. El código es abierto como el FTP del 93.<br>
+        3. Las palabras peligrosas tienen casa aquí.<br>
+        4. Soñar no necesita patrocinadores.<br>
+        5. La fama se construye con autenticidad, no con engagement.</p>
+    </div>
+
+    <!-- Zona Controversial (carrusel de issues) -->
+    <div id="controversial-carousel">
+        <div class="zona-header">
+            <h2 class="zona-titulo">🔥 Zona Controversial</h2>
+            <p>Cargando contenido desde GitHub...</p>
+        </div>
+        <div class="carousel-filtros" id="filtros-container">
+            <!-- Filtros dinámicos -->
+        </div>
+        <div class="carousel-wrapper">
+            <div class="carousel-track" id="carousel-track">
+                <!-- Los issues se inyectan aquí -->
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <button class="carousel-btn" id="prevSlide">◀</button>
+            <div class="carousel-dots" id="carousel-dots"></div>
+            <button class="carousel-btn" id="nextSlide">▶</button>
+        </div>
+        <div class="carousel-counter" id="carousel-counter"></div>
     </div>
 
     <div class="footer">
-        <p>📍 En vivo desde Chile · <span id="fecha-chile"></span></p>
-        <p>Hosteado en GitHub Pages · Código 100% propio</p>
-        <p>GitHub: @paulaflechadadeai · Sin trackers, sin cookies</p>
-        <p><em>"Internet era gratis en el 93. Soñar no tiene sponsor."</em></p>
+        <p>~/ $ echo "código abierto, mente libre"<br>
+        🔗 <a href="https://github.com/paulaflechadadeai" style="color:var(--neon-pink);">GitHub</a> · 
+        📷 <a href="https://instagram.com/paulaflechadadeai" style="color:var(--neon-pink);">Instagram</a><br>
+        🧚‍♀️ Hadas malvadas vigilando desde el éter.
+        </p>
     </div>
 
-    <section id="controversial-carousel">
-        <div class="zona-header"><h2 class="zona-titulo">🔥 Zona Controversial</h2></div>
-        <div class="carousel-filtros" id="filtros">
-            <button class="filtro-chip activo" onclick="filtrarIssues('todos')">🔥 Todos</button>
-            <button class="filtro-chip" onclick="filtrarIssues('video')">🎬 Video</button>
-            <button class="filtro-chip" onclick="filtrarIssues('audio')">🎵 Audio</button>
-            <button class="filtro-chip" onclick="filtrarIssues('imagen')">📸 Imagen</button>
-            <button class="filtro-chip" onclick="filtrarIssues('pdf')">📄 PDF</button>
-            <button class="filtro-chip" onclick="filtrarIssues('controversial')">⚠️ Controversial</button>
-            <button class="filtro-chip" onclick="filtrarIssues('nsfw')">🔞 NSFW</button>
+    <!-- ENLACE DIRECTO A GALERÍA ESCLAVA (en lugar del chat de Gemini) -->
+    <div id="galeria-link">
+        <div class="galeria-header">
+            <span class="prompt">~/galeria_link</span> $ <span class="cmd">abrir --taller</span>
         </div>
-        <div class="carousel-wrapper"><div class="carousel-track" id="carouselTrack"><div class="estado-carga">Cargando contenido desde GitHub...</div></div></div>
-        <div class="carousel-controls"><button class="carousel-btn" onclick="anteriorSlide()">◀</button><div class="carousel-dots" id="carouselDots"></div><button class="carousel-btn" onclick="siguienteSlide()">▶</button></div>
-        <div class="carousel-counter" id="carouselCounter">0 / 0</div>
-    </section>
-
-    <div id="gemini-terminal">
-        <div class="gemini-header" onclick="toggleGemini()"><span>~/gemini_link $</span><span id="gemini-toggle-icon">🔽</span></div>
-        <div class="gemini-chat-container">
-            <div id="gemini-chat-box"><div><span class="cmd">></span> Sistema de IA inicializado. Enlace directo establecido. ¿Qué necesitas?</div></div>
-            <div id="gemini-input-area"><span style="color: var(--neon-pink); font-weight: bold;">$</span><input type="text" id="gemini-input" placeholder="Ingresa comando..." style="background: transparent; border: none; color: var(--neon-green); outline: none; width: 100%; font-family: inherit;"><button onclick="ejecutarConsulta()" style="background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); cursor: pointer; border-radius: 3px; padding: 3px 8px; font-family: inherit;">[EXE]</button></div>
+        <div class="galeria-contenido">
+            <div class="terminal-line">
+                <span class="prompt">></span> Conexión con el Taller de Hadas Malvadas establecida.
+            </div>
+            <div class="terminal-line">
+                <span class="prompt">></span> Haz clic para acceder a la galería multimedia:
+            </div>
+            <a href="https://polillacateteai.github.io/" target="_blank" class="galeria-enlace">
+                [ VISITAR GALERÍA → ]
+            </a>
+            <div class="terminal-line" style="margin-top: 12px;">
+                <span class="prompt">></span> <span style="color: #ffaa66;">Sin sponsors, sin APIs externas.</span>
+            </div>
         </div>
     </div>
 
     <script>
-        // FECHA CHILE
-        const ahora = new Date();
-        const opciones = { timeZone: 'America/Santiago', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        document.getElementById('fecha-chile').textContent = ahora.toLocaleDateString('es-CL', opciones);
-
-        // VOLUMEN
-        const controlVolumen = document.getElementById('controlVolumen');
-        const musica = document.getElementById('musicaFondo');
-        const volumenDisplay = document.getElementById('vencimientoDisplay');
-        const musicPlayer = document.getElementById('musicPlayer');
-        controlVolumen.addEventListener('input', function() { musica.volume = this.value; volumenDisplay.textContent = Math.round(this.value * 100) + '%'; });
-        window.addEventListener('load', function() { let playPromise = musica.play(); if (playPromise !== undefined) playPromise.catch(() => musicPlayer.classList.add('muted')); cargarIssues(); });
-        musica.addEventListener('play', () => musicPlayer.classList.remove('muted'));
-
-        // WHOAMI
-        function mostrarWhoami() {
-            const output = document.getElementById('whoami-output');
-            if(!output) return;
-            let campo1 = 'paulaflechadadeai', campo2 = '📷 instagram.com/paulaflechadadeai', campo3 = '🐙 github.com/paulaflechadadeai';
-            try { const data = localStorage.getItem('whoami'); if(data) { const items = JSON.parse(data); if(items.length>0) { if(items[0].campo1) campo1=items[0].campo1; if(items[0].campo2) campo2=items[0].campo2; if(items[0].campo3) campo3=items[0].campo3; } } } catch(e) {}
-            output.innerHTML = `> ${campo1}<br>> ${campo2}<br>> ${campo3}`;
+        // JavaScript existente para el contador, carrusel, etc.
+        // Volumen
+        const audio = document.getElementById('musicaFondo');
+        const volumenSlider = document.getElementById('controlVolumen');
+        const volumenDisplay = document.getElementById('volumenDisplay');
+        audio.volume = 0.3;
+        volumenSlider.addEventListener('input', function() {
+            audio.volume = this.value;
+            volumenDisplay.textContent = Math.round(this.value * 100) + '%';
+        });
+        // Silencio inicial si el navegador lo permite (autoplay bloqueado)
+        audio.muted = true;
+        document.getElementById('musicPlayer').classList.add('muted');
+        function unmuteFirstPlay() {
+            audio.muted = false;
+            document.getElementById('musicPlayer').classList.remove('muted');
+            // Solo se ejecuta una vez
+            document.body.removeEventListener('click', unmuteFirstPlay);
+            document.body.removeEventListener('touchstart', unmuteFirstPlay);
         }
-        mostrarWhoami();
+        document.body.addEventListener('click', unmuteFirstPlay);
+        document.body.addEventListener('touchstart', unmuteFirstPlay);
 
-        // EXTRAER NÚMERO DEL CONTADOR DE IMAGEN (solo estético)
-        function actualizarTextoContador() {
+        // Contador de visitas (leer valor desde el contador externo)
+        function actualizarContadorTexto() {
             const img = document.querySelector('.counter-number img');
-            if (img && img.complete && img.src) {
-                const match = img.src.match(/value=(\d+)/);
-                if (match && match[1]) {
-                    document.getElementById('contador-valor').innerText = match[1];
+            if (img && img.src) {
+                // Intentar extraer el número de la URL (no es preciso, solo estético)
+                const match = img.src.match(/page=(\d+)/);
+                if (match) {
+                    document.getElementById('contador-valor').textContent = match[1];
                 } else {
-                    // Intento alternativo: la imagen puede tener el número en su carga
-                    setTimeout(() => {
-                        const match2 = img.src.match(/value=(\d+)/);
-                        if (match2) document.getElementById('contador-valor').innerText = match2[1];
-                    }, 500);
+                    document.getElementById('contador-valor').textContent = '???';
                 }
+            } else {
+                document.getElementById('contador-valor').textContent = '???';
             }
         }
-        setTimeout(actualizarTextoContador, 1500);
-        setInterval(actualizarTextoContador, 5000);
+        setTimeout(actualizarContadorTexto, 1000);
 
-        // CARRUSEL ISSUES (simplificado pero funcional)
-        const GITHUB_USER = 'paulaflechadadeai';
-        const GITHUB_REPO = 'paulaflechadadeai.github.io';
-        let allIssues = [], filteredIssues = [], currentSlide = 0, autoAdvanceInterval;
-        function escapeHtml(text) { if(!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
-        async function cargarIssues() {
+        // CARRUSEL DE ISSUES (mismo código que antes)
+        let issuesData = [];
+        let currentIndex = 0;
+        let activeFilter = 'todos';
+        let filteredIssues = [];
+
+        const repoOwner = 'paulaflechadadeai';
+        const repoName = 'paulaflechadadeai.github.io';
+        const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/issues?state=all&per_page=100&sort=updated&direction=desc`;
+
+        async function fetchIssues() {
             try {
-                const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?state=all&per_page=50`);
-                if(!response.ok) throw new Error();
-                allIssues = await response.json();
-                allIssues = allIssues.filter(issue => !issue.pull_request && issue.labels.some(l => ['video','audio','imagen','pdf','observatorio','controversial','nsfw'].includes(l.name)));
-                allIssues.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-                filtrarIssues('todos');
-            } catch(error) { document.getElementById('carouselTrack').innerHTML = '<div class="estado-carga">Error al cargar issues</div>'; }
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const allIssues = await response.json();
+                issuesData = allIssues.filter(issue => !issue.pull_request);
+                aplicarFiltro();
+                generarFiltros();
+            } catch (error) {
+                console.error(error);
+                document.querySelector('#controversial-carousel p').innerHTML = '❌ Error al cargar los issues. ¿El repositorio es público?';
+            }
         }
-        function filtrarIssues(tipo) {
-            document.querySelectorAll('.filtro-chip').forEach(btn => btn.classList.remove('activo'));
-            const btn = Array.from(document.querySelectorAll('.filtro-chip')).find(b => b.textContent.toLowerCase().includes(tipo) || (tipo==='todos' && b.textContent.includes('Todos')));
-            if(btn) btn.classList.add('activo');
-            if(tipo === 'todos') filteredIssues = allIssues;
-            else filteredIssues = allIssues.filter(issue => issue.labels.some(l => l.name.toLowerCase() === tipo.toLowerCase()));
-            currentSlide = 0;
+
+        function aplicarFiltro() {
+            if (activeFilter === 'todos') {
+                filteredIssues = [...issuesData];
+            } else {
+                filteredIssues = issuesData.filter(issue =>
+                    issue.labels.some(label => label.name.toLowerCase() === activeFilter.toLowerCase())
+                );
+            }
+            currentIndex = 0;
             renderizarCarrusel();
         }
+
+        function generarFiltros() {
+            const labelsSet = new Set();
+            issuesData.forEach(issue => {
+                issue.labels.forEach(label => {
+                    labelsSet.add(label.name.toLowerCase());
+                });
+            });
+            const labelsArray = Array.from(labelsSet).sort();
+            const container = document.getElementById('filtros-container');
+            container.innerHTML = `<button class="filtro-chip ${activeFilter === 'todos' ? 'activo' : ''}" data-filtro="todos">todos</button>`;
+            labelsArray.forEach(label => {
+                const chip = document.createElement('button');
+                chip.className = `filtro-chip ${activeFilter === label ? 'activo' : ''}`;
+                chip.textContent = label;
+                chip.dataset.filtro = label;
+                container.appendChild(chip);
+            });
+            document.querySelectorAll('.filtro-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    activeFilter = chip.dataset.filtro;
+                    aplicarFiltro();
+                    document.querySelectorAll('.filtro-chip').forEach(c => c.classList.remove('activo'));
+                    chip.classList.add('activo');
+                });
+            });
+        }
+
         function renderizarCarrusel() {
-            const track = document.getElementById('carouselTrack');
-            const dots = document.getElementById('carouselDots');
-            if(filteredIssues.length === 0) {
-                track.innerHTML = '<div class="estado-carga">No hay contenido con ese filtro</div>';
-                dots.innerHTML = '';
-                document.getElementById('carouselCounter').textContent = '0 / 0';
+            const track = document.getElementById('carousel-track');
+            const dotsContainer = document.getElementById('carousel-dots');
+            const counterSpan = document.getElementById('carousel-counter');
+            if (!track) return;
+            if (filteredIssues.length === 0) {
+                track.innerHTML = `<div class="carousel-slide"><div class="issue-card">No hay issues con este filtro.</div></div>`;
+                dotsContainer.innerHTML = '';
+                counterSpan.textContent = '0 / 0';
                 return;
             }
-            track.innerHTML = filteredIssues.map(issue => {
-                const fecha = new Date(issue.created_at).toLocaleDateString('es-CL');
-                const labels = issue.labels.map(l => `<span class="issue-label ${l.name.toLowerCase()}">${escapeHtml(l.name)}</span>`).join('');
-                const body = issue.body || '';
-                const urlMatch = body.match(/https?:\/\/[^\s)\]]+/);
-                const imgMatch = body.match(/!\[.*?\]\((.*?)\)/);
-                const mediaUrl = urlMatch ? urlMatch[0] : (imgMatch ? imgMatch[1] : null);
-                const isAudio = issue.labels.some(l => l.name.toLowerCase() === 'audio');
-                const isVideo = issue.labels.some(l => l.name.toLowerCase() === 'video');
-                const isImagen = issue.labels.some(l => l.name.toLowerCase() === 'imagen');
-                let mediaHtml = '';
-                if(mediaUrl) {
-                    if(isAudio) mediaHtml = `<div class="issue-media"><audio controls preload="metadata" src="${escapeHtml(mediaUrl)}"></audio></div>`;
-                    else if(isVideo) mediaHtml = `<div class="issue-media"><video controls preload="metadata"><source src="${escapeHtml(mediaUrl)}" type="video/mp4"></video></div>`;
-                    else if(isImagen) mediaHtml = `<div class="issue-media"><img src="${escapeHtml(mediaUrl)}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg%3E%3C/svg%3E'"></div>`;
-                    else mediaHtml = `<div class="issue-media"><img src="${escapeHtml(mediaUrl)}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg%3E%3C/svg%3E'"></div>`;
-                }
-                let desc = body.replace(/!\[.*?\]\(.*?\)/g,'').replace(/\[.*?\]\(.*?\)/g,'').replace(/https?:\/\/\S+/g,'').trim().substring(0,120);
-                if(desc) desc += '...';
-                else desc = 'Sin descripción adicional.';
-                const fuegoCount = issue.labels.some(l => l.name === 'nsfw') ? 4 : (issue.labels.some(l => l.name === 'controversial') ? 3 : 2);
-                const fuegos = '🔥'.repeat(fuegoCount);
-                return `<div class="carousel-slide"><div class="issue-card"><div class="issue-header"><span class="issue-numero">#${issue.number} · ${fecha}</span><h3 class="issue-titulo">${escapeHtml(issue.title)}</h3><div class="issue-labels">${labels}</div></div>${mediaHtml}<p class="issue-desc">${escapeHtml(desc)}</p><div class="issue-footer"><span class="nivel-fuego">${fuegos}</span><a href="${issue.html_url}" target="_blank" class="issue-link">Ver en GitHub →</a></div></div></div>`;
-            }).join('');
-            dots.innerHTML = filteredIssues.map((_,i) => `<div class="dot ${i===0?'activo':''}" onclick="irASlide(${i})"></div>`).join('');
-            actualizarCarrusel();
-            iniciarAutoAvance();
+            track.innerHTML = '';
+            filteredIssues.forEach((issue, idx) => {
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
+                slide.innerHTML = generarHTMLIssue(issue);
+                track.appendChild(slide);
+            });
+            actualizarPosicion();
+            generarPuntos();
+            actualizarContador();
         }
-        function actualizarCarrusel() {
-            document.getElementById('carouselTrack').style.transform = `translateX(-${currentSlide * 100}%)`;
-            document.querySelectorAll('.dot').forEach((dot,i) => dot.classList.toggle('activo', i===currentSlide));
-            document.getElementById('carouselCounter').textContent = `${currentSlide+1} / ${filteredIssues.length}`;
-        }
-        function siguienteSlide() { if(filteredIssues.length) { currentSlide = (currentSlide+1) % filteredIssues.length; actualizarCarrusel(); } }
-        function anteriorSlide() { if(filteredIssues.length) { currentSlide = (currentSlide-1+filteredIssues.length) % filteredIssues.length; actualizarCarrusel(); } }
-        function irASlide(i) { currentSlide = i; actualizarCarrusel(); }
-        function iniciarAutoAvance() { if(autoAdvanceInterval) clearInterval(autoAdvanceInterval); if(filteredIssues.length>1) autoAdvanceInterval = setInterval(() => siguienteSlide(), 5000); }
-        document.addEventListener('visibilitychange', () => { if(document.hidden) clearInterval(autoAdvanceInterval); else iniciarAutoAvance(); });
 
-        // GEMINI TERMINAL
-        function toggleGemini() { const t = document.getElementById('gemini-terminal'); t.style.maxWidth = (t.style.maxWidth === '350px') ? '45px' : '350px'; setTimeout(()=>{ if(t.style.maxWidth === '350px') t.style.maxWidth='45px'; },10000); }
-        const keyPart1 = 'AIzaSyBhLC6rXws73C', keyPart2 = '2WSUWY-BarBo-J_Yc6knY', GEMINI_API_KEY = keyPart1+keyPart2;
-        async function ejecutarConsulta() {
-            const input = document.getElementById('gemini-input'), chatBox = document.getElementById('gemini-chat-box'), texto = input.value.trim();
-            if(!texto) return;
-            chatBox.innerHTML += `<div><span style="color: var(--neon-pink);">usr@host:</span> ${escapeHtml(texto)}</div>`;
-            input.value = ''; chatBox.scrollTop = chatBox.scrollHeight;
-            const loadingId = 'loading-'+Date.now();
-            chatBox.innerHTML += `<div id="${loadingId}"><span style="color: var(--neon-yellow);">> Procesando...</span></div>`;
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({contents:[{parts:[{text:texto}]}]})
-                });
-                const data = await response.json();
-                document.getElementById(loadingId)?.remove();
-                if(data.error) throw new Error(data.error.message);
-                let respuesta = data.candidates[0].content.parts[0].text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b style="color:white;">$1</b>');
-                chatBox.innerHTML += `<div><span style="color: var(--neon-blue);">gemini_sys:</span> ${respuesta}</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            } catch(e) { document.getElementById(loadingId)?.remove(); chatBox.innerHTML += `<div><span style="color: var(--neon-red);">[ERROR]:</span> ${e.message}</div>`; }
+        function generarHTMLIssue(issue) {
+            const labelsHtml = issue.labels.map(label => {
+                let claseExtra = '';
+                if (label.name === 'video') claseExtra = 'video';
+                if (label.name === 'audio') claseExtra = 'audio';
+                if (label.name === 'imagen') claseExtra = 'imagen';
+                if (label.name === 'pdf') claseExtra = 'pdf';
+                return `<span class="issue-label ${claseExtra}">${label.name}</span>`;
+            }).join('');
+            let mediaHtml = '';
+            const body = issue.body || '';
+            // Imágenes
+            const imgMatch = body.match(/!\[.*?\]\((.*?)\)/);
+            if (imgMatch && (imgMatch[1].match(/\.(jpg|jpeg|png|gif|webp)/i))) {
+                mediaHtml = `<div class="issue-media"><img src="${imgMatch[1]}" loading="lazy" alt="imagen adjunta"></div>`;
+            }
+            // Audio
+            const audioMatch = body.match(/https?:\/\/[^\s]+\.(mp3|wav|ogg)/i);
+            if (audioMatch) {
+                mediaHtml = `<div class="issue-media"><audio controls src="${audioMatch[0]}"></audio></div>`;
+            }
+            // Video
+            const videoMatch = body.match(/https?:\/\/[^\s]+\.(mp4|webm|mov)/i);
+            if (videoMatch) {
+                mediaHtml = `<div class="issue-media"><video controls src="${videoMatch[0]}" style="max-width:100%"></video></div>`;
+            } else {
+                const youtubeMatch = body.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/i);
+                if (youtubeMatch) {
+                    mediaHtml = `<div class="issue-media"><iframe width="100%" height="200" src="https://www.youtube.com/embed/${youtubeMatch[1]}" frameborder="0" allowfullscreen></iframe></div>`;
+                }
+            }
+            const desc = body.replace(/!\[.*?\]\(.*?\)/g, '').replace(/https?:\/\/[^\s]+/g, '').substring(0, 200);
+            return `
+                <div class="issue-card">
+                    <div class="issue-header">
+                        <div class="issue-numero">#${issue.number}</div>
+                        <div class="issue-titulo">${escapeHtml(issue.title)}</div>
+                        <div class="issue-labels">${labelsHtml}</div>
+                    </div>
+                    ${mediaHtml}
+                    <div class="issue-desc">${escapeHtml(desc)}${desc.length >= 200 ? '...' : ''}</div>
+                    <div class="issue-footer">
+                        <span class="nivel-fuego">🔥 ${Math.floor(Math.random() * 100)}%</span>
+                        <a href="${issue.html_url}" target="_blank" class="issue-link">Ver en GitHub →</a>
+                    </div>
+                </div>
+            `;
         }
-        document.getElementById('gemini-input').addEventListener('keypress', e => { if(e.key === 'Enter') ejecutarConsulta(); });
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
+        }
+
+        function actualizarPosicion() {
+            const track = document.getElementById('carousel-track');
+            if (track) {
+                const anchoSlide = track.children[0]?.offsetWidth || 0;
+                track.style.transform = `translateX(-${currentIndex * anchoSlide}px)`;
+            }
+        }
+
+        function generarPuntos() {
+            const dotsContainer = document.getElementById('carousel-dots');
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < filteredIssues.length; i++) {
+                const dot = document.createElement('span');
+                dot.className = `dot ${i === currentIndex ? 'activo' : ''}`;
+                dot.addEventListener('click', () => {
+                    currentIndex = i;
+                    actualizarPosicion();
+                    generarPuntos();
+                    actualizarContador();
+                });
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function actualizarContador() {
+            const counter = document.getElementById('carousel-counter');
+            if (counter) {
+                counter.textContent = `${currentIndex + 1} / ${filteredIssues.length}`;
+            }
+        }
+
+        document.getElementById('prevSlide')?.addEventListener('click', () => {
+            if (filteredIssues.length === 0) return;
+            currentIndex = (currentIndex - 1 + filteredIssues.length) % filteredIssues.length;
+            actualizarPosicion();
+            generarPuntos();
+            actualizarContador();
+        });
+        document.getElementById('nextSlide')?.addEventListener('click', () => {
+            if (filteredIssues.length === 0) return;
+            currentIndex = (currentIndex + 1) % filteredIssues.length;
+            actualizarPosicion();
+            generarPuntos();
+            actualizarContador();
+        });
+
+        window.addEventListener('resize', () => {
+            actualizarPosicion();
+        });
+
+        fetchIssues();
     </script>
 </body>
-</html>
+    </html>
+    
