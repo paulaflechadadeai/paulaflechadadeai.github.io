@@ -296,4 +296,135 @@
             </div>
         </div>
      </div>
-                        
+        <!-- Lightbox Modal Simplificado (sin botones prev/next) -->
+    <div id="lightbox" class="lightbox" onclick="cerrarLightbox(event)">
+        <button class="lightbox-close" onclick="cerrarLightbox()">&times;</button>
+        <div class="lightbox-content" onclick="event.stopPropagation()">
+            <img id="lightboxImage" class="lightbox-image" src="" alt="">
+            <div class="lightbox-info">
+                <div class="lightbox-title" id="lightboxTitle"></div>
+                <div class="lightbox-meta" id="lightboxMeta"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CLAVE_EDITOR = 'patito123';
+        const GITHUB_USER = 'paulaflechadadeai';
+        const GITHUB_REPO = 'paulaflechadadeai.github.io';
+        let editorActivo = false;
+        let archivoSeleccionado = null;
+
+        // SISTEMA DE AUTENTICACIÓN
+        function mostrarSelector() {
+            const clave = prompt("🔑 Ingresa clave de editor:");
+            if (clave === CLAVE_EDITOR) activarModoEditor();
+            else if (clave !== null) alert("❌ Clave incorrecta. Acceso denegado.");
+        }
+
+        function activarModoEditor() {
+            editorActivo = true;
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+            document.getElementById('panelUpload').style.display = 'block';
+            document.getElementById('statusIndicator').style.display = 'block';
+        }
+
+        function cerrarEditor() {
+            editorActivo = false;
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            document.getElementById('panelUpload').style.display = 'none';
+            document.getElementById('statusIndicator').style.display = 'none';
+            resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById('titulo').value = '';
+            document.getElementById('autor').value = '';
+            document.getElementById('qid').value = '';
+            document.getElementById('descripcion').value = '';
+            document.getElementById('urlExterna').value = '';
+            document.getElementById('tipoCaptura').value = 'error';
+            document.querySelectorAll('.tag-check').forEach(cb => cb.checked = false);
+            quitarCaptura();
+        }
+
+        // GESTIÓN DE ARCHIVOS (Solo visual en el HTML)
+        function previsualizar(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > 5 * 1024 * 1024) { alert("❌ La captura debe ser menor de 5MB"); input.value = ''; return; }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    archivoSeleccionado = { nombre: file.name, tamaño: (file.size / (1024 * 1024)).toFixed(2), formato: file.type.split('/')[1].toUpperCase() };
+                    document.getElementById('imgPreview').src = e.target.result;
+                    document.getElementById('imgTamaño').textContent = `💾 ${archivoSeleccionado.tamaño} MB`;
+                    document.getElementById('vistaPrevia').style.display = 'block';
+                    document.getElementById('fileLabel').style.borderColor = 'var(--neon-green)';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function quitarCaptura() {
+            archivoSeleccionado = null;
+            document.getElementById('vistaPrevia').style.display = 'none';
+            document.getElementById('archivo').value = '';
+            document.getElementById('fileLabel').style.borderColor = 'var(--neon-cyan)';
+        }
+
+        // SUBIR A GITHUB (Mantenido por si quieres respaldos)
+        function subirCaptura() {
+            if (!editorActivo) { alert("⚠️ Debes activar el modo editor primero"); return; }
+            const titulo = document.getElementById('titulo').value.trim();
+            const autor = document.getElementById('autor').value.trim();
+            const qid = document.getElementById('qid').value.trim();
+            const descripcion = document.getElementById('descripcion').value.trim();
+            const tipoCaptura = document.getElementById('tipoCaptura').value;
+            const urlExterna = document.getElementById('urlExterna').value.trim();
+            const etiquetas = Array.from(document.querySelectorAll('.tag-check:checked')).map(cb => cb.value);
+
+            if (!titulo) { alert("⚠️ El título es obligatorio"); return; }
+            const tiposEmoji = { 'error': '💥', 'ui': '🎨', 'mensaje': '💬', 'terminal': '⌨️', 'redes': '🌐', 'ia': '🤖', 'otro': '🔧' };
+            let cuerpo = `${tiposEmoji[tipoCaptura] || '💻'} **Tipo:** ${tipoCaptura}\n`;
+            if (autor) cuerpo += `✍️ **Capturado por:** ${autor}\n`;
+            if (qid) cuerpo += `🆔 **QID:** [${qid}](https://www.wikidata.org/wiki/${qid})\n`;
+            if (etiquetas.length > 0) cuerpo += `🏷️ **Etiquetas:** ${etiquetas.join(', ')}\n`;
+            cuerpo += `\n## 📝 Contexto\n${descripcion || 'Sin contexto'}\n\n`;
+            if (urlExterna) cuerpo += `## 🔗 Enlace externo\n![${titulo}](${urlExterna})\n\n`;
+            if (archivoSeleccionado) {
+                cuerpo += `## 💻 Archivo\n- **Nombre:** ${archivoSeleccionado.nombre}\n- **Tamaño:** ${archivoSeleccionado.tamaño} MB\n`;
+                cuerpo += `⬆️ **Acción requerida:** Arrastra la captura al issue para subirla\n\n`;
+            }
+            if (!urlExterna && !archivoSeleccionado) { alert("⚠️ Proporciona una URL externa o selecciona una captura"); return; }
+            cuerpo += `---\n*Subido desde observatorio-capturas*`;
+            let labels = `captura,${tipoCaptura},observatorio`;
+            window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('💻 ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=${encodeURIComponent(labels)}`, '_blank');
+            resetForm();
+        }
+
+        // LIGHTBOX SIMPLIFICADO PARA CLOUDFLARE
+        function abrirLightbox(url, titleText) {
+            const lightbox = document.getElementById('lightbox');
+            document.getElementById('lightboxImage').src = url;
+            document.getElementById('lightboxTitle').textContent = titleText;
+            document.getElementById('lightboxMeta').innerHTML = "☁️ Servido desde infraestructura Cloudflare R2";
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarLightbox(event) {
+            if (event && event.target !== event.currentTarget) return;
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            document.getElementById('lightboxImage').src = '';
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox.classList.contains('active') && e.key === 'Escape') cerrarLightbox();
+        });
+    </script>
+ </body>
+</html>                    
+
