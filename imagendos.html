@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💻 Subir Captura · observatorio</title>
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-green: #0aff0a;
+            --neon-red: #ff003c;
+            --neon-yellow: #ffee00;
+            --neon-cyan: #00ffff;
+            --neon-purple: #bd00ff;
+            --bg-dark: #0a0a0f;
+            --bg-terminal: #0d1117;
+            --border: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Courier New', monospace; background: var(--bg-dark); color: #c9d1d9; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--neon-cyan); padding-bottom: 20px; }
+        .glitch-title { font-size: 2.5rem; color: var(--neon-cyan); text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue); animation: glitch 2s infinite; }
+        @keyframes glitch {
+            0%, 90%, 100% { text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue); }
+            92% { text-shadow: -2px 0 var(--neon-red), 2px 0 var(--neon-blue); }
+            94% { text-shadow: 2px 0 var(--neon-blue), -2px 0 var(--neon-red); }
+        }
+        .subheader { color: var(--neon-green); margin-top: 10px; font-size: 1.1rem; }
+        .volver { margin-bottom: 20px; }
+        .volver a { color: var(--neon-cyan); text-decoration: none; font-weight: bold; transition: all 0.3s; }
+        .volver a:hover { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+        .editor-controls { max-width: 600px; margin: 0 auto 30px; text-align: center; }
+        .btn-editor { background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple)); border: 2px solid var(--neon-cyan); color: #0a0a0f; padding: 12px 24px; font-family: 'Courier New', monospace; font-weight: bold; cursor: pointer; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; font-size: 0.9rem; }
+        .btn-editor:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); }
+        .terminal { background: var(--bg-terminal); border: 1px solid var(--border); border-radius: 10px; padding: 30px; max-width: 600px; margin: 0 auto 30px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.1); }
+        label { display: block; color: var(--neon-yellow); margin: 15px 0 5px; font-weight: bold; }
+        input[type="text"], input[type="url"], textarea, select { width: 100%; background: #010409; border: 1px solid var(--border); color: #c9d1d9; padding: 12px; border-radius: 6px; font-family: inherit; font-size: 14px; transition: all 0.3s; }
+        input[type="text"]:focus, input[type="url"]:focus, textarea:focus, select:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+        input[type="file"] { display: none; }
+        .file-label { display: block; background: linear-gradient(45deg, #21262d, #30363d); border: 2px dashed var(--neon-cyan); color: var(--neon-cyan); padding: 40px 20px; text-align: center; border-radius: 10px; cursor: pointer; transition: all 0.3s; margin: 10px 0; }
+        .file-label:hover { background: rgba(0, 255, 255, 0.1); box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); transform: translateY(-2px); }
+        .file-label::before { content: "💻 "; font-size: 2rem; }
+        small { color: var(--neon-cyan); display: block; margin-top: 5px; }
+        .preview-container { background: #010409; border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 15px 0; text-align: center; }
+        .preview-container img { max-width: 100%; max-height: 300px; border-radius: 6px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); border: 1px solid var(--neon-cyan); }
+        .image-meta { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+        .meta-tag { background: rgba(0, 255, 255, 0.2); color: var(--neon-cyan); padding: 4px 12px; border-radius: 15px; font-size: 0.85rem; border: 1px solid var(--neon-cyan); }
+        .btn-success, .btn-secondary, .btn-danger, .btn-refresh { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-family: inherit; font-weight: bold; transition: all 0.3s; text-transform: uppercase; }
+        .btn-success { background: linear-gradient(45deg, #238636, #2ea043); color: white; }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(35, 134, 54, 0.5); }
+        .btn-secondary { background: linear-gradient(45deg, #6e7681, #8b949e); color: white; }
+        .btn-secondary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(110, 118, 129, 0.5); }
+        .btn-danger { background: linear-gradient(45deg, #da3633, #f85149); color: white; padding: 8px 16px; font-size: 0.9rem; }
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(218, 54, 51, 0.5); }
+        .btn-refresh { background: linear-gradient(45deg, #00ffff, #00f3ff); color: #0a0a0f; padding: 10px 20px; font-size: 0.9rem; }
+        .btn-refresh:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0, 255, 255, 0.5); }
+        .checkbox-group { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 5px; }
+        .checkbox-item { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--neon-cyan); }
+        .info-box { background: rgba(255, 238, 0, 0.1); border-left: 3px solid var(--neon-yellow); padding: 10px 15px; margin: 15px 0; border-radius: 0 6px 6px 0; }
+        .info-box p { color: var(--neon-yellow); font-size: 0.9rem; }
+        .qid-input { font-family: monospace; letter-spacing: 1px; }
+        .existing-captures { max-width: 1200px; margin: 0 auto; }
+        .section-title { color: var(--neon-cyan); font-size: 1.5rem; margin-bottom: 20px; text-align: center; text-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+        .loading { text-align: center; color: var(--neon-cyan); padding: 20px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        .masonry-grid { column-count: 1; column-gap: 20px; }
+        @media (min-width: 640px) { .masonry-grid { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 3; } }
+        @media (min-width: 1400px) { .masonry-grid { column-count: 4; } }
+        .capture-card { break-inside: avoid; margin-bottom: 20px; background: var(--bg-terminal); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: all 0.3s; position: relative; }
+        .capture-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue)); z-index: 1; }
+        .capture-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2); border-color: var(--neon-cyan); }
+        .capture-image-container { position: relative; overflow: hidden; background: #010409; }
+        .capture-image { width: 100%; height: auto; display: block; cursor: pointer; transition: transform 0.3s; }
+        .capture-card:hover .capture-image { transform: scale(1.05); }
+        .capture-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.8)); opacity: 0; transition: opacity 0.3s; display: flex; align-items: flex-end; justify-content: center; padding: 15px; }
+        .capture-card:hover .capture-overlay { opacity: 1; }
+        .view-btn { background: var(--neon-cyan); color: #0a0a0f; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: inherit; transition: all 0.3s; }
+        .view-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--neon-cyan); }
+        .capture-content { padding: 15px; }
+        .capture-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .capture-icon { font-size: 1.3rem; }
+        .capture-title { color: var(--neon-green); font-size: 0.95rem; font-weight: bold; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .capture-meta { color: #8b949e; font-size: 0.8rem; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .capture-description { color: #c9d1d9; font-size: 0.85rem; line-height: 1.4; max-height: 60px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; margin-bottom: 10px; }
+        .labels { display: flex; flex-wrap: wrap; gap: 5px; }
+        .label { background: rgba(0, 255, 255, 0.1); color: var(--neon-cyan); padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; border: 1px solid rgba(0, 255, 255, 0.3); }
+        .label.tipo { background: rgba(255, 0, 60, 0.1); color: var(--neon-red); border-color: rgba(255, 0, 60, 0.3); }
+        .label.qid { background: rgba(255, 238, 0, 0.1); color: var(--neon-yellow); border-color: rgba(255, 238, 0, 0.3); }
+        .label.nsfw { background: rgba(255, 0, 60, 0.3); color: #fff; border-color: var(--neon-red); }
+        .empty-state { text-align: center; padding: 40px; color: #8b949e; }
+        .empty-state-icon { font-size: 4rem; margin-bottom: 20px; }
+        .error-message { background: rgba(218, 54, 51, 0.1); border: 1px solid var(--neon-red); color: var(--neon-red); padding: 15px; border-radius: 8px; text-align: center; }
+        
+        /* Modal Lightbox Modificado (sin botones de navegación) */
+        .lightbox { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.95); z-index: 1000; padding: 20px; overflow: auto; }
+        .lightbox.active { display: flex; align-items: center; justify-content: center; }
+        .lightbox-content { position: relative; max-width: 90vw; max-height: 90vh; }
+        .lightbox-image { max-width: 100%; max-height: 85vh; border-radius: 8px; box-shadow: 0 0 40px rgba(0, 255, 255, 0.3); }
+        .lightbox-close { position: absolute; top: -40px; right: 0; background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; transition: color 0.3s; }
+        .lightbox-close:hover { color: var(--neon-red); }
+        .lightbox-info { position: absolute; bottom: -60px; left: 0; right: 0; text-align: center; color: #c9d1d9; }
+        .lightbox-title { font-size: 1.2rem; color: var(--neon-cyan); margin-bottom: 5px; }
+        .lightbox-meta { font-size: 0.9rem; color: #8b949e; }
+        
+        .admin-actions { display: flex; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border); justify-content: flex-end; }
+        .status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 10px; text-transform: uppercase; }
+        .status-protected { background: rgba(255, 0, 60, 0.2); color: var(--neon-red); border: 1px solid var(--neon-red); }
+        .status-unlocked { background: rgba(10, 255, 10, 0.2); color: var(--neon-green); border: 1px solid var(--neon-green); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="glitch-title">~/observatorio/capturas $</h1>
+        <p class="subheader">> Galería de capturas de pantalla</p>
+    </div>
+
+    <div class="volver">
+        <a href="/">← INICIO</a>
+    </div>
+
+    <div class="editor-controls">
+        <button onclick="mostrarSelector()" id="btnMostrarEditor" class="btn-editor">🔒 ACCEDER AL UPLOADER</button>
+        <div id="statusIndicator" style="margin-top: 10px; display: none;"><span class="status-badge status-unlocked">MODO EDITOR ACTIVO</span></div>
+    </div>
+
+    <div id="panelUpload" class="terminal" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+            <span style="color: var(--neon-green); font-weight: bold;">📝 NUEVA CAPTURA</span>
+            <button onclick="cerrarEditor()" class="btn-danger" style="padding: 5px 10px; font-size: 0.8rem;">✖ CERRAR</button>
+        </div>
+        <form onsubmit="event.preventDefault(); subirCaptura();">
+            <label>📌 TÍTULO:</label><input type="text" id="titulo" placeholder="Título de la captura" required>
+            <label>✍️ AUTOR/FUENTE:</label><input type="text" id="autor" placeholder="Quién capturó esto">
+            <label>🆔 QID (Wikidata):</label><input type="text" id="qid" class="qid-input" placeholder="Q123456" pattern="Q[0-9]+" title="Formato: Q seguido de números">
+            <label>📝 CONTEXTO:</label><textarea id="descripcion" rows="2" placeholder="¿Qué está pasando en esta captura?"></textarea>
+            <label>📂 TIPO DE CAPTURA:</label>
+            <select id="tipoCaptura">
+                <option value="error">💥 Error/Fallo</option><option value="ui">🎨 UI/UX</option><option value="mensaje">💬 Mensaje/Chat</option>
+                <option value="terminal">⌨️ Terminal/Código</option><option value="redes">🌐 Redes Sociales</option><option value="ia">🤖 Interacción con IA</option><option value="otro">🔧 Otro</option>
+            </select>
+            <label>🏷️ ETIQUETAS:</label>
+            <div class="checkbox-group">
+                <label class="checkbox-item"><input type="checkbox" value="nsfw" class="tag-check"> NSFW</label>
+                <label class="checkbox-item"><input type="checkbox" value="controversial" class="tag-check"> Controversial</label>
+                <label class="checkbox-item"><input type="checkbox" value="bug" class="tag-check"> Bug</label>
+            </div>
+            <label>🔗 URL EXTERNA (opcional):</label><input type="url" id="urlExterna" placeholder="https://...">
+            <label>💻 SELECCIONAR CAPTURA:</label>
+            <label for="archivo" class="file-label" id="fileLabel">Haz clic para seleccionar captura</label>
+            <input type="file" id="archivo" accept="image/png,image/jpeg,image/webp,image/gif" onchange="previsualizar(this)">
+            <div id="vistaPrevia" class="preview-container" style="display: none;">
+                <img id="imgPreview" alt="Vista previa"><div class="image-meta"><span class="meta-tag" id="imgTamaño">💾 ? MB</span></div>
+                <button type="button" onclick="quitarCaptura()" class="btn-danger">✖ QUITAR</button>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn-success">🚀 GUARDAR EN GITHUB</button>
+                <button type="button" onclick="resetForm()" class="btn-secondary">↩ LIMPIAR</button>
+            </div>
+        </form>
+    </div>
