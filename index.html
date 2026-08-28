@@ -476,6 +476,32 @@
     </div>
 
     <script>
+        // ==========================================
+        // CARGAR DATOS DE WHOAMI EN LA PÁGINA PRINCIPAL
+        // ==========================================
+        function cargarWhoamiInicio() {
+            const output = document.getElementById('whoami-output');
+            const guardado = localStorage.getItem('whoami_v2');
+            
+            if (guardado) {
+                try {
+                    const data = JSON.parse(guardado);
+                    const emoji = data.campo4 || '👤';
+                    const nombre = data.campo1 || 'Anónimo';
+                    const bio = data.campo2 || 'Sin descripción';
+                    
+                    // Inyecta los datos con el formato de la terminal
+                    output.innerHTML = `> Identidad: ${emoji} ${nombre}<br>> Bio: ${bio}`;
+                } catch (e) {
+                    output.innerHTML = "> Error al leer el perfil.";
+                }
+            } else {
+                output.innerHTML = "> Perfil no configurado. Entra a editar.";
+            }
+        }
+
+        // Ejecutamos la función apenas cargue la página
+        cargarWhoamiInicio();
         // JavaScript existente para el contador, carrusel, etc.
         // Volumen
         const audio = document.getElementById('musicaFondo');
