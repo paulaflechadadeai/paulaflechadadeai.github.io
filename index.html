@@ -223,7 +223,7 @@
         }
         #counter-status { font-family: 'Courier New', monospace; font-size: 0.75em; color: var(--text-muted); }
 
-        /* CARRUSEL (igual que antes) */
+        /* CARRUSEL */
         #controversial-carousel {
             margin-top: 3rem;
             padding: 1.5rem;
@@ -238,7 +238,7 @@
         .filtro-chip:hover, .filtro-chip.activo { background: var(--neon-pink); color: black; box-shadow: 0 0 10px var(--neon-pink); }
         .carousel-wrapper { max-width: 600px; margin: 0 auto; border: 2px solid var(--neon-pink); border-radius: 15px; background: var(--bg-darker); overflow: hidden; }
         .carousel-track { display: flex; transition: transform 0.5s ease; }
-        .carousel-slide { min-width: 100%; padding: 20px; }
+        .carousel-slide { min-width: 100%; padding: 20px; box-sizing: border-box; }
         .issue-card { background: rgba(255, 0, 255, 0.05); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
         .issue-header { border-bottom: 1px dashed var(--neon-pink); padding-bottom: 10px; margin-bottom: 15px; }
         .issue-numero { color: var(--neon-yellow); font-size: 0.8rem; }
@@ -260,7 +260,7 @@
         .carousel-controls { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
         .carousel-btn { background: transparent; border: 2px solid var(--neon-pink); color: var(--neon-pink); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
         .carousel-btn:hover { background: var(--neon-pink); color: black; }
-        .carousel-dots { display: flex; gap: 8px; }
+        .carousel-dots { display: flex; gap: 8px; align-items: center; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; }
         .dot.activo { background: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
         .carousel-counter { text-align: center; color: var(--neon-yellow); margin-top: 10px; font-size: 0.85rem; }
@@ -268,7 +268,7 @@
         .estado-carga::after { content: ''; display: inline-block; width: 20px; height: 20px; border: 2px solid var(--neon-pink); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-left: 10px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* NUEVO: ENLACE A GALERÍA ESCLAVA (estilo terminal minimizable) */
+        /* ENLACE A GALERÍA ESCLAVA */
         #galeria-link {
             position: fixed;
             bottom: 20px;
@@ -400,7 +400,8 @@
         </div>
         <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">track_info</span><div class="output">> Reproduciendo: himno sin sponsors · Loop infinito</div></div>
     </div>
-  <!-- CONTADOR GLOBAL HITWEBCOUNTER REAL POR IP -->
+
+    <!-- CONTADOR GLOBAL HITWEBCOUNTER -->
     <div class="counter-box" id="visit-counter">
         <div style="color: var(--neon-pink); font-size: 0.85em; text-transform: uppercase; letter-spacing: 2px;">$ visitas_globales</div>
         <div class="counter-number">
@@ -454,7 +455,7 @@
         </p>
     </div>
 
-    <!-- ENLACE DIRECTO A GALERÍA ESCLAVA (en lugar del chat de Gemini) -->
+    <!-- ENLACE DIRECTO A GALERÍA ESCLAVA -->
     <div id="galeria-link">
         <div class="galeria-header">
             <span class="prompt">~/galeria_link</span> $ <span class="cmd">abrir --taller</span>
@@ -490,7 +491,6 @@
                     const nombre = data.campo1 || 'Anónimo';
                     const bio = data.campo2 || 'Sin descripción';
                     
-                    // Inyecta los datos con el formato de la terminal
                     output.innerHTML = `> Identidad: ${emoji} ${nombre}<br>> Bio: ${bio}`;
                 } catch (e) {
                     output.innerHTML = "> Error al leer el perfil.";
@@ -499,37 +499,39 @@
                 output.innerHTML = "> Perfil no configurado. Entra a editar.";
             }
         }
-
-        // Ejecutamos la función apenas cargue la página
         cargarWhoamiInicio();
-        // JavaScript existente para el contador, carrusel, etc.
-        // Volumen
+
+        // ==========================================
+        // REPRODUCTOR DE MÚSICA
+        // ==========================================
         const audio = document.getElementById('musicaFondo');
         const volumenSlider = document.getElementById('controlVolumen');
         const volumenDisplay = document.getElementById('volumenDisplay');
         audio.volume = 0.3;
+        
         volumenSlider.addEventListener('input', function() {
             audio.volume = this.value;
             volumenDisplay.textContent = Math.round(this.value * 100) + '%';
         });
-        // Silencio inicial si el navegador lo permite (autoplay bloqueado)
+        
         audio.muted = true;
         document.getElementById('musicPlayer').classList.add('muted');
+        
         function unmuteFirstPlay() {
             audio.muted = false;
             document.getElementById('musicPlayer').classList.remove('muted');
-            // Solo se ejecuta una vez
             document.body.removeEventListener('click', unmuteFirstPlay);
             document.body.removeEventListener('touchstart', unmuteFirstPlay);
         }
         document.body.addEventListener('click', unmuteFirstPlay);
         document.body.addEventListener('touchstart', unmuteFirstPlay);
 
-        // Contador de visitas (leer valor desde el contador externo)
+        // ==========================================
+        // CONTADOR DE VISITAS
+        // ==========================================
         function actualizarContadorTexto() {
             const img = document.querySelector('.counter-number img');
             if (img && img.src) {
-                // Intentar extraer el número de la URL (no es preciso, solo estético)
                 const match = img.src.match(/page=(\d+)/);
                 if (match) {
                     document.getElementById('contador-valor').textContent = match[1];
@@ -542,7 +544,9 @@
         }
         setTimeout(actualizarContadorTexto, 1000);
 
-        // CARRUSEL DE ISSUES (mismo código que antes)
+        // ==========================================
+        // CARRUSEL DE ISSUES DE GITHUB
+        // ==========================================
         let issuesData = [];
         let currentIndex = 0;
         let activeFilter = 'todos';
@@ -558,6 +562,9 @@
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const allIssues = await response.json();
                 issuesData = allIssues.filter(issue => !issue.pull_request);
+                
+                document.querySelector('.zona-header p').style.display = 'none'; // Oculta mensaje de carga
+                
                 aplicarFiltro();
                 generarFiltros();
             } catch (error) {
@@ -588,6 +595,7 @@
             const labelsArray = Array.from(labelsSet).sort();
             const container = document.getElementById('filtros-container');
             container.innerHTML = `<button class="filtro-chip ${activeFilter === 'todos' ? 'activo' : ''}" data-filtro="todos">todos</button>`;
+            
             labelsArray.forEach(label => {
                 const chip = document.createElement('button');
                 chip.className = `filtro-chip ${activeFilter === label ? 'activo' : ''}`;
@@ -595,6 +603,7 @@
                 chip.dataset.filtro = label;
                 container.appendChild(chip);
             });
+            
             document.querySelectorAll('.filtro-chip').forEach(chip => {
                 chip.addEventListener('click', () => {
                     activeFilter = chip.dataset.filtro;
@@ -609,20 +618,24 @@
             const track = document.getElementById('carousel-track');
             const dotsContainer = document.getElementById('carousel-dots');
             const counterSpan = document.getElementById('carousel-counter');
+            
             if (!track) return;
+            
             if (filteredIssues.length === 0) {
                 track.innerHTML = `<div class="carousel-slide"><div class="issue-card">No hay issues con este filtro.</div></div>`;
-                dotsContainer.innerHTML = '';
-                counterSpan.textContent = '0 / 0';
+                if(dotsContainer) dotsContainer.innerHTML = '';
+                if(counterSpan) counterSpan.textContent = '0 / 0';
                 return;
             }
+            
             track.innerHTML = '';
-            filteredIssues.forEach((issue, idx) => {
+            filteredIssues.forEach((issue) => {
                 const slide = document.createElement('div');
                 slide.className = 'carousel-slide';
                 slide.innerHTML = generarHTMLIssue(issue);
                 track.appendChild(slide);
             });
+            
             actualizarPosicion();
             generarPuntos();
             actualizarContador();
@@ -637,29 +650,48 @@
                 if (label.name === 'pdf') claseExtra = 'pdf';
                 return `<span class="issue-label ${claseExtra}">${label.name}</span>`;
             }).join('');
+            
             let mediaHtml = '';
             const body = issue.body || '';
-            // Imágenes
-            const imgMatch = body.match(/!\[.*?\]\((.*?)\)/);
-            if (imgMatch && (imgMatch[1].match(/\.(jpg|jpeg|png|gif|webp)/i))) {
-                mediaHtml = `<div class="issue-media"><img src="${imgMatch[1]}" loading="lazy" alt="imagen adjunta"></div>`;
+            
+            // Detección de multimedia
+            const imgMatch = body.match(/!\[.*?\]\((.*?)\)/); 
+            const githubAssetMatch = body.match(/https:\/\/github\.com\/[^\s\)]+/); 
+            const urlAudioVideoMatch = body.match(/https?:\/\/[^\s\)]+\.(mp4|webm|mov|mp3|wav|ogg)/i); 
+            
+            if (imgMatch) {
+                mediaHtml = `<div class="issue-media"><img src="${imgMatch[1]}" loading="lazy" alt="captura adjunta"></div>`;
+            } 
+            else if (urlAudioVideoMatch || githubAssetMatch) {
+                const url = urlAudioVideoMatch ? urlAudioVideoMatch[0] : githubAssetMatch[0];
+                const isVideo = issue.labels.some(l => l.name === 'video') || url.match(/\.(mp4|webm|mov)$/i);
+                const isAudio = issue.labels.some(l => l.name === 'audio') || url.match(/\.(mp3|wav|ogg)$/i);
+                
+                if (isVideo) {
+                    mediaHtml = `<div class="issue-media"><video controls src="${url}" style="max-width:100%"></video></div>`;
+                } else if (isAudio) {
+                    mediaHtml = `<div class="issue-media"><audio controls src="${url}"></audio></div>`;
+                } else if (githubAssetMatch && !url.includes('pull')) {
+                    mediaHtml = `<div class="issue-media"><a href="${url}" target="_blank" class="enlace-interno">📎 Ver archivo adjunto</a></div>`;
+                }
             }
-            // Audio
-            const audioMatch = body.match(/https?:\/\/[^\s]+\.(mp3|wav|ogg)/i);
-            if (audioMatch) {
-                mediaHtml = `<div class="issue-media"><audio controls src="${audioMatch[0]}"></audio></div>`;
-            }
-            // Video
-            const videoMatch = body.match(/https?:\/\/[^\s]+\.(mp4|webm|mov)/i);
-            if (videoMatch) {
-                mediaHtml = `<div class="issue-media"><video controls src="${videoMatch[0]}" style="max-width:100%"></video></div>`;
-            } else {
+            else {
                 const youtubeMatch = body.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/i);
                 if (youtubeMatch) {
                     mediaHtml = `<div class="issue-media"><iframe width="100%" height="200" src="https://www.youtube.com/embed/${youtubeMatch[1]}" frameborder="0" allowfullscreen></iframe></div>`;
                 }
             }
-            const desc = body.replace(/!\[.*?\]\(.*?\)/g, '').replace(/https?:\/\/[^\s]+/g, '').substring(0, 200);
+
+            // Limpieza de Markdown para la descripción
+            let desc = body
+                .replace(/!\[.*?\]\(.*?\)/g, '') 
+                .replace(/https?:\/\/[^\s]+/g, '') 
+                .replace(/\*\*(.*?)\*\*/g, '$1') 
+                .replace(/\*(.*?)\*/g, '$1') 
+                .replace(/\n/g, ' - ') 
+                .replace(/\s{2,}/g, ' ') 
+                .trim();
+                
             return `
                 <div class="issue-card">
                     <div class="issue-header">
@@ -668,7 +700,7 @@
                         <div class="issue-labels">${labelsHtml}</div>
                     </div>
                     ${mediaHtml}
-                    <div class="issue-desc">${escapeHtml(desc)}${desc.length >= 200 ? '...' : ''}</div>
+                    <div class="issue-desc">${escapeHtml(desc).substring(0, 200)}${desc.length > 200 ? '...' : ''}</div>
                     <div class="issue-footer">
                         <span class="nivel-fuego">🔥 ${Math.floor(Math.random() * 100)}%</span>
                         <a href="${issue.html_url}" target="_blank" class="issue-link">Ver en GitHub →</a>
@@ -678,26 +710,26 @@
         }
 
         function escapeHtml(str) {
+            if (!str) return '';
             return str.replace(/[&<>]/g, function(m) {
                 if (m === '&') return '&amp;';
                 if (m === '<') return '&lt;';
                 if (m === '>') return '&gt;';
                 return m;
-            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-                return c;
             });
         }
 
         function actualizarPosicion() {
             const track = document.getElementById('carousel-track');
-            if (track) {
-                const anchoSlide = track.children[0]?.offsetWidth || 0;
-                track.style.transform = `translateX(-${currentIndex * anchoSlide}px)`;
+            if (track && track.parentElement) {
+                const anchoWrapper = track.parentElement.offsetWidth; 
+                track.style.transform = `translateX(-${currentIndex * anchoWrapper}px)`;
             }
         }
-
+      
         function generarPuntos() {
             const dotsContainer = document.getElementById('carousel-dots');
+            if (!dotsContainer) return;
             dotsContainer.innerHTML = '';
             for (let i = 0; i < filteredIssues.length; i++) {
                 const dot = document.createElement('span');
@@ -726,6 +758,7 @@
             generarPuntos();
             actualizarContador();
         });
+
         document.getElementById('nextSlide')?.addEventListener('click', () => {
             if (filteredIssues.length === 0) return;
             currentIndex = (currentIndex + 1) % filteredIssues.length;
@@ -738,8 +771,8 @@
             actualizarPosicion();
         });
 
+        // Iniciar la carga de los issues
         fetchIssues();
     </script>
 </body>
-    </html>
-    
+</html>
