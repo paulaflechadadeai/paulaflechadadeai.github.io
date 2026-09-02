@@ -1,0 +1,176 @@
+    <script>
+        // CONFIGURACIÓN
+        const CLAVE_EDITOR = 'patito123';
+        const GITHUB_USER = 'paulaflechadadeai';
+        const GITHUB_REPO = 'paulaflechadadeai.github.io';
+        
+        // 🔗 LA CONEXIÓN MÁGICA: URL de tu Worker en Cloudflare
+        const WORKER_URL = 'https://observatorio-upload.veronicakamyarnima.workers.dev';
+
+        let editorActivo = false;
+        let archivoSeleccionado = null;
+
+        // SISTEMA DE AUTENTICACIÓN
+        function mostrarSelector() {
+            const clave = prompt("🔑 Ingresa clave de editor:");
+            if (clave === CLAVE_EDITOR) activarModoEditor();
+            else if (clave !== null) alert("❌ Clave incorrecta. Acceso denegado.");
+        }
+
+        function activarModoEditor() {
+            editorActivo = true;
+            document.getElementById('btnMostrarEditor').style.display = 'none';
+            document.getElementById('panelUpload').style.display = 'block';
+            document.getElementById('statusIndicator').style.display = 'block';
+        }
+
+        function cerrarEditor() {
+            editorActivo = false;
+            document.getElementById('btnMostrarEditor').style.display = 'inline-block';
+            document.getElementById('panelUpload').style.display = 'none';
+            document.getElementById('statusIndicator').style.display = 'none';
+            resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById('titulo').value = '';
+            document.getElementById('artista').value = '';
+            document.getElementById('qid').value = '';
+            document.getElementById('descripcion').value = '';
+            document.getElementById('urlExterna').value = '';
+            document.getElementById('genero').value = 'ai-gen';
+            quitarVideo();
+        }
+
+        // GESTIÓN DE ARCHIVOS PARA EL EDITOR
+        function previsualizar(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > 50 * 1024 * 1024) {
+                    alert("❌ El video debe ser menor de 50MB"); input.value = ''; return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    archivoSeleccionado = { nombre: file.name, tipo: 'video', tamaño: (file.size / (1024 * 1024)).toFixed(2), duracion: null };
+                    const video = document.getElementById('videoPreview');
+                    video.src = e.target.result;
+                    video.onloadedmetadata = function() {
+                        const mins = Math.floor(video.duration / 60);
+                        const segs = Math.floor(video.duration % 60);
+                        archivoSeleccionado.duracion = `${mins}:${segs.toString().padStart(2, '0')}`;
+                        actualizarInfo();
+                    };
+                    document.getElementById('vistaPrevia').style.display = 'block';
+                    document.getElementById('fileLabel').style.borderColor = 'var(--neon-green)';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function actualizarInfo() {
+            let info = `📊 ${archivoSeleccionado.nombre} (${archivoSeleccionado.tamaño} MB)`;
+            if (archivoSeleccionado.duracion) info += ` · ⏱️ ${archivoSeleccionado.duracion}`;
+            document.getElementById('fileInfo').textContent = info;
+        }
+
+        function quitarVideo() {
+            archivoSeleccionado = null;
+            document.getElementById('vistaPrevia').style.display = 'none';
+            document.getElementById('archivo').value = '';
+            const video = document.getElementById('videoPreview');
+            video.src = '';
+            document.getElementById('fileLabel').style.borderColor = 'var(--neon-blue)';
+        }
+
+        // 🚀 SUBIR A CLOUDFLARE R2 Y CREAR ISSUE EN GITHUB
+        async function subirVideo() {
+            if (!editorActivo) { alert("⚠️ Activa el modo editor primero"); return; }
+            
+            const titulo = document.getElementById('titulo').value.trim();
+            const artista = document.getElementById('artista').value.trim();
+            const descripcion = document.getElementById('descripcion').value.trim();
+            const genero = document.getElementById('genero').value;
+            const urlExterna = document.getElementById('urlExterna').value.trim();
+            const archivoInput = document.getElementById('archivo');
+
+            if (!titulo) { alert("⚠️ El título es obligatorio"); return; }
+
+            // CASO 1: Hay un archivo para subir a R2
+            if (archivoInput.files && archivoInput.files[0]) {
+                const file = archivoInput.files[0];
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('titulo', titulo);
+                formData.append('genero', genero);
+
+                // Bloquear botón y mostrar estado de carga
+                const btn = document.querySelector('button[type="submit"]');
+                const originalText = btn.innerText;
+                btn.innerText = '⏳ SUBIENDO A R2...';
+                btn.disabled = true;
+
+                try {
+                    // Enviar petición POST al Worker
+                    const response = await fetch(WORKER_URL, {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Error desconocido en Cloudflare');
+                    }
+
+                    alert(`✅ ¡Video subido a tu Bucket!\n🌐 URL: ${result.url}`);
+
+                    // Crear el Issue en GitHub con la URL pública de R2
+                    let cuerpo = `**Género:** ${genero}\n`;
+                    if (artista) cuerpo += `🎥 **Artista:** ${artista}\n`;
+                    cuerpo += `\n${descripcion || 'Sin descripción'}\n\n`;
+                    cuerpo += `🔗 **URL R2 Pública:** ${result.url}\n`;
+                    cuerpo += `📁 **Archivo:** ${result.key} · ${(result.size / (1024*1024)).toFixed(2)} MB\n`;
+
+                    window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('🎬 ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=video,${genero}`, '_blank');
+                    
+                    resetForm();
+
+                } catch (err) {
+                    alert(`❌ Error al subir: ${err.message}`);
+                    console.error(err);
+                } finally {
+                    // Restaurar botón
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+
+            } 
+            // CASO 2: Solo se usa una URL externa (YouTube, Vimeo, etc)
+            else if (urlExterna) {
+                let cuerpo = `**Género:** ${genero}\n`;
+                if (artista) cuerpo += `🎥 **Artista:** ${artista}\n`;
+                cuerpo += `\n${descripcion || 'Sin descripción'}\n\n`;
+                cuerpo += `🔗 **Ver enlace externo:** [Enlace](${urlExterna})\n`;
+
+                window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('🎬 ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=video,${genero}`, '_blank');
+                resetForm();
+            } 
+            // ERROR: No hay ni archivo ni URL
+            else {
+                alert("⚠️ Sube un archivo de video o proporciona una URL externa");
+            }
+        }
+
+        // Drag and drop para el editor
+        const fileLabel = document.getElementById('fileLabel');
+        fileLabel.addEventListener('dragover', (e) => { e.preventDefault(); fileLabel.style.background = 'rgba(0, 243, 255, 0.2)'; });
+        fileLabel.addEventListener('dragleave', () => { fileLabel.style.background = ''; });
+        fileLabel.addEventListener('drop', (e) => {
+            e.preventDefault(); fileLabel.style.background = '';
+            if (e.dataTransfer.files.length > 0) {
+                document.getElementById('archivo').files = e.dataTransfer.files;
+                previsualizar(document.getElementById('archivo'));
+            }
+        });
+      </script>
+      
