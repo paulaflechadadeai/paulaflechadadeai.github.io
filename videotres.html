@@ -131,7 +131,7 @@
                 <p><button type="button" onclick="quitarVideo()" class="btn-danger">✖ QUITAR</button></p>
             </div>
 
-            <!-- NUEVO: Barra de progreso oculta por defecto -->
+            <!-- BARRA DE PROGRESO DE SUBIDA -->
             <div id="progressContainer" style="display: none; margin-top: 15px;">
                 <div style="width: 100%; background: #010409; border: 1px solid var(--border); border-radius: 4px; overflow: hidden;">
                     <div id="progressBar" style="width: 0%; height: 15px; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); box-shadow: 0 0 10px var(--neon-blue); transition: width 0.2s ease;"></div>
@@ -146,13 +146,13 @@
         </form>
     </div>
 
-    <!-- Sección de Videos Fijos (Cloudflare R2) -->
+    <!-- Sección de Videos (Estáticos + Dinámicos) -->
     <div class="existing-videos">
         <h2 class="section-title">📚 Videos en el Observatorio</h2>
         
         <div class="video-grid" id="videosContainer">
             
-            <!-- ================== VIDEO 1 ================== -->
+            <!-- ================== VIDEO 1 ESTÁTICO ================== -->
             <div class="video-card">
                 <div class="video-card-header">
                     <span class="video-icon">🤖</span>
@@ -176,7 +176,7 @@
                 </div>
             </div>
 
-            <!-- ================== VIDEO 2 ================== -->
+            <!-- ================== VIDEO 2 ESTÁTICO ================== -->
             <div class="video-card">
                 <div class="video-card-header">
                     <span class="video-icon">🌀</span>
@@ -200,7 +200,7 @@
                 </div>
             </div>
 
-            <!-- ================== VIDEO 3 ================== -->
+            <!-- ================== VIDEO 3 ESTÁTICO ================== -->
             <div class="video-card">
                 <div class="video-card-header">
                     <span class="video-icon">📼</span>
@@ -222,7 +222,8 @@
                     <span class="label genero">otro</span>
                 </div>
             </div>
-
+            
+            <!-- A PARTIR DE AQUÍ SE INYECTARÁN AUTOMÁTICAMENTE LOS NUEVOS VIDEOS -->
         </div>
     </div>
 
@@ -274,19 +275,14 @@
         function previsualizar(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
-                
-                // Validación estricta de formato
                 const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
                 if (!allowedTypes.includes(file.type)) {
-                    alert("❌ Formato no soportado. Usa MP4, WebM, OGG o MOV.");
-                    input.value = ''; 
-                    return;
+                    alert("❌ Formato no soportado. Usa MP4, WebM, OGG o MOV."); 
+                    input.value = ''; return;
                 }
-
                 if (file.size > 50 * 1024 * 1024) {
                     alert("❌ El video debe ser menor de 50MB"); 
-                    input.value = ''; 
-                    return;
+                    input.value = ''; return;
                 }
                 
                 const reader = new FileReader();
@@ -322,8 +318,8 @@
             document.getElementById('fileLabel').style.borderColor = 'var(--neon-blue)';
         }
 
-        // 🚀 SUBIR A CLOUDFLARE R2 Y CREAR ISSUE EN GITHUB
-        async function subirVideo() {
+        // 🚀 SUBIR A CLOUDFLARE R2 Y CREAR ISSUE EN GITHUB (CON BARRA DE PROGRESO)
+        function subirVideo() {
             if (!editorActivo) { alert("⚠️ Activa el modo editor primero"); return; }
             
             const titulo = document.getElementById('titulo').value.trim();
@@ -348,7 +344,7 @@
                 const originalText = btn.innerText;
                 btn.innerText = '⏳ ESTABLECIENDO CONEXIÓN...';
                 btn.disabled = true;
-                
+
                 const progressContainer = document.getElementById('progressContainer');
                 const progressBar = document.getElementById('progressBar');
                 const progressText = document.getElementById('progressText');
@@ -367,7 +363,10 @@
                         const percentComplete = Math.round((e.loaded / e.total) * 100);
                         progressBar.style.width = percentComplete + '%';
                         progressText.innerText = percentComplete + '% ENVIADO';
-                        btn.innerText = '🚀 TRANSMITIENDO DATOS...';
+                        
+                        if(percentComplete > 10) {
+                            btn.innerText = '🚀 TRANSMITIENDO DATOS...';
+                        }
                     }
                 };
 
@@ -389,7 +388,6 @@
                         cuerpo += `📁 **Archivo:** ${result.key} · ${(result.size / (1024*1024)).toFixed(2)} MB\n`;
 
                         window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('🎬 ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=video,${genero}`, '_blank');
-                        
                         resetForm();
                     } else {
                         let errorMsg = 'Error desconocido en Cloudflare';
@@ -410,6 +408,7 @@
 
                 // Iniciar la subida
                 xhr.send(formData);
+
             } 
             // CASO 2: Solo se usa una URL externa (YouTube, Vimeo, etc)
             else if (urlExterna) {
@@ -438,6 +437,59 @@
                 previsualizar(document.getElementById('archivo'));
             }
         });
+
+        // 📥 CARGAR VIDEOS DINÁMICOS DESDE GITHUB ISSUES AL FINAL
+        async function cargarGaleriaDinamica() {
+            const contenedor = document.getElementById('videosContainer');
+            
+            try {
+                // Leer Issues desde GitHub
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?state=open&labels=video`);
+                const issues = await response.json();
+                
+                // Si no hay issues, el código no hace nada y los 3 fijos se quedan igual
+                if (issues.length === 0) return;
+
+                // Si encuentra videos, los va agregando uno por uno al fondo de la grilla
+                issues.forEach(issue => {
+                    const urlMatch = issue.body.match(/URL R2 Pública:\*\* (https:\/\/[^\s]+)/);
+                    const urlR2 = urlMatch ? urlMatch[1] : null;
+
+                    if (urlR2) {
+                        const tituloLimpio = issue.title.replace('🎬 ', '');
+                        
+                        const cardHTML = `
+                        <div class="video-card">
+                            <div class="video-card-header">
+                                <span class="video-icon">📼</span>
+                                <h3 class="video-title">${tituloLimpio}</h3>
+                            </div>
+                            <div class="video-meta">
+                                <span>☁️ Cloudflare R2</span>
+                                <span>#${issue.number}</span>
+                            </div>
+                            <div class="video-player-container">
+                                <video controls preload="metadata">
+                                    <source src="${urlR2}" type="video/mp4">
+                                </video>
+                            </div>
+                            <div style="margin-top: 15px; text-align: center;">
+                                <a href="${issue.html_url}" target="_blank" style="color: var(--neon-blue); text-decoration: none; font-size: 0.8rem; border: 1px solid var(--neon-blue); padding: 4px 8px; border-radius: 4px;">Ver metadatos completos →</a>
+                            </div>
+                        </div>`;
+                        
+                        // IMPORTANTE: El operador += inyecta el HTML al final, 
+                        // manteniendo vivos tus 3 videos iniciales.
+                        contenedor.innerHTML += cardHTML;
+                    }
+                });
+            } catch (error) {
+                console.error("Error cargando la galería dinámica:", error);
+            }
+        }
+
+        // Se asegura de que la galería cargue apenas abres la página
+        document.addEventListener('DOMContentLoaded', cargarGaleriaDinamica);
     </script>
 </body>
 </html>
