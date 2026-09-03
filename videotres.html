@@ -131,6 +131,14 @@
                 <p><button type="button" onclick="quitarVideo()" class="btn-danger">✖ QUITAR</button></p>
             </div>
 
+            <!-- NUEVO: Barra de progreso oculta por defecto -->
+            <div id="progressContainer" style="display: none; margin-top: 15px;">
+                <div style="width: 100%; background: #010409; border: 1px solid var(--border); border-radius: 4px; overflow: hidden;">
+                    <div id="progressBar" style="width: 0%; height: 15px; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); box-shadow: 0 0 10px var(--neon-blue); transition: width 0.2s ease;"></div>
+                </div>
+                <small id="progressText" style="text-align: center; color: var(--neon-green); margin-top: 5px; display: block;">0% ENVIADO</small>
+            </div>
+
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button type="submit" class="btn-success">🚀 SUBIR A CLOUDFLARE</button>
                 <button type="button" onclick="resetForm()" class="btn-secondary">↩ LIMPIAR</button>
@@ -266,9 +274,21 @@
         function previsualizar(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
-                if (file.size > 50 * 1024 * 1024) {
-                    alert("❌ El video debe ser menor de 50MB"); input.value = ''; return;
+                
+                // Validación estricta de formato
+                const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert("❌ Formato no soportado. Usa MP4, WebM, OGG o MOV.");
+                    input.value = ''; 
+                    return;
                 }
+
+                if (file.size > 50 * 1024 * 1024) {
+                    alert("❌ El video debe ser menor de 50MB"); 
+                    input.value = ''; 
+                    return;
+                }
+                
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     archivoSeleccionado = { nombre: file.name, tipo: 'video', tamaño: (file.size / (1024 * 1024)).toFixed(2), duracion: null };
@@ -323,47 +343,73 @@
                 formData.append('titulo', titulo);
                 formData.append('genero', genero);
 
-                // Bloquear botón y mostrar estado de carga
+                // Bloquear botón y mostrar interfaz de carga
                 const btn = document.querySelector('button[type="submit"]');
                 const originalText = btn.innerText;
-                btn.innerText = '⏳ SUBIENDO A R2...';
+                btn.innerText = '⏳ ESTABLECIENDO CONEXIÓN...';
                 btn.disabled = true;
+                
+                const progressContainer = document.getElementById('progressContainer');
+                const progressBar = document.getElementById('progressBar');
+                const progressText = document.getElementById('progressText');
+                
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressText.innerText = '0% ENVIADO';
 
-                try {
-                    // Enviar petición POST al Worker
-                    const response = await fetch(WORKER_URL, {
-                        method: 'POST',
-                        body: formData,
-                    });
+                // Usamos XMLHttpRequest para rastrear el progreso
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', WORKER_URL, true);
 
-                    const result = await response.json();
-
-                    if (!response.ok) {
-                        throw new Error(result.error || 'Error desconocido en Cloudflare');
+                // Evento que se dispara mientras se suben los bytes
+                xhr.upload.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        const percentComplete = Math.round((e.loaded / e.total) * 100);
+                        progressBar.style.width = percentComplete + '%';
+                        progressText.innerText = percentComplete + '% ENVIADO';
+                        btn.innerText = '🚀 TRANSMITIENDO DATOS...';
                     }
+                };
 
-                    alert(`✅ ¡Video subido a tu Bucket!\n🌐 URL: ${result.url}`);
-
-                    // Crear el Issue en GitHub con la URL pública de R2
-                    let cuerpo = `**Género:** ${genero}\n`;
-                    if (artista) cuerpo += `🎥 **Artista:** ${artista}\n`;
-                    cuerpo += `\n${descripcion || 'Sin descripción'}\n\n`;
-                    cuerpo += `🔗 **URL R2 Pública:** ${result.url}\n`;
-                    cuerpo += `📁 **Archivo:** ${result.key} · ${(result.size / (1024*1024)).toFixed(2)} MB\n`;
-
-                    window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('🎬 ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=video,${genero}`, '_blank');
-                    
-                    resetForm();
-
-                } catch (err) {
-                    alert(`❌ Error al subir: ${err.message}`);
-                    console.error(err);
-                } finally {
-                    // Restaurar botón
+                // Evento cuando termina la conexión
+                xhr.onload = function() {
                     btn.innerText = originalText;
                     btn.disabled = false;
-                }
+                    progressContainer.style.display = 'none';
 
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        const result = JSON.parse(xhr.responseText);
+                        alert(`✅ ¡Video subido a tu Bucket!\n🌐 URL: ${result.url}`);
+
+                        // Crear el Issue en GitHub con la URL pública de R2
+                        let cuerpo = `**Género:** ${genero}\n`;
+                        if (artista) cuerpo += `🎥 **Artista:** ${artista}\n`;
+                        cuerpo += `\n${descripcion || 'Sin descripción'}\n\n`;
+                        cuerpo += `🔗 **URL R2 Pública:** ${result.url}\n`;
+                        cuerpo += `📁 **Archivo:** ${result.key} · ${(result.size / (1024*1024)).toFixed(2)} MB\n`;
+
+                        window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('🎬 ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=video,${genero}`, '_blank');
+                        
+                        resetForm();
+                    } else {
+                        let errorMsg = 'Error desconocido en Cloudflare';
+                        try {
+                            const result = JSON.parse(xhr.responseText);
+                            if (result.error) errorMsg = result.error;
+                        } catch(e) {}
+                        alert(`❌ Error al subir: ${errorMsg}`);
+                    }
+                };
+
+                xhr.onerror = function() {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    progressContainer.style.display = 'none';
+                    alert("❌ Error crítico de red durante la transmisión.");
+                };
+
+                // Iniciar la subida
+                xhr.send(formData);
             } 
             // CASO 2: Solo se usa una URL externa (YouTube, Vimeo, etc)
             else if (urlExterna) {
