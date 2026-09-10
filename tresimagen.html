@@ -30,8 +30,9 @@
         .volver a { color: var(--neon-blue); text-decoration: none; font-weight: bold; transition: all 0.3s; }
         .volver a:hover { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
         
+        /* Controles y Formulario */
         .editor-controls { max-width: 600px; margin: 0 auto 30px; text-align: center; }
-        .btn-editor { background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple)); border: 2px solid var(--neon-blue); color: white; padding: 12px 24px; font-family: inherit; font-weight: bold; cursor: pointer; border-radius: 6px; text-transform: uppercase; transition: all 0.3s; }
+        .btn-editor { background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple)); border: 2px solid var(--neon-blue); color: white; padding: 12px 24px; font-family: 'Courier New', monospace; font-weight: bold; cursor: pointer; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; font-size: 0.9rem; }
         .btn-editor:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 243, 255, 0.5); }
         .terminal { background: var(--bg-terminal); border: 1px solid var(--border); border-radius: 10px; padding: 30px; max-width: 600px; margin: 0 auto 30px; box-shadow: 0 0 30px rgba(0, 243, 255, 0.1); }
         label { display: block; color: var(--neon-yellow); margin: 15px 0 5px; font-weight: bold; }
@@ -41,8 +42,10 @@
         .file-label { display: block; background: linear-gradient(45deg, #21262d, #30363d); border: 2px dashed var(--neon-blue); color: var(--neon-blue); padding: 40px 20px; text-align: center; border-radius: 10px; cursor: pointer; transition: all 0.3s; margin: 10px 0; }
         .file-label:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); transform: translateY(-2px); }
         .file-label::before { content: "🖼️ "; font-size: 2rem; }
+        small { color: var(--neon-blue); display: block; margin-top: 5px; }
         
         .preview-container { background: #010409; border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 15px 0; text-align: center; }
+        
         img.preview-img { max-width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid var(--border); }
         
         .btn-success, .btn-secondary, .btn-danger { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-family: inherit; font-weight: bold; transition: all 0.3s; text-transform: uppercase; }
@@ -53,23 +56,26 @@
         .btn-danger { background: linear-gradient(45deg, #da3633, #f85149); color: white; padding: 8px 16px; font-size: 0.9rem; }
         .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(218, 54, 51, 0.5); }
         
-        .existing-media { max-width: 1000px; margin: 0 auto; }
+        /* Galería de Imágenes */
+        .existing-videos { max-width: 1000px; margin: 0 auto; }
         .section-title { color: var(--neon-purple); font-size: 1.5rem; margin-bottom: 20px; text-align: center; text-shadow: 0 0 10px rgba(189, 0, 255, 0.3); }
-        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .media-card { background: var(--bg-terminal); border: 1px solid var(--border); border-radius: 10px; padding: 20px; transition: all 0.3s; position: relative; overflow: hidden; }
-        .media-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); }
-        .media-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 243, 255, 0.2); border-color: var(--neon-blue); }
-        .media-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .media-icon { font-size: 2rem; }
-        .media-title { color: var(--neon-green); font-size: 1.1rem; font-weight: bold; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .media-meta { color: #8b949e; font-size: 0.85rem; margin-bottom: 10px; }
-        .media-description { color: #c9d1d9; font-size: 0.9rem; line-height: 1.4; margin-bottom: 15px; }
-        .media-player-container { background: #010409; border-radius: 8px; padding: 10px; border: 1px solid var(--border); text-align: center; }
-        .media-player-container img { max-width: 100%; border-radius: 4px; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .video-card { background: var(--bg-terminal); border: 1px solid var(--border); border-radius: 10px; padding: 20px; transition: all 0.3s; position: relative; overflow: hidden; }
+        .video-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); }
+        .video-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 243, 255, 0.2); border-color: var(--neon-blue); }
+        .video-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .video-icon { font-size: 2rem; }
+        .video-title { color: var(--neon-green); font-size: 1.1rem; font-weight: bold; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .video-meta { color: #8b949e; font-size: 0.85rem; margin-bottom: 10px; }
+        .video-meta span { display: inline-block; margin-right: 10px; }
+        .video-description { color: #c9d1d9; font-size: 0.9rem; line-height: 1.4; margin-bottom: 15px; }
+        .video-player-container { background: #010409; border-radius: 8px; padding: 10px; border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; }
+        .video-player-container img { max-width: 100%; max-height: 300px; border-radius: 4px; object-fit: contain; }
         
         .labels { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
         .label { background: rgba(0, 243, 255, 0.2); color: var(--neon-blue); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; border: 1px solid var(--neon-blue); }
         .label.genero { background: rgba(189, 0, 255, 0.2); color: var(--neon-purple); border-color: var(--neon-purple); }
+        
         .status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 10px; text-transform: uppercase; }
         .status-protected { background: rgba(255, 0, 60, 0.2); color: var(--neon-red); border: 1px solid var(--neon-red); }
     </style>
@@ -77,7 +83,7 @@
 <body>
     <div class="header">
         <h1 class="glitch-title">~/observatorio/imagen $</h1>
-        <p class="subheader">> Galería visual y gráfica colaborativa</p>
+        <p class="subheader">> Repositorio visual y generativo</p>
     </div>
 
     <div class="volver">
@@ -99,21 +105,19 @@
             <button onclick="cerrarEditor()" class="btn-danger" style="padding: 5px 10px; font-size: 0.8rem;">✖ CERRAR</button>
         </div>
 
-        <form onsubmit="event.preventDefault(); subirArchivo();">
+        <form onsubmit="event.preventDefault(); subirImagen();">
             <label>📌 TÍTULO:</label>
-            <input type="text" id="titulo" placeholder="Título de la imagen" required>
+            <input type="text" id="titulo" placeholder="Título de la obra" required>
             <label>🎨 ARTISTA/CREADOR:</label>
-            <input type="text" id="artista" placeholder="Nombre del artista">
-            <label>🆔 QID (Wikidata):</label>
-            <input type="text" id="qid" placeholder="Q123456">
-            <label>📝 DESCRIPCIÓN / PROMPT:</label>
-            <textarea id="descripcion" rows="2" placeholder="Descripción o prompt utilizado..."></textarea>
-            <label>🏷️ GÉNERO/TIPO:</label>
+            <input type="text" id="artista" placeholder="Nombre del artista o modelo AI">
+            <label>📝 PROMPT / DESCRIPCIÓN:</label>
+            <textarea id="descripcion" rows="3" placeholder="Descripción de la imagen o prompt utilizado..."></textarea>
+            <label>🏷️ GÉNERO/ESTILO:</label>
             <select id="genero">
-                <option value="ai-art">🤖 Arte IA</option>
+                <option value="ai-gen">🤖 Generación IA</option>
+                <option value="cyberpunk">🌃 Cyberpunk Aesthetic</option>
+                <option value="manga">🎌 Estilo Manga/Cómic</option>
                 <option value="fotografia">📸 Fotografía</option>
-                <option value="ilustracion">🖌️ Ilustración / Vector</option>
-                <option value="textura">🧱 Textura / Material</option>
                 <option value="otro">🔧 Otro</option>
             </select>
             <label>🔗 URL EXTERNA (opcional):</label>
@@ -123,11 +127,12 @@
             <input type="file" id="archivo" accept="image/jpeg,image/png,image/webp,image/gif" onchange="previsualizar(this)">
             
             <div id="vistaPrevia" class="preview-container" style="display: none;">
-                <img id="imagePreview" class="preview-img" src="" alt="Vista previa">
+                <img id="imagePreview" class="preview-img" alt="Vista previa">
                 <p style="margin-top: 10px;"><span id="fileInfo" style="color: var(--neon-green);"></span></p>
-                <p><button type="button" onclick="quitarArchivo()" class="btn-danger">✖ QUITAR</button></p>
+                <p><button type="button" onclick="quitarImagen()" class="btn-danger">✖ QUITAR</button></p>
             </div>
 
+            <!-- BARRA DE PROGRESO DE SUBIDA -->
             <div id="progressContainer" style="display: none; margin-top: 15px;">
                 <div style="width: 100%; background: #010409; border: 1px solid var(--border); border-radius: 4px; overflow: hidden;">
                     <div id="progressBar" style="width: 0%; height: 15px; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); box-shadow: 0 0 10px var(--neon-blue); transition: width 0.2s ease;"></div>
@@ -142,40 +147,89 @@
         </form>
     </div>
 
-    <div class="existing-media">
-        <h2 class="section-title">📚 Galería del Observatorio</h2>
+    <!-- Sección de Imágenes (Estáticas + Dinámicas) -->
+    <div class="existing-videos">
+        <h2 class="section-title">🖼️ Galería del Observatorio</h2>
         
-        <div class="media-grid" id="mediaContainer">
+        <div class="video-grid" id="videosContainer">
             
-            <!-- VIDEO 1 ESTÁTICO ADAPTADO A IMAGEN -->
-            <div class="media-card">
-                <div class="media-card-header">
-                    <span class="media-icon">🤖</span>
-                    <h3 class="media-title">Autoretrato Generativo</h3>
+            <!-- ================== IMAGEN 1 ESTÁTICA ================== -->
+            <div class="video-card">
+                <div class="video-card-header">
+                    <span class="video-icon">🤖</span>
+                    <h3 class="video-title">Fusión Facial IA</h3>
                 </div>
-                <div class="media-meta">
+                <div class="video-meta">
                     <span>🎨 Paula</span>
                     <span>☁️ Cloudflare R2</span>
                 </div>
-                <div class="media-description">Fusión de imagen propia y texturas cyberpunk generadas mediante IA.</div>
+                <div class="video-description">Prueba de face-swapping manteniendo consistencia estructural del rostro original.</div>
                 
-                <div class="media-player-container">
-                    <img src="https://via.placeholder.com/400x300/0d1117/00f3ff?text=Imagen+IA+Modelo+Propio" alt="Autoretrato">
+                <div class="video-player-container">
+                    <img src="https://via.placeholder.com/600x400/0d1117/00f3ff?text=Imagen+en+reserva" alt="Placeholder">
                 </div>
                 
                 <div class="labels">
-                    <span class="label genero">ai-art</span>
-                    <span class="label">Composición</span>
+                    <span class="label genero">ai-gen</span>
+                    <span class="label">Retrato</span>
                 </div>
             </div>
 
+            <!-- ================== IMAGEN 2 ESTÁTICA ================== -->
+            <div class="video-card">
+                <div class="video-card-header">
+                    <span class="video-icon">🌃</span>
+                    <h3 class="video-title">Callejón Neón</h3>
+                </div>
+                <div class="video-meta">
+                    <span>🎨 Paula</span>
+                    <span>☁️ Cloudflare R2</span>
+                </div>
+                <div class="video-description">Concept art de estética cyberpunk generado mediante promts complejos.</div>
+                
+                <div class="video-player-container">
+                    <img src="https://via.placeholder.com/600x400/0d1117/0aff0a?text=Imagen+en+reserva" alt="Placeholder">
+                </div>
+                
+                <div class="labels">
+                    <span class="label genero">cyberpunk</span>
+                    <span class="label">Concept Art</span>
+                </div>
+            </div>
+
+            <!-- ================== IMAGEN 3 ESTÁTICA ================== -->
+            <div class="video-card">
+                <div class="video-card-header">
+                    <span class="video-icon">🎌</span>
+                    <h3 class="video-title">Líneas de Tinta</h3>
+                </div>
+                <div class="video-meta">
+                    <span>🎨 Paula</span>
+                    <span>☁️ Cloudflare R2</span>
+                </div>
+                <div class="video-description">Estudio de ilustración en blanco y negro, estilo manga clásico.</div>
+                
+                <div class="video-player-container">
+                    <img src="https://via.placeholder.com/600x400/0d1117/bd00ff?text=Imagen+en+reserva" alt="Placeholder">
+                </div>
+                
+                <div class="labels">
+                    <span class="label genero">manga</span>
+                    <span class="label">Ilustración</span>
+                </div>
+            </div>
+            
+            <!-- A PARTIR DE AQUÍ SE INYECTARÁN AUTOMÁTICAMENTE LAS NUEVAS IMÁGENES -->
         </div>
     </div>
 
     <script>
+        // CONFIGURACIÓN
         const CLAVE_EDITOR = 'patito123';
         const GITHUB_USER = 'paulaflechadadeai';
         const GITHUB_REPO = 'paulaflechadadeai.github.io';
+        
+        // 🔗 LA MISMA URL DEL WORKER FUNCIONA PARA TODO
         const WORKER_URL = 'https://observatorio-upload.veronicakamyarnima.workers.dev';
 
         let editorActivo = false;
@@ -205,32 +259,30 @@
         function resetForm() {
             document.getElementById('titulo').value = '';
             document.getElementById('artista').value = '';
-            document.getElementById('qid').value = '';
             document.getElementById('descripcion').value = '';
             document.getElementById('urlExterna').value = '';
-            document.getElementById('genero').value = 'ai-art';
-            quitarArchivo();
+            document.getElementById('genero').value = 'ai-gen';
+            quitarImagen();
         }
 
+        // GESTIÓN DE ARCHIVOS (Adaptado a Imágenes)
         function previsualizar(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                
                 if (!allowedTypes.includes(file.type)) {
                     alert("❌ Formato no soportado. Usa JPG, PNG, WEBP o GIF."); 
-                    input.value = ''; return;
-                }
-                if (file.size > 20 * 1024 * 1024) {
-                    alert("❌ La imagen debe ser menor de 20MB"); 
                     input.value = ''; return;
                 }
                 
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    archivoSeleccionado = { nombre: file.name, tamaño: (file.size / (1024 * 1024)).toFixed(2) };
+                    archivoSeleccionado = { nombre: file.name, tipo: 'imagen', tamaño: (file.size / (1024 * 1024)).toFixed(2) };
                     const img = document.getElementById('imagePreview');
                     img.src = e.target.result;
-                    document.getElementById('fileInfo').textContent = `📊 ${archivoSeleccionado.nombre} (${archivoSeleccionado.tamaño} MB)`;
+                    
+                    actualizarInfo();
                     document.getElementById('vistaPrevia').style.display = 'block';
                     document.getElementById('fileLabel').style.borderColor = 'var(--neon-green)';
                 };
@@ -238,7 +290,12 @@
             }
         }
 
-        function quitarArchivo() {
+        function actualizarInfo() {
+            let info = `📊 ${archivoSeleccionado.nombre} (${archivoSeleccionado.tamaño} MB)`;
+            document.getElementById('fileInfo').textContent = info;
+        }
+
+        function quitarImagen() {
             archivoSeleccionado = null;
             document.getElementById('vistaPrevia').style.display = 'none';
             document.getElementById('archivo').value = '';
@@ -246,8 +303,9 @@
             document.getElementById('fileLabel').style.borderColor = 'var(--neon-blue)';
         }
 
-        function subirArchivo() {
-            if (!editorActivo) return;
+        // 🚀 SUBIR A CLOUDFLARE R2
+        function subirImagen() {
+            if (!editorActivo) { alert("⚠️ Activa el modo editor primero"); return; }
             
             const titulo = document.getElementById('titulo').value.trim();
             const artista = document.getElementById('artista').value.trim();
@@ -267,15 +325,17 @@
 
                 const btn = document.querySelector('button[type="submit"]');
                 const originalText = btn.innerText;
-                btn.innerText = '⏳ TRANSMITIENDO...';
+                btn.innerText = '⏳ ESTABLECIENDO CONEXIÓN...';
                 btn.disabled = true;
 
                 const progressContainer = document.getElementById('progressContainer');
                 const progressBar = document.getElementById('progressBar');
                 const progressText = document.getElementById('progressText');
+                
                 progressContainer.style.display = 'block';
                 progressBar.style.width = '0%';
-                
+                progressText.innerText = '0% ENVIADO';
+
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', WORKER_URL, true);
 
@@ -284,6 +344,10 @@
                         const percentComplete = Math.round((e.loaded / e.total) * 100);
                         progressBar.style.width = percentComplete + '%';
                         progressText.innerText = percentComplete + '% ENVIADO';
+                        
+                        if(percentComplete > 10) {
+                            btn.innerText = '🚀 TRANSMITIENDO IMAGEN...';
+                        }
                     }
                 };
 
@@ -294,61 +358,105 @@
 
                     if (xhr.status >= 200 && xhr.status < 300) {
                         const result = JSON.parse(xhr.responseText);
+                        alert(`✅ ¡Imagen subida a tu Bucket!\n🌐 URL: ${result.url}`);
+
                         let cuerpo = `**Género:** ${genero}\n`;
                         if (artista) cuerpo += `🎨 **Artista:** ${artista}\n`;
                         cuerpo += `\n${descripcion || 'Sin descripción'}\n\n`;
                         cuerpo += `🔗 **URL R2 Pública:** ${result.url}\n`;
-                        
+                        cuerpo += `📁 **Archivo:** ${result.key} · ${(result.size / (1024*1024)).toFixed(2)} MB\n`;
+
+                        // NOTA: Se cambió la etiqueta a 'imagen'
                         window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('🖼️ ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=imagen,${genero}`, '_blank');
                         resetForm();
                     } else {
-                        alert(`❌ Error al subir`);
+                        let errorMsg = 'Error desconocido en Cloudflare';
+                        try {
+                            const result = JSON.parse(xhr.responseText);
+                            if (result.error) errorMsg = result.error;
+                        } catch(e) {}
+                        alert(`❌ Error al subir: ${errorMsg}`);
                     }
                 };
+
+                xhr.onerror = function() {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    progressContainer.style.display = 'none';
+                    alert("❌ Error crítico de red durante la transmisión.");
+                };
+
                 xhr.send(formData);
+
             } else if (urlExterna) {
                 let cuerpo = `**Género:** ${genero}\n`;
                 if (artista) cuerpo += `🎨 **Artista:** ${artista}\n`;
-                cuerpo += `\n${descripcion || 'Sin descripción'}\n\n🔗 **Ver enlace externo:** [Enlace](${urlExterna})\n`;
+                cuerpo += `\n${descripcion || 'Sin descripción'}\n\n`;
+                cuerpo += `🔗 **Ver enlace externo:** [Enlace](${urlExterna})\n`;
+
                 window.open(`https://github.com/${GITHUB_USER}/${GITHUB_REPO}/issues/new?title=${encodeURIComponent('🖼️ ' + titulo)}&body=${encodeURIComponent(cuerpo)}&labels=imagen,${genero}`, '_blank');
                 resetForm();
             } else {
-                alert("⚠️ Sube un archivo o proporciona una URL");
+                alert("⚠️ Sube un archivo de imagen o proporciona una URL externa");
             }
         }
 
+        // Drag and drop
+        const fileLabel = document.getElementById('fileLabel');
+        fileLabel.addEventListener('dragover', (e) => { e.preventDefault(); fileLabel.style.background = 'rgba(0, 243, 255, 0.2)'; });
+        fileLabel.addEventListener('dragleave', () => { fileLabel.style.background = ''; });
+        fileLabel.addEventListener('drop', (e) => {
+            e.preventDefault(); fileLabel.style.background = '';
+            if (e.dataTransfer.files.length > 0) {
+                document.getElementById('archivo').files = e.dataTransfer.files;
+                previsualizar(document.getElementById('archivo'));
+            }
+        });
+
+        // 📥 CARGAR IMÁGENES DINÁMICAS (Busca labels=imagen)
         async function cargarGaleriaDinamica() {
-            const contenedor = document.getElementById('mediaContainer');
+            const contenedor = document.getElementById('videosContainer');
+            
             try {
-                // Filtramos específicamente por la etiqueta 'imagen'
+                // Filtramos por la etiqueta 'imagen'
                 const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?state=open&labels=imagen`);
                 const issues = await response.json();
                 
+                if (issues.length === 0) return;
+
                 issues.forEach(issue => {
                     const urlMatch = issue.body.match(/URL R2 Pública:\*\* (https:\/\/[^\s]+)/);
                     const urlR2 = urlMatch ? urlMatch[1] : null;
 
                     if (urlR2) {
                         const tituloLimpio = issue.title.replace('🖼️ ', '');
+                        
                         const cardHTML = `
-                        <div class="media-card">
-                            <div class="media-card-header">
-                                <span class="media-icon">🖼️</span>
-                                <h3 class="media-title">${tituloLimpio}</h3>
+                        <div class="video-card">
+                            <div class="video-card-header">
+                                <span class="video-icon">📸</span>
+                                <h3 class="video-title">${tituloLimpio}</h3>
                             </div>
-                            <div class="media-meta"><span>☁️ Cloudflare R2</span> <span>#${issue.number}</span></div>
-                            <div class="media-player-container">
+                            <div class="video-meta">
+                                <span>☁️ Cloudflare R2</span>
+                                <span>#${issue.number}</span>
+                            </div>
+                            <div class="video-player-container">
                                 <img src="${urlR2}" alt="${tituloLimpio}">
                             </div>
                             <div style="margin-top: 15px; text-align: center;">
                                 <a href="${issue.html_url}" target="_blank" style="color: var(--neon-blue); text-decoration: none; font-size: 0.8rem; border: 1px solid var(--neon-blue); padding: 4px 8px; border-radius: 4px;">Ver metadatos completos →</a>
                             </div>
                         </div>`;
+                        
                         contenedor.innerHTML += cardHTML;
                     }
-                }); 
-            } catch (error) { console.error("Error", error); }
+                });
+            } catch (error) {
+                console.error("Error cargando la galería dinámica:", error);
+            }
         }
+
         document.addEventListener('DOMContentLoaded', cargarGaleriaDinamica);
     </script>
 </body>
